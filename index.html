@@ -204,7 +204,9 @@ p{max-width:68ch}
 .car-arrow:disabled{opacity:0;pointer-events:none}
 .slide{opacity:.45;transform:scale(.96);transition:opacity .3s,transform .3s}.slide.on{opacity:1;transform:none}
 .car-nav{justify-content:center}.car-hint{font-size:12px;color:var(--muted);margin-left:8px}
-.proj-bar{margin:-8px 0 18px}.proj-tabs{margin:0 0 28px}.tabs button{font:inherit;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;padding:12px 22px;font-size:16px;font-weight:500;color:var(--muted);cursor:pointer}
+.proj-bar{margin:-8px 0 18px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.yr-pick select{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 36px 8px 16px;cursor:pointer;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 55%,calc(100% - 13px) 55%;background-size:5px 5px;background-repeat:no-repeat}.proj-tabs{margin:0 0 28px}.tabs button{font:inherit;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;padding:12px 22px;font-size:16px;font-weight:500;color:var(--muted);cursor:pointer}
 .tabs button:hover{color:var(--ink);background:var(--teal-soft)}.tabs button[aria-selected="true"]{color:var(--teal);border-bottom-color:var(--teal)}
 .role-tag{font-style:normal;font-family:var(--body);font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:999px;margin-right:8px;border:1px solid var(--teal);color:var(--teal);vertical-align:1px}
 .role-tag.pi{background:var(--teal);color:#fff}
@@ -692,7 +694,7 @@ const views = {
   awards(){
     const yrs=[...new Set(AWARDS.map(a=>(a.date||"").slice(0,4)).filter(Boolean))].sort().reverse();
     return `<section class="page wrap">${head("","Awards")}
-      <div class="proj-bar"><div class="seg" id="awYears"><button type="button" data-y="all" aria-pressed="${AWYEAR==="all"}">${T("All","전체")}</button>${yrs.map(y=>`<button type="button" data-y="${y}" aria-pressed="${AWYEAR===y}">${y}</button>`).join("")}</div></div>
+      <div class="proj-bar"><label class="yr-pick"><span class="sr">${T("Year","연도")}</span><select id="awYears"><option value="all"${AWYEAR==="all"?" selected":""}>${T("All years","전체 연도")}</option>${yrs.map(y=>`<option value="${y}"${AWYEAR===y?" selected":""}>${y}</option>`).join("")}</select></label></div>
       <div class="ig" id="igGrid"></div><div class="sentinel" id="awSentinel"></div><div class="feed-end" id="awEnd" hidden></div></section>`;
   },
   activities(){
@@ -852,7 +854,7 @@ function route(){
     const grid=document.getElementById("igGrid"),PAGE=12;let shown=0;
     const tile=(a,k)=>`<button type="button" class="ig-tile" data-k="${k}" aria-label="${esc(a.title)}">${a.imgs.length?`<img src="${a.imgs[0]}" alt="" loading="lazy">`:`<span class="ig-noimg">${esc(a.title)}</span>`}${a.imgs.length>1?`<span class="cnt">${a.imgs.length}</span>`:""}<span class="ig-cap"><b>${esc(a.title)}</b><small>${a.date.replaceAll("-",". ")}</small></span></button>`;
     const LIST=AWARDS.map((a,k)=>[a,k]).filter(([a])=>AWYEAR==="all"||(a.date||"").startsWith(AWYEAR));
-    document.getElementById("awYears").onclick=e=>{const b=e.target.closest("button");if(!b||b.dataset.y===AWYEAR)return;AWYEAR=b.dataset.y;const y=scrollY;route();window.scrollTo(0,y);};
+    document.getElementById("awYears").onchange=e=>{AWYEAR=e.target.value;const y=scrollY;route();window.scrollTo(0,y);};
     const more=()=>{if(shown>=LIST.length)return;const next=LIST.slice(shown,shown+PAGE);grid.insertAdjacentHTML("beforeend",next.map(([a,k])=>tile(a,k)).join(""));shown+=next.length;
       const end=document.getElementById("awEnd");end.hidden=!(shown>=LIST.length&&LIST.length>PAGE);end.textContent=T("You have seen all awards.","모든 수상 내역을 다 봤습니다.");};
     more();
