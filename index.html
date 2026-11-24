@@ -429,7 +429,7 @@ form.adm-head input{flex:1;min-width:220px}
 .intro{display:block;padding-block:20px 8px}
 .intro p{margin:0 0 12px;max-width:920px}
 .hq-track{align-items:stretch}.areas-band .area-card{width:320px;box-sizing:border-box}
-.areas-band{padding-block:20px 8px}.areas-band .areas-title{font-size:17px;margin:0 0 10px}
+.areas-band{padding-block:0 24px}.areas-band .areas-title{font-size:17px;margin:0 0 10px}
 .hmarquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
 .hq-track{display:flex;gap:14px;width:max-content;animation:hq 50s linear infinite}
 .hmarquee:hover .hq-track{animation-play-state:paused}
@@ -670,7 +670,7 @@ const views = {
       <p class="tag">${esc(ko("about.tagline",a.tagline))}</p>${ko("about.paras",a.paras).map(p=>`<p class="ab-p">${esc(p)}</p>`).join("")}
       <div class="funders"><span class="chip">KAIA</span><span class="chip">NRF</span></div>
       <h2 class="ab-h">${T("Core Research Areas","핵심 연구 분야")}</h2>
-      <div class="area-grid">${areas.map(([t,d])=>`<article class="area-card"><b>${t}</b><span>${d}</span></article>`).join("")}</div>
+      <div class="areas-band"><div class="hmarquee"><div class="hq-track">${[0,1].map(k=>areas.map(([t,d])=>`<article class="area-card"${k?' aria-hidden="true"':''}><b>${t}</b><span>${d}</span></article>`).join("")).join("")}</div></div></div>
     </section>`;
   },
   pi(){
