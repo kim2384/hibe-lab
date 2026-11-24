@@ -170,13 +170,24 @@ p{max-width:68ch}
 /* Members */
 .group-title{font-size:22px;font-weight:500;margin:48px 0 20px;display:flex;align-items:baseline;gap:10px}
 .group-title .n{font-family:var(--mono);font-size:13px;color:var(--muted);font-weight:400}
-.members{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,440px),1fr));gap:28px}
-.member{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:28px;display:grid;grid-template-columns:96px 1fr;gap:24px;align-items:start}
+.members{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:20px}
+.member{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 16px 18px;display:grid;gap:4px;justify-items:center;text-align:center;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.member:hover,.member:focus-visible{box-shadow:0 6px 18px rgba(0,0,0,.08);transform:translateY(-2px)}
+.member .avatar{width:100%;max-width:150px;height:auto;aspect-ratio:5/6;font-size:28px;margin-bottom:10px}
+.member .role{margin:0}
+.m-detail{display:grid;grid-template-columns:140px 1fr;gap:24px;align-items:start}
+.m-detail .avatar{width:140px;height:168px}
+.m-detail h3{margin:0}
+.m-detail .role{font-size:14px;color:var(--muted);margin:2px 0 16px}
+.m-detail .ri{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+.m-detail ul{margin:0 0 18px;padding-left:18px;font-size:15px;line-height:1.6}
+.m-detail .links{font-size:14px;display:flex;gap:16px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--line)}
+@media (max-width:520px){.m-detail{grid-template-columns:1fr}.m-detail .avatar{width:120px;height:144px}}
 .member > *{min-width:0}
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
 .avatar{width:96px;height:120px;border-radius:8px;overflow:hidden;background:var(--teal-soft);color:var(--teal);display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:24px}
-@media (max-width:480px){.member{grid-template-columns:72px 1fr;gap:16px;padding:20px}.avatar{width:72px;height:90px}}
-.member h4{margin:0;font-family:var(--display);font-size:20px;font-weight:500}
+@media (max-width:480px){.members{grid-template-columns:repeat(2,1fr);gap:12px}.member{padding:12px}}
+.member h4{margin:0;font-family:var(--display);font-size:17px;font-weight:500}
 .member .role{font-size:14px;color:var(--muted);margin:2px 0 16px}
 .member .ri{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
 .member ul{margin:0 0 18px;padding-left:18px;font-size:15px;line-height:1.6;display:grid;gap:2px}
@@ -282,6 +293,16 @@ p{max-width:68ch}
 .post p{white-space:pre-line;margin:0;font-size:13.5px;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;align-self:start;line-height:1.6;max-height:3.2em}
 .post .sample{justify-self:start;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--muted)}
 .post .del{justify-self:start;font:inherit;font-size:12px;background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
+.awards{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.award{display:grid;grid-template-columns:132px 1fr;gap:18px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;transition:box-shadow .15s}
+.award:hover,.award:focus-visible{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.aw-ph{aspect-ratio:4/3;border-radius:8px;overflow:hidden;background:var(--teal-soft)}
+.aw-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.aw-body{display:grid;gap:4px;min-width:0;padding-top:2px}
+.aw-body .meta{font-size:12px;color:var(--muted)}
+.aw-body h3{margin:0;font-size:15.5px;font-weight:500;line-height:1.45}
+.aw-body p{margin:0;font-size:13.5px;color:var(--muted);white-space:pre-line;line-height:1.6}
+@media (max-width:560px){.award{grid-template-columns:88px 1fr;gap:12px}}
 .gal{display:grid;gap:8px;padding:8px}
 .gal img{width:100%;height:auto;border-radius:8px;display:block}
 .modal-body .ptext{white-space:pre-wrap;font-size:15.5px;line-height:1.7}
@@ -330,7 +351,7 @@ footer .fc{height:4px;background:linear-gradient(90deg,var(--fc1),var(--fc2),var
 <script>
 /* ---- 콘텐츠: 기존 사이트에서 그대로 옮김. 실제 구축 시 이 부분이 관리툴(콘텐츠 파일)로 분리됩니다. ---- */
 const SITE = {
-  nav: [["about","About hibe","연구실 소개"],["pi","People","구성원"],["projects","Projects","연구과제"],["publications","Publications","논문"],["awards","Awards","수상"],["activities","Activities","활동"],["join","Join us","참여하기"]],
+  nav: [["about","About hibe","연구실 소개"],["pi","People","구성원"],["projects","Projects","연구과제"],["publications","Publications","논문게재 및 학술발표"],["awards","Awards","수상"],["activities","Activities","활동"],["join","Join us","참여하기"]],
   about: {
     title: "Hyper-Intelligent Built Environment Laboratory at Chung-Ang University",
     ko: "중앙대학교 초지능형 건축환경 연구실",
@@ -377,7 +398,7 @@ const SITE = {
     {group:"Undergraduate Research Assistants", name:"Kim, Yunseong", role:"Undergrad. Researcher (Senior)", interests:["Urban energy modeling","Daylighting (Simulation & Control)","Building Performance (Energy) Modelling"], email:"mc3061@cau.ac.kr", cv:"https://docs.google.com/document/d/1SYJ6Byc4zQm7tswzJhnSR9LQ7wk9U44X/edit?usp=drive_link", photo:"images/members/kim-yunseong.jpg"}
   ],
   projects: [
-    "Seoul ANCHOR (Regional Growth and Talent Development System)",
+    "Seoul ANCHOR 10 Challenge",
     "Green Remodeling Talent Development Platform",
     "A Holistic Framework Towards Human-Centric Urban Lightscape",
     "Center for Carbon Neutrality in Buildings (C·CNB)",
@@ -429,6 +450,9 @@ const SITE = {
 
 /* ---- 기존 사이트(Tumblr)에서 옮긴 Activities 게시물 ---- */
 const OLD_POSTS = [{"id": "t826181884733259776", "old": true, "cat": "conf", "date": "2026-08-28", "title": "17th Asia Lighting Conference (ALC2026)", "text": "장소: Daido University, Nagoya, Japan\n날짜: 2026.08.19~21", "imgs": ["images/activities/826181884733259776-1.jpg", "images/activities/826181884733259776-2.jpg", "images/activities/826181884733259776-3.jpg", "images/activities/826181884733259776-4.jpg", "images/activities/826181884733259776-5.jpg", "images/activities/826181884733259776-6.jpg"]}, {"id": "t803832446925864960", "old": true, "cat": "conf", "date": "2025-11-12", "title": "2025 한국건축친환경설비학회 추계학술발표대회", "text": "장소: 충북대학교, 청주\n날짜: 2025.11.13~15\n발표자: 윤대민, 장현진, 강경민", "imgs": ["images/activities/803832446925864960-1.jpg", "images/activities/803832446925864960-2.jpg", "images/activities/803832446925864960-3.jpg"]}, {"id": "t803832317644767232", "old": true, "cat": "conf", "date": "2025-11-04", "title": "2025 한국태양에너지학회 추계학술발표대회", "text": "장소: 베네치아호텔, 여수\n날짜: 2025.11.05~07", "imgs": ["images/activities/803832317644767232-1.jpg", "images/activities/803832317644767232-2.jpg"]}, {"id": "t803832582756319232", "old": true, "cat": "conf", "date": "2025-08-23", "title": "Building Simulation 2025 (2025)", "text": "장소: Brisbane, Australia\n날짜: 2025.08.24~27", "imgs": ["images/activities/803832582756319232-1.jpg", "images/activities/803832582756319232-2.jpg"]}, {"id": "t803832185845104640", "old": true, "cat": "conf", "date": "2025-05-22", "title": "2025 한국생태환경건축학회 춘계학술발표대회", "text": "장소: 한국과학기술회관, 서울\n날짜: 2025.05.23\n발표자: 윤대민, 장현진, 강경민, 김영수", "imgs": ["images/activities/803832185845104640-1.jpg", "images/activities/803832185845104640-2.jpg"]}, {"id": "t803831728613507072", "old": true, "cat": "conf", "date": "2025-04-15", "title": "2025 한국태양에너지학회 춘계학술발표대회", "text": "장소: 비체팰리스, 보령\n날짜: 2025.04.16~18", "imgs": ["images/activities/803831728613507072-1.jpg", "images/activities/803831728613507072-2.jpg", "images/activities/803831728613507072-3.jpg"]}, {"id": "t803831487808126976", "old": true, "cat": "conf", "date": "2024-11-13", "title": "2024 한국건축친환경설비학회 추계학술발표대회", "text": "장소: 제주대학교, 제주\n날짜: 2024.11.14~16", "imgs": ["images/activities/803831487808126976-1.jpg", "images/activities/803831487808126976-2.jpg", "images/activities/803831487808126976-3.jpg"]}, {"id": "t803831209669083136", "old": true, "cat": "conf", "date": "2024-08-21", "title": "15th Asia Lighting Conference (ALC2024)", "text": "장소: 세종대학교, 서울\n날짜: 2024.08.22~23", "imgs": ["images/activities/803831209669083136-1.jpg"]}, {"id": "t826181373365829632", "old": true, "cat": "out", "date": "2026-08-27", "title": "정기 회식 및 이성현 학부 연구생 환영회", "text": "", "imgs": ["images/activities/826181373365829632-1.jpg", "images/activities/826181373365829632-2.jpg"]}, {"id": "t804059749012357120", "old": true, "cat": "out", "date": "2025-12-02", "title": "이승재 교수님(University of Toronto)", "text": "Human-Building Interaction Through the Lens of Causality\n2025.12.02", "imgs": ["images/activities/804059749012357120-1.jpg", "images/activities/804059749012357120-2.jpg", "images/activities/804059749012357120-3.jpg"]}, {"id": "t804070994250727424", "old": true, "cat": "out", "date": "2025-11-17", "title": "국토교통부 이진철 청장님 특강", "text": "AI시대, 건축정책의 이슈들\n2025.11.17", "imgs": ["images/activities/804070994250727424-1.jpg", "images/activities/804070994250727424-2.jpg"]}, {"id": "t804281062600622081", "old": true, "cat": "out", "date": "2025-11-04", "title": "Prof. Panagiota Karava (Purdue University) 특강", "text": "2025.11.05", "imgs": ["images/activities/804281062600622081-1.jpg"]}];
+
+/* ---- 기존 사이트(Tumblr hibe-award)에서 옮긴 수상 내역 ---- */
+const AWARDS = [{"id": "a825820134620938240", "date": "2026-08-24", "title": "Best Student Paper Award, The 17th Asia Lighting Conference -ALC2026, Nagoya, Japan (2026.08.21)", "text": "논문명: Eye-Level Vertical Illuminance as an Indicator for Integrated Assessment of Glare and Circadian Lighting in Sidelit Open-Plan Offices\n저자: 강영준, 강경민, 김영수", "imgs": ["images/awards/825820134620938240-1.jpg"]}, {"id": "a825820012603424768", "date": "2026-08-24", "title": "Merit Student Paper Award, The 17th Asia Lighting Conference -ALC2026, Nagoya, Japan (2026.08.21)", "text": "논문명: Far-Field Assumption Error Analysis in Image-Based Lighting Simulation toward Human-Centric Lighting Control\n저자: 강경민, 강영준, 김영수", "imgs": ["images/awards/825820012603424768-1.jpg"]}, {"id": "a825881046355738624", "date": "2025-12-05", "title": "공과대학장상, 2025 CAU 공학학술제 (2025.12.05)", "text": "주관 기관: 중앙대학교\n수상자: 장현진, 조형준", "imgs": ["images/awards/825881046355738624-1.jpg"]}, {"id": "a803797325815398400", "date": "2025-11-26", "title": "최우수상, 2025 X-Corpus Plus 페스티벌 (2025.11.26)", "text": "주관 기관: 과학기술정보통신부, 한국연구재단\n작품명: 도시 맥락에 따른 ZEB 차등화: HDRI기반 SVF 회귀 모델을 이용한 입면 일사량 추정\n수상자: 강경민, 조형준, 장현진, 이학돈, 김영수", "imgs": ["images/awards/803797325815398400-1.jpg"]}, {"id": "a803796267301060608", "date": "2025-11-14", "title": "장려상, 2025건축친환경설비기술공모전-공학 기술 Track (2025.11.14)", "text": "주관 기관: 한국그린빌딩협의회, 한국건축친환경설비학회\n작품명: 커뮤니티 규모에서의 3차원 일사 데이터베이스 구축 및 건물 외피 태양광 잠재력 분석\n수상자: 조형준, 장현진, 김영수", "imgs": ["images/awards/803796267301060608-1.jpg"]}, {"id": "a803796186767163392", "date": "2025-11-14", "title": "최우수상, 2025건축친환경설비기술공모전-공학 기술 Track (2025.11.14)", "text": "주관 기관: 한국그린빌딩협의회, 한국건축친환경설비학회\n작품명: HDRI 기반 Image-Based Lighting 시뮬레이션을 통한 재실자 중심 현휘 평가 프레임워크 구현\n수상자: 강경민, 강영준, 강준모, 김영수", "imgs": ["images/awards/803796186767163392-1.jpg"]}, {"id": "a803793448939520000", "date": "2025-11-14", "title": "우수논문발표상, 2025 추계학술발표대회 (2025.11.14)", "text": "한국건축친환경설비학회\n논문명: HDRI 기반 주광 시뮬레이션을 위한 Solar Disk 자동화 정의 알고리즘\n저자: 강경민, 강영준, 윤대민, 김영수", "imgs": ["images/awards/803793448939520000-1.jpg"]}, {"id": "a803795935542099968", "date": "2025-11-06", "title": "후원업체상, 2025 대한민국 녹색 건축대전-설계 부문 (2025.11.06)", "text": "주관 기관: 국토교통부, 한국태양에너지학회\n작품명: 자연광 기반 전생애주기 에너지 최적화 파라메트릭 설계 전략\n수상자: 강경민, 이학돈, 윤대민, 김영수", "imgs": ["images/awards/803795935542099968-1.jpg"]}, {"id": "a803795557545082880", "date": "2025-08-27", "title": "Student Travel Award, IBPSA Building Simulation Conference 2025, Brisbane, Australia (2025.08.27)", "text": "논문명: Sensitivity Analysis of albedo input settings for vertical facades in community-scale solar irradiance simulation\n저자: 윤대민, 강경민, 조형준, 장현진, 김영수", "imgs": ["images/awards/803795557545082880-1.jpg", "images/awards/803795557545082880-2.jpg"]}, {"id": "a803793815609753600", "date": "2025-08-22", "title": "Best Student Award, The 16th Asia Lighting Conference -ALC2025, Chongqing, China (2025.08.22)", "text": "논문명: GUI-Based Image-Based Lighting (IBL) Simulation Framework For Human-Centric Daylighting\n저자: 강경민, 윤대민, 김영수", "imgs": ["images/awards/803793815609753600-1.jpg"]}, {"id": "a803793302522576896", "date": "2025-05-23", "title": "우수논문발표상, 2025 춘계학술발표대회 (2025.05.23)", "text": "수여기관: 한국생태환경건축학회\n논문명: 정밀 주광 시뮬레이션을 위한 사용자 친화형 Image-Based Lighting 시뮬레이션 모듈 개발\n저자: 강경민, 윤대민, 김영수", "imgs": ["images/awards/803793302522576896-1.jpg"]}, {"id": "a803793106810109952", "date": "2024-12-06", "title": "최우수상, 2024건축친환경설비기술공모전-창의 아이디어 Track (2024.12.06)", "text": "주관 기관: 한국그린빌딩협의회, 한국건축친환경설비학회\n작품명: Airwall 형성 및 이상기류 안정화를 위한 하단부 Clark-Y 형상 루버형 BIPV 제안\n수상자: 강경민, 이학돈, 이가연, 김영수", "imgs": ["images/awards/803793106810109952-1.jpg"]}, {"id": "a803792902466797568", "date": "2024-12-06", "title": "최우수상, 2024건축친환경설비기술공모전-공학 기술 Track  (2024.12.06)", "text": "주관기관: 한국그린빌딩협의회, 한국건축친환경설비학회\n작품명: 공공데이터와 일사 시뮬레이션을 활용한 노후화된 지역의 옥상 PV 리트로핏 지수 제안\n수상자: 조형준, 윤대민, 장현진, 김영수", "imgs": ["images/awards/803792902466797568-1.jpg"]}, {"id": "a803792686096220160", "date": "2024-11-15", "title": "우수논문발표상, 2024 추계학술발표대회 (2024.11.15)", "text": "수여기관: 한국건축친환경설비학회\n논문명: 건물 외피용 Clark-Y형 BIPV 루버를 둘러싼 기류 연구\n저자: 강경민, 이가연, 이학돈, 김영수", "imgs": ["images/awards/803792686096220160-1.jpg"]}];
 
 /* ---- 한국어 버전 (KR 모드). 비어 있는 항목은 영어 원문이 그대로 보입니다. ---- */
 const KO = {
@@ -547,10 +571,8 @@ const views = {
     const groups = [...new Set(SITE.members.map(m=>m.group))];
     return `<section class="page wrap">${peopleHead("members")}
       ${groups.map(g=>{const ms=SITE.members.filter(m=>m.group===g);return `<h2 class="group-title">${LANG==="ko"?KO.groups[g]||g:g}<span class="n">${ms.length}</span></h2>
-      <div class="members">${ms.map(m=>`<article class="member"><div class="avatar" aria-hidden="true">${m.photo?`<img src="${m.photo}" alt="" loading="lazy">`:initials(m.name)}</div><div>
-        <h4>${m.name}</h4><div class="role">${LANG==="ko"?KO.roles[m.role]||m.role:m.role}</div>
-        <ul>${m.interests.map(i=>`<li>${i}</li>`).join("")}</ul>
-        <div class="links"><span>${m.email}</span><a href="${m.cv}" target="_blank" rel="noopener">CV</a></div></div></article>`).join("")}</div>`}).join("")}
+      <div class="members">${ms.map(m=>`<article class="member" data-m="${SITE.members.indexOf(m)}" tabindex="0" role="button" aria-label="${esc(m.name)}"><div class="avatar" aria-hidden="true">${m.photo?`<img src="${m.photo}" alt="" loading="lazy">`:initials(m.name)}</div>
+        <h4>${m.name}</h4><div class="role">${LANG==="ko"?KO.roles[m.role]||m.role:m.role}</div></article>`).join("")}</div>`}).join("")}
     </section>`;
   },
   projects(){
@@ -563,14 +585,17 @@ const views = {
     </section>`;
   },
   publications(){
-    return `<section class="page wrap">${head("",T("Publications","논문"))}
+    return `<section class="page wrap">${head("",T("Publications","논문게재 및 학술발표"))}
       <div class="pub-tools"><input id="q" type="search" placeholder="${T("Search by title, author or journal","제목, 저자, 학술지로 찾기")}" aria-label="${T("Search publications","논문 검색")}">
         <div class="seg" id="seg"><button aria-pressed="true" data-c="all">${T("All","전체")}</button>${SITE.pubCats.map(([k,en,kr])=>`<button aria-pressed="false" data-c="${k}">${T(en.replace(/ Papers| Presentations/g,""),kr)}</button>`).join("")}</div></div>
       <div class="sort-row"><span>${T("Sort","정렬")}</span><div class="seg" id="sortSeg">${[["new","Newest","최신순"],["cite","Most cited","인용순"]].map(([k,en,kr])=>`<button aria-pressed="${k===PUBSORT}" data-s="${k}">${T(en,kr)}</button>`).join("")}</div></div>
       <p class="legend"><sup>†</sup> ${T("Corresponding author","교신저자")} · ${T(`Citation counts from ${CITES_SRC} as of ${CITES_DATE}`,`인용 수는 ${CITES_SRC==="OpenAlex"?"OpenAlex":"구글 스칼라"} 기준 (${CITES_DATE})`)}</p><div id="publist"></div></section>`;
   },
   awards(){
-    return `<section class="page wrap">${head("",T("Awards","수상"))}<div class="empty">${T("No awards listed yet. New awards added in the admin tool will appear here.","기존 사이트의 Awards 페이지는 아직 비어 있습니다. 수상 내역이 생기면 관리툴에서 추가하면 여기에 바로 표시됩니다.")}</div></section>`;
+    return `<section class="page wrap">${head("",T("Awards","수상"))}
+      <ul class="awards">${AWARDS.map((a,k)=>`<li class="award" data-k="${k}" tabindex="0" role="button">
+        <div class="aw-ph">${a.imgs.length?`<img src="${a.imgs[0]}" alt="" loading="lazy">`:""}</div>
+        <div class="aw-body"><span class="meta">${a.date.replaceAll("-",". ")}</span><h3>${esc(a.title)}</h3>${a.text?`<p>${esc(a.text)}</p>`:""}</div></li>`).join("")}</ul></section>`;
   },
   activities(){
     return `<section class="page wrap">${head("",T("Activities","활동"))}
@@ -672,6 +697,22 @@ function route(){
     track.tabIndex=0;
     track.addEventListener("keydown",e=>{if(e.key==="ArrowRight"){e.preventDefault();go(cur()+1)}if(e.key==="ArrowLeft"){e.preventDefault();go(cur()-1)}});
     sync();
+  }
+  if(id==="members"){
+    const openM=k=>{const m=SITE.members[k];
+      openModal(`<div class="modal-body m-detail"><div class="avatar">${m.photo?`<img src="${m.photo}" alt="">`:initials(m.name)}</div><div>
+        <h3 id="mTitle">${m.name}</h3><div class="role">${LANG==="ko"?KO.roles[m.role]||m.role:m.role}</div>
+        <div class="ri">${T("Research Interests","연구 주제")}</div><ul>${m.interests.map(i=>`<li>${esc(i)}</li>`).join("")}</ul>
+        <div class="links"><a href="mailto:${m.email}">${m.email}</a><a href="${m.cv}" target="_blank" rel="noopener">CV</a></div></div></div>`);};
+    const sec=$main.querySelector("section.page");
+    sec.addEventListener("click",e=>{const c=e.target.closest(".member");if(c)openM(+c.dataset.m);});
+    sec.addEventListener("keydown",e=>{const c=e.target.closest(".member");if(c&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openM(+c.dataset.m);}});
+  }
+  if(id==="awards"){
+    const list=document.querySelector(".awards");
+    const openAw=k=>{const a=AWARDS[k];openModal(`${a.imgs.length?`<div class="gal">${a.imgs.map(u=>`<img src="${u}" alt="">`).join("")}</div>`:""}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${a.date.replaceAll("-",". ")}</span><h3 id="mTitle">${esc(a.title)}</h3>${a.text?`<div class="ptext">${esc(a.text)}</div>`:""}</div>`);};
+    list.addEventListener("click",e=>{const li=e.target.closest(".award");if(li)openAw(+li.dataset.k);});
+    list.addEventListener("keydown",e=>{const li=e.target.closest(".award");if(li&&e.key==="Enter")openAw(+li.dataset.k);});
   }
   if(id==="activities"){
     const KEY="hibe-draft-posts";
