@@ -213,11 +213,11 @@ p{max-width:68ch}
 .role-tag.done{border-color:var(--muted);color:var(--muted)}
 .pstats{display:flex;flex-wrap:wrap;gap:16px 40px;margin:0 0 28px}
 .proj-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px 40px;margin-bottom:24px}.proj-head .page-title,.proj-head .pstats{margin:0}.proj-head .ps b{font-size:24px}
-.ps{display:grid;gap:4px}
+.ps{display:grid;gap:4px;align-content:start}
 .amt-note{color:var(--muted);font-size:13px;display:block}
 .amt{margin-top:2px}.amt b{font-weight:500}
 .ps b{font-family:var(--display);font-size:28px;font-weight:500;color:var(--teal);line-height:1.1}
-.ps span{font-size:13px;color:var(--muted)}
+.ps span{font-size:13px;color:var(--muted)}.ps-sub{font-size:12px;color:var(--muted);opacity:.85}
 @media (max-width:720px){.pstats{gap:16px 32px}.ps b{font-size:22px}}
 .proj-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
 .proj-row{display:grid;grid-template-columns:180px 1fr 24px;gap:20px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;transition:box-shadow .15s}
@@ -791,7 +791,7 @@ const projStats=()=>{const inf=SITE.projects.map((_,i)=>SITE.projectInfo?.[i]).f
   const amt=LANG==="ko"?krw(`KRW ${krwM.toFixed(2)} Million`):krwM>=1000?`KRW ${(krwM/1000).toFixed(2)}B`:`KRW ${Math.round(krwM)}M`;
   const L={on:["Ongoing projects","진행 중 과제"],done:["Completed projects","완료 과제"],all:["Entire projects","전체 과제"]}[PROJFILTER];
   const tile=(n,l)=>`<div class="ps"><b>${n}</b><span>${l}</span></div>`;
-  return `<div class="pstats">${tile(on.length,T(...L))}${tile(pi,T("as PI","PI"))}${tile(co,T("as Co-PI","Co-PI"))}${tile(amt,T(`Funding · hibe lab portion (≈ USD ${usdM.toFixed(2)}M)`,`연구비 · hibe lab 배정 (≈ USD ${usdM.toFixed(2)}M)`))}</div>`;};
+  return `<div class="pstats"><div class="ps"><b>${on.length}</b><span>${T(...L)}</span><small class="ps-sub">${pi} ${T("as PI","PI")} · ${co} ${T("as Co-PI","Co-PI")}</small></div>${tile(amt,T(`Funding · hibe lab portion (≈ USD ${usdM.toFixed(2)}M)`,`연구비 · hibe lab 배정 (≈ USD ${usdM.toFixed(2)}M)`))}</div>`;};
 const krw=a=>{if(LANG!=="ko")return a;if(KO.projects.amounts[a])return KO.projects.amounts[a];const m=String(a).match(/KRW ([\d,.]+) Million/);if(!m)return a;const v=Math.round(parseFloat(m[1].replace(/,/g,""))*100),e=Math.floor(v/10000),man=v%10000;return `${e?e+"억 ":""}${man?man.toLocaleString()+"만 ":""}원`.replace(/ 원$/," 원");};
 const pFunder=f=>LANG==="ko"?KO.projects.funders[f.funder]||f.funder:f.funder;
 const authors=(a,corr)=>{let h=esc(a);if(corr)h=h.replace(esc(corr),esc(corr)+"<sup>†</sup>");return h.replace(/Kim, M\./g,'<span class="me">Kim, M.</span>');};
