@@ -445,8 +445,9 @@ form.adm-head input{flex:1;min-width:220px}
 .area-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:24px}
 .area-grid .area-card{width:auto}
 /* Home News: 인스타그램식 무한 스크롤 카드 */
-.nfeed{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-@media (max-width:900px){.nfeed{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.nfeed{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px}
+@media (max-width:1000px){.nfeed{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){.nfeed{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:560px){.nfeed{grid-template-columns:1fr}}
 .ncard{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;background:var(--surface);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:transform .15s}
 .ncard:hover{transform:translateY(-2px)}.ncard:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
@@ -952,7 +953,7 @@ function route(){
     io.observe(document.getElementById("sentinel"));
     render();
   }
-  if(id==="home"){const feed=document.getElementById("newsFeed"),ALL=newsItems(),PAGE=9;let shown=0;
+  if(id==="home"){const feed=document.getElementById("newsFeed"),ALL=newsItems(),PAGE=16;let shown=0;
     const card=(n,x)=>`<button type="button" class="ncard" data-x="${x}"><div class="nimg${n.img?(n.fit==="cover"?" cover":""):" txt"}">${n.img?`<img src="${n.img}" alt="" loading="lazy">`:`<span>${esc(n.venue||"")}</span>`}</div>
       <div class="nbody"><span class="nmeta"><b>${T(...n.c)}</b> · ${newsDate(n.d)}</span><span class="nt">${esc(n.t)}</span></div></button>`;
     const more=()=>{if(shown>=ALL.length)return;feed.insertAdjacentHTML("beforeend",ALL.slice(shown,shown+PAGE).map((n,k)=>card(n,shown+k)).join(""));shown=Math.min(ALL.length,shown+PAGE);
