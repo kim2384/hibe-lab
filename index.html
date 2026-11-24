@@ -83,7 +83,7 @@ main{min-height:60vh}
 section.page{padding-block:24px 72px}
 h1,h2,h3{font-family:var(--display);font-weight:500;text-wrap:balance;line-height:1.2}
 .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin:0 0 8px}
-.page-title{font-size:clamp(30px,5vw,44px);margin:0 0 40px;font-weight:500;color:var(--h1a);background:linear-gradient(180deg,var(--h1a) 15%,var(--h1b) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content;max-width:100%}
+.page-title{font-size:clamp(24px,3.6vw,34px);margin:0 0 28px;font-weight:500;color:var(--h1a);background:linear-gradient(180deg,var(--h1a) 15%,var(--h1b) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;width:fit-content;max-width:100%}
 .lead{font-size:18px;max-width:65ch;color:var(--ink)}
 p{max-width:68ch}
 
@@ -191,6 +191,7 @@ p{max-width:68ch}
 .slide .img span{border:1px dashed var(--line);border-radius:6px;padding:4px 10px;background:var(--surface)}
 .slide .cap{padding:22px 26px 26px;display:grid;gap:6px}
 .slide .k{font-family:var(--mono);font-size:12px;color:var(--teal);letter-spacing:.06em}
+.modal-body .pdesc{white-space:pre-line;line-height:1.7}
 .slide h3{margin:0;font-size:21px;font-weight:500;line-height:1.35}
 .car-nav{display:flex;align-items:center;gap:12px;margin-top:20px}
 .car-nav button{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:18px;cursor:pointer}
@@ -275,10 +276,10 @@ p{max-width:68ch}
 .post .ph img{display:block;width:100%;height:100%;object-fit:cover}
 .post .ph .cnt{position:absolute;right:10px;top:10px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;border-radius:999px;padding:2px 8px}
 .post .ph .fake{height:100%;background:linear-gradient(135deg,var(--teal-soft),var(--surface));display:grid;place-items:center;color:var(--muted);font-size:13px}
-.post .body{padding:18px 20px 20px;display:grid;gap:6px;grid-template-rows:auto auto 1fr auto;flex:1;min-height:180px}
-.post .meta{font-size:13px;color:var(--muted)}
-.post h3{margin:0;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.post p{white-space:pre-line;margin:0;font-size:15px;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;align-self:start;line-height:1.6;max-height:3.2em}
+.post .body{padding:14px 16px 16px;display:grid;gap:6px;grid-template-rows:auto auto 1fr auto;flex:1;min-height:132px}
+.post .meta{font-size:12px;color:var(--muted)}
+.post h3{margin:0;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.post p{white-space:pre-line;margin:0;font-size:13.5px;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;align-self:start;line-height:1.6;max-height:3.2em}
 .post .sample{justify-self:start;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--muted)}
 .post .del{justify-self:start;font:inherit;font-size:12px;background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
 .gal{display:grid;gap:8px;padding:8px}
@@ -383,6 +384,8 @@ const SITE = {
     "Rapid Urban-Scale Solar Simulation Leveraging Augmented Urban Digital Twin and Physically-Informed Neural Networks",
     "Data-driven energy optimization for supporting the design process of developing net-zero energy communities (SoftwareEcom)"
   ],
+  /* 과제 정보: projects 순서와 같음 (기존 사이트 Projects 페이지에서 옮김) */
+  projectInfo: [ { "period": "2026.07.01 – 2035.02", "funder": "Seoul Metropolitan Government", "amount": "KRW 8,000 Million", "no": "", "desc": "This project addresses Seoul's challenge of becoming a carbon-neutral city by 2050 through an integrated, AI-based Net-Zero platform. There are five sub-projects — buildings, transportation, carbon management, waste, and the carbon market — and each produces sectoral carbon emission estimates, along with technology-specific performance and cost parameters. These feed into a single superstructure optimization model that derives the least-cost Net-Zero pathway for Seoul. Buildings account for 68.8% of Seoul's greenhouse gas emissions and are the largest mitigation target. Our laboratory leads this sector: we build an integrated urban environmental database from GIS (S-Map, V-World) and meteorological data, develop a generative AI-based urban augmentation model to fill data gaps, and construct a physics-informed neural network (PINN) surrogate for city-scale solar irradiance prediction. From this we quantify façade-level irradiance, building-integrated photovoltaic (BIPV) generation, energy self-sufficiency, and CO₂ reduction. The results enter the platform as neighborhood-level BIPV deployment priorities and extend to a Seoul BIPV roadmap, policy guidelines, and an S-Map-linked GIS visualization API." }, { "period": "2026.05.01 – 2028.12", "funder": "Ministry of Land, Infrastructure and Transport", "amount": "KRW 300 Million", "no": "", "desc": "The Green Remodeling Talent Development Platform at Chung-Ang University cultivates practice- and research-oriented professionals capable of performing the full lifecycle of Green Remodeling (GR)—diagnosis, planning, design, construction, operation, and performance evaluation—in response to the growing demand for carbon-neutral building expertise. Built on an integrated architecture and architectural engineering curriculum, the program combines specialized coursework (24+ credits) with extracurricular activities (15+ credits), and operates a three-tier \"Carbon-Neutral Architecture·GR Micro-degree\" system (Green–Silver–Gold) supported by blockchain-based digital badges. Leveraging the GR Metropolitan Hub Platform and industry-academia networks, it strengthens field internships and employment linkages, aiming to produce 24+ specialized program completers annually over 2026–2028 and establish a sustainable educational framework beyond the project's conclusion." }, { "period": "2026.03.01 – 2031.02", "funder": "National Research Foundation of Korea", "amount": "KRW 141.10 Million", "no": "2710106861", "desc": "This project is a research initiative designed to develop a holistic analytical framework for urban light pollution. The project addresses two critical challenges: nighttime light pollution from sources such as media facades and daytime glare caused by high-reflectivity building materials. Moving beyond conventional quantity-based lighting regulations, this initiative introduces Human-Centric Lighting (HCL) indicators to prioritize human health and well-being, with a focus on the visual and non-visual impacts of light. To achieve this, the project develops an integrated methodological framework that includes public-data-driven 3D city modeling, GPU-accelerated dynamic light simulations, and a real-time monitoring system based on HDRI and computer vision. Ultimately, this project aims to provide standardized design guidelines and a scientific evaluation protocol that mitigate social conflict and legal disputes while fostering a safer, healthier, and more sustainable urban lightscape." }, { "period": "2023.06.01 – 2030.02", "funder": "National Research Foundation of Korea", "amount": "KRW 2,302.00 Million", "no": "2710101182", "desc": "" }, { "period": "2025.09.01 – 2026.08", "funder": "National Research Foundation of Korea", "amount": "KRW 92.84 Million", "no": "2710090289", "desc": "The ultimate objective of this project is to develop a model that supports the design and operation of net-zero energy buildings at the community scale, thereby enabling informed decision-making regarding the urban applicability of photovoltaic systems. The specific objectives are as follows: (1) to preprocess and database public GIS data and construct foundational datasets for urban-scale machine learning and simulation; (2) use generative AI technics to massively augment realistic 3D urban models; and (3) to develop a physics-informed neural network (PINN) surrogate model that embeds radiative transfer constraints into the loss function, enabling fast prediction of urban-scale solar irradiance and photovoltaic potential, and to experimentally validate the proposed approach." }, { "period": "2024.07.01 – 2027.03", "funder": "Korea Agency for Infrastructure Technology Advancement", "amount": "KRW 212.62 Million", "no": "2610000200", "desc": "A cross-nation (Korea-United Kingdom) consortium-based research project aiming to develop a software suite to design and operate net-zero energy buildings at a community scale.\nOur group's objectives are to: i) develop a computationally efficient simulation method to estimate the solar harvesting potential of photovoltaic panels either attached or integrated into the buildings, at a community or urban scale; ii) experimentally validate the simulation method developed, based on public datasets; and iii) develop a time-resolved design optimization algorithm for BAPV and BIPV design at a community scale, that maximizes the energy autonomy of the communities." } ],
   /* 과제 이미지: projects 순서와 같음 */
   projectImgs: ["images/projects/project-1.jpg", "images/projects/project-2.jpg", "images/projects/project-3.jpg", "images/projects/project-4.jpg", "images/projects/project-5.jpg", "images/projects/project-6.jpg"],
   pubCats: [["sci","International Journal Papers (SCI-E)","국제 저널"],["kci","Domestic Journal Papers (KCI)","국내 저널"],["intconf","International Conference Presentations","국제 학술대회"],["domconf","Domestic Conference Presentations","국내 학술대회"]],
@@ -457,6 +460,7 @@ const KO = {
     undergrad: [["57486","건축환경및설비"],["58107","공기조화설비"],["58105","친환경설비설계"],["42751","건축 시스템 설계"]],
     grad: [["47555","건물에너지분석"],["58184","건물빛환경세미나"],["51811","첨단건축설비세미나"]]
   },
+  projects: {"funders": {"Seoul Metropolitan Government": "서울특별시", "Ministry of Land, Infrastructure and Transport": "국토교통부", "National Research Foundation of Korea": "한국연구재단", "Korea Agency for Infrastructure Technology Advancement": "국토교통과학기술진흥원"}, "amounts": {"KRW 8,000 Million": "80억 원", "KRW 300 Million": "3억 원", "KRW 141.10 Million": "1억 4,110만 원", "KRW 2,302.00 Million": "23억 200만 원", "KRW 92.84 Million": "9,284만 원", "KRW 212.62 Million": "2억 1,262만 원"}},
   groups: {"Graduate Research Assistants":"대학원 연구원","Undergraduate Research Assistants":"학부 연구원"},
   roles: {"Master's Researcher (2nd year)":"석사과정 (2년차)","Master's Researcher (1st year)":"석사과정 (1년차)","Undergrad. Researcher (Senior)":"학부연구생 (4학년)"},
   pubCats: {sci:"국제 저널 (SCI-E)",kci:"국내 저널 (KCI)",intconf:"국제 학술대회 발표",domconf:"국내 학술대회 발표"},
@@ -552,7 +556,7 @@ const views = {
   projects(){
     return `<section class="page wrap">${head("",T("Projects","연구과제"))}
       <div class="track" id="track">${SITE.projects.map((t,i)=>`<article class="slide" data-i="${i}" role="button" tabindex="-1" aria-label="${esc(t)}">${SITE.projectImgs?.[i]?`<div class="img has"><img src="${SITE.projectImgs[i]}" alt="" draggable="false"${i?' loading="lazy"':""}></div>`:`<div class="img"><span>${T("Project image (to be replaced)","과제 이미지 (원본으로 교체 예정)")}</span></div>`}
-        <div class="cap"><h3>${esc(t)}</h3></div></article>`).join("")}</div>
+        <div class="cap">${(f=>f?`<span class="k">${esc(f.period)} · ${esc(pFunder(f))}</span>`:"")(SITE.projectInfo?.[i])}<h3>${esc(t)}</h3></div></article>`).join("")}</div>
       <div class="car-nav"><button id="prev" aria-label="${T("Previous","이전 과제")}">‹</button><button id="next" aria-label="${T("Next","다음 과제")}">›</button>
         <div class="dots" id="dots">${SITE.projects.map((_,i)=>`<button aria-label="${i+1}" data-i="${i}"></button>`).join("")}</div>
         <span class="car-count" id="count"></span></div>
@@ -596,6 +600,7 @@ const views = {
   }
 };
 
+const pFunder=f=>LANG==="ko"?KO.projects.funders[f.funder]||f.funder:f.funder;
 const authors=(a,corr)=>{let h=esc(a);if(corr)h=h.replace(esc(corr),esc(corr)+"<sup>†</sup>");return h.replace(/Kim, M\./g,'<span class="me">Kim, M.</span>');};
 let PUBSORT="new";
 function renderPubs(){
@@ -661,7 +666,7 @@ function route(){
       track.classList.remove("dragging");go(Math.abs(dx)>60?start+(dx<0?1:-1):start);});
     /* 클릭(또는 탭)하면 과제 정보 */
     const open=i=>{const t=SITE.projects[i];
-      openModal(`${SITE.projectImgs?.[i]?`<div class="img has"><img src="${SITE.projectImgs[i]}" alt=""></div>`:`<div class="img">${T("Project image (to be replaced)","과제 이미지 (원본으로 교체 예정)")}</div>`}<div class="modal-body"><h3 id="mTitle">${esc(t)}</h3><dl><dt>${T("Funded by","지원 기관")}</dt><dd>${todo()}</dd><dt>${T("Period","기간")}</dt><dd>${todo()}</dd><dt>${T("Description","과제 설명")}</dt><dd>${todo()}</dd></dl></div>`);};
+      openModal(`${SITE.projectImgs?.[i]?`<div class="img has"><img src="${SITE.projectImgs[i]}" alt=""></div>`:`<div class="img">${T("Project image (to be replaced)","과제 이미지 (원본으로 교체 예정)")}</div>`}<div class="modal-body"><h3 id="mTitle">${esc(t)}</h3>${(f=>`<dl><dt>${T("Funded by","지원 기관")}</dt><dd>${f?esc(pFunder(f))+(f.amount?` (${esc(LANG==="ko"?KO.projects.amounts[f.amount]||f.amount:f.amount)})`:""):todo()}</dd><dt>${T("Period","기간")}</dt><dd>${f?esc(f.period):todo()}</dd>${f?.no?`<dt>${T("Project No.","과제 번호")}</dt><dd>${esc(f.no)}</dd>`:""}<dt>${T("Description","과제 설명")}</dt><dd class="pdesc">${f?.desc?esc(f.desc):todo()}</dd></dl>`)(SITE.projectInfo?.[i])}</div>`);};
     track.addEventListener("click",e=>{if(moved){moved=false;return;}const s=e.target.closest(".slide");if(s)open(+s.dataset.i);});
     track.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();open(cur())}});
     track.tabIndex=0;
