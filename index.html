@@ -207,8 +207,9 @@ p{max-width:68ch}
 .tabs button:hover{color:var(--ink);background:var(--teal-soft)}.tabs button[aria-selected="true"]{color:var(--teal);border-bottom-color:var(--teal)}
 .role-tag{font-style:normal;font-family:var(--body);font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:999px;margin-right:8px;border:1px solid var(--teal);color:var(--teal);vertical-align:1px}
 .role-tag.pi{background:var(--teal);color:#fff}
-.pstats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:-8px 0 28px}
-.ps{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:4px}
+.pstats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin:-4px 0 32px}
+.ps{display:grid;gap:4px}
+.amt-note{color:var(--muted);font-size:13px}
 .ps b{font-family:var(--display);font-size:28px;font-weight:500;color:var(--teal);line-height:1.1}
 .ps span{font-size:13px;color:var(--muted)}
 @media (max-width:720px){.pstats{grid-template-columns:repeat(2,1fr)}.ps b{font-size:22px}}
@@ -386,6 +387,31 @@ footer{border-top:1px solid var(--line);color:var(--muted);font-size:13px}
 footer .wrap{padding-block:28px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 footer .fc{height:4px;background:linear-gradient(90deg,var(--fc1),var(--fc2),var(--fc3),var(--fc4),var(--fc5),var(--fc6))}
 @media (prefers-reduced-motion:no-preference){section.page{animation:fade .25s ease-out}@keyframes fade{from{opacity:.4}to{opacity:1}}}
+/* 관리자 화면 */
+.adm-link{color:var(--muted);font-size:12px;text-decoration:none;opacity:.7}.adm-link:hover{opacity:1;text-decoration:underline}
+.adm-card{border:1px solid var(--line);border-radius:12px;padding:24px;max-width:520px;background:var(--surface)}
+.adm-login{display:grid;gap:14px}.adm-login h3{margin:0}
+.adm label,.adm-form label{display:grid;gap:6px;font-size:14px;color:var(--muted)}
+.adm input,.adm select,.adm textarea,.adm-form input,.adm-form select,.adm-form textarea{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;box-sizing:border-box}
+.adm-links{display:flex;gap:16px;flex-wrap:wrap}.link{background:none;border:0;padding:0;color:var(--teal);font:inherit;font-size:13px;cursor:pointer;text-decoration:underline}
+.adm-msg{color:var(--teal);font-size:14px;margin:0;min-height:1em}.adm-note{font-size:13px;color:var(--muted);margin:0}
+.adm-tabs{flex-wrap:wrap;margin-bottom:20px}
+.adm-head{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap}
+form.adm-head input{flex:1;min-width:220px}
+.adm-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.adm-list li{display:flex;gap:14px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line)}
+.adm-th{width:56px;height:56px;border-radius:8px;background:#f4f5f6;flex:none;overflow:hidden}.adm-th img{width:100%;height:100%;object-fit:cover}
+.adm-tx{flex:1;min-width:0;display:grid;gap:2px}.adm-tx b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.adm-tx small{color:var(--muted)}
+.adm-act{display:flex;gap:6px;flex:none}.adm-act button,.adm-imgs button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:4px 10px;cursor:pointer}
+.adm-act .danger{color:#b3261e}
+.adm-form{display:grid;gap:16px}.adm-f{display:grid;gap:6px;font-size:14px;color:var(--muted)}.adm-f small{font-size:12px}
+.adm-plan{border:1px dashed var(--teal);border-radius:10px;padding:14px;background:rgba(52,147,129,.06)}
+.adm-imgs{display:flex;gap:8px;flex-wrap:wrap}.adm-imgs figure{margin:0;width:110px;display:grid;gap:4px}
+.adm-imgs img{width:110px;height:110px;object-fit:contain;background:#f4f5f6;border-radius:8px}.adm-imgs span{display:flex;gap:4px}.adm-imgs button{padding:2px 7px}
+.adm-foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:sticky;bottom:0;background:var(--surface);padding:10px 0}
+.adm-bar{position:fixed;right:16px;bottom:16px;z-index:50;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.adm-bar a{color:inherit;font-weight:600}.adm-bar button{font:inherit;background:none;border:1px solid currentColor;color:inherit;border-radius:999px;padding:2px 10px;cursor:pointer}
+@media (max-width:600px){.adm-bar span{display:none}.adm-list li{flex-wrap:wrap}.adm-act{width:100%;justify-content:flex-end}}
 </style>
 </head>
 <body>
@@ -406,7 +432,7 @@ footer .fc{height:4px;background:linear-gradient(90deg,var(--fc1),var(--fc2),var
 
 <footer>
   <div class="wrap">
-    <span>© 2025 hibe lab at CAU · Hyper-Intelligent Built Environment Laboratory at Chung-Ang University</span>
+    <span>© 2025 hibe lab at CAU · Hyper-Intelligent Built Environment Laboratory at Chung-Ang University</span><a class="adm-link" href="#admin">Admin</a>
   </div>
 </footer>
 
@@ -468,7 +494,7 @@ const SITE = {
     "Data-driven energy optimization for supporting the design process of developing net-zero energy communities (SoftwareEcom)"
   ],
   /* 과제 정보: projects 순서와 같음 (기존 사이트 Projects 페이지에서 옮김) */
-  projectInfo: [{"period": "2026.07.01 – 2035.02", "funder": "Seoul Metropolitan Government", "amount": "KRW 8,000 Million", "no": "", "desc": "Seoul ANCHOR 10 Challenge builds an AI-based Net-Zero platform for a carbon-neutral Seoul. Its five sub-projects (buildings, transportation, carbon capture, waste, and the carbon market) are designed not as separate studies but as input modules of one integrated optimization platform. Each produces sector emissions and technology performance and cost parameters (energy efficiency, carbon reduction, CAPEX/OPEX) in a common data format. These feed a superstructure optimization model that derives Seoul's least-cost Net-Zero pathway, and the results flow back to S-Map visualization and carbon-market decisions.\nOur lab leads the building sector (BIPV and green buildings), the largest emitter at 68.8% of Seoul's greenhouse gas emissions:\n• An integrated Seoul building and climate dataset from S-Map, V-World and KMA data, with a generative AI urban augmentation model to fill data gaps\n• A GPU-accelerated physics-informed neural network (PINN) surrogate for city-scale solar irradiance prediction\n• PV generation, energy self-sufficiency and CO₂ reduction forecasts linked to public-building PV data\n• A Seoul BIPV deployment roadmap, policy guidelines and an S-Map-linked GIS visualization API, with the Seoul Metropolitan Government, SH and Seoul Energy Corporation", "role": "Co-PI"}, {"period": "2026.05.01 – 2028.12", "funder": "Ministry of Land, Infrastructure and Transport", "amount": "KRW 500 Million", "no": "", "desc": "The Green Remodeling Talent Development Platform at Chung-Ang University cultivates practice- and research-oriented professionals capable of performing the full lifecycle of Green Remodeling (GR)—diagnosis, planning, design, construction, operation, and performance evaluation—in response to the growing demand for carbon-neutral building expertise. Built on an integrated architecture and architectural engineering curriculum, the program combines specialized coursework (24+ credits) with extracurricular activities (15+ credits), and operates a three-tier \"Carbon-Neutral Architecture·GR Micro-degree\" system (Green–Silver–Gold) supported by blockchain-based digital badges. Leveraging the GR Metropolitan Hub Platform and industry-academia networks, it strengthens field internships and employment linkages, aiming to produce 24+ specialized program completers annually over 2026–2028 and establish a sustainable educational framework beyond the project's conclusion.", "role": "PI"}, {"period": "2026.03.01 – 2031.02", "funder": "National Research Foundation of Korea", "amount": "KRW 141.10 Million", "no": "2710106861", "desc": "This project is a research initiative designed to develop a holistic analytical framework for urban light pollution. The project addresses two critical challenges: nighttime light pollution from sources such as media facades and daytime glare caused by high-reflectivity building materials. Moving beyond conventional quantity-based lighting regulations, this initiative introduces Human-Centric Lighting (HCL) indicators to prioritize human health and well-being, with a focus on the visual and non-visual impacts of light. To achieve this, the project develops an integrated methodological framework that includes public-data-driven 3D city modeling, GPU-accelerated dynamic light simulations, and a real-time monitoring system based on HDRI and computer vision. Ultimately, this project aims to provide standardized design guidelines and a scientific evaluation protocol that mitigate social conflict and legal disputes while fostering a safer, healthier, and more sustainable urban lightscape.", "role": "PI"}, {"period": "2023.06.01 – 2030.02", "funder": "National Research Foundation of Korea", "amount": "KRW 2,302.00 Million", "no": "2710101182", "desc": "", "role": "Co-PI"}, {"period": "2025.09.01 – 2026.08", "funder": "National Research Foundation of Korea", "amount": "KRW 92.84 Million", "no": "2710090289", "desc": "The ultimate objective of this project is to develop a model that supports the design and operation of net-zero energy buildings at the community scale, thereby enabling informed decision-making regarding the urban applicability of photovoltaic systems. The specific objectives are as follows: (1) to preprocess and database public GIS data and construct foundational datasets for urban-scale machine learning and simulation; (2) use generative AI technics to massively augment realistic 3D urban models; and (3) to develop a physics-informed neural network (PINN) surrogate model that embeds radiative transfer constraints into the loss function, enabling fast prediction of urban-scale solar irradiance and photovoltaic potential, and to experimentally validate the proposed approach.", "role": "PI"}, {"period": "2024.07.01 – 2027.03", "funder": "Korea Agency for Infrastructure Technology Advancement", "amount": "KRW 212.62 Million", "no": "2610000200", "desc": "A cross-nation (Korea-United Kingdom) consortium-based research project aiming to develop a software suite to design and operate net-zero energy buildings at a community scale.\nOur group's objectives are to: i) develop a computationally efficient simulation method to estimate the solar harvesting potential of photovoltaic panels either attached or integrated into the buildings, at a community or urban scale; ii) experimentally validate the simulation method developed, based on public datasets; and iii) develop a time-resolved design optimization algorithm for BAPV and BIPV design at a community scale, that maximizes the energy autonomy of the communities.", "role": "Co-PI"}],
+  projectInfo: [{"period": "2026.07.01 – 2035.02", "funder": "Seoul Metropolitan Government", "amount": "KRW 120 Million", "no": "", "desc": "Seoul ANCHOR 10 Challenge builds an AI-based Net-Zero platform for a carbon-neutral Seoul. Its five sub-projects (buildings, transportation, carbon capture, waste, and the carbon market) are designed not as separate studies but as input modules of one integrated optimization platform. Each produces sector emissions and technology performance and cost parameters (energy efficiency, carbon reduction, CAPEX/OPEX) in a common data format. These feed a superstructure optimization model that derives Seoul's least-cost Net-Zero pathway, and the results flow back to S-Map visualization and carbon-market decisions.\nOur lab leads the building sector (BIPV and green buildings), the largest emitter at 68.8% of Seoul's greenhouse gas emissions:\n• An integrated Seoul building and climate dataset from S-Map, V-World and KMA data, with a generative AI urban augmentation model to fill data gaps\n• A GPU-accelerated physics-informed neural network (PINN) surrogate for city-scale solar irradiance prediction\n• PV generation, energy self-sufficiency and CO₂ reduction forecasts linked to public-building PV data\n• A Seoul BIPV deployment roadmap, policy guidelines and an S-Map-linked GIS visualization API, with the Seoul Metropolitan Government, SH and Seoul Energy Corporation", "role": "Co-PI", "amountNote": "Direct costs allocated to hibe lab through 2028.02", "amountNoteKo": "hibe lab 배정 직접비, 2028.02까지"}, {"period": "2026.05.01 – 2028.12", "funder": "Ministry of Land, Infrastructure and Transport", "amount": "KRW 500 Million", "no": "", "desc": "The Green Remodeling Talent Development Platform at Chung-Ang University cultivates practice- and research-oriented professionals capable of performing the full lifecycle of Green Remodeling (GR)—diagnosis, planning, design, construction, operation, and performance evaluation—in response to the growing demand for carbon-neutral building expertise. Built on an integrated architecture and architectural engineering curriculum, the program combines specialized coursework (24+ credits) with extracurricular activities (15+ credits), and operates a three-tier \"Carbon-Neutral Architecture·GR Micro-degree\" system (Green–Silver–Gold) supported by blockchain-based digital badges. Leveraging the GR Metropolitan Hub Platform and industry-academia networks, it strengthens field internships and employment linkages, aiming to produce 24+ specialized program completers annually over 2026–2028 and establish a sustainable educational framework beyond the project's conclusion.", "role": "PI"}, {"period": "2026.03.01 – 2031.02", "funder": "National Research Foundation of Korea", "amount": "KRW 141.10 Million", "no": "2710106861", "desc": "This project is a research initiative designed to develop a holistic analytical framework for urban light pollution. The project addresses two critical challenges: nighttime light pollution from sources such as media facades and daytime glare caused by high-reflectivity building materials. Moving beyond conventional quantity-based lighting regulations, this initiative introduces Human-Centric Lighting (HCL) indicators to prioritize human health and well-being, with a focus on the visual and non-visual impacts of light. To achieve this, the project develops an integrated methodological framework that includes public-data-driven 3D city modeling, GPU-accelerated dynamic light simulations, and a real-time monitoring system based on HDRI and computer vision. Ultimately, this project aims to provide standardized design guidelines and a scientific evaluation protocol that mitigate social conflict and legal disputes while fostering a safer, healthier, and more sustainable urban lightscape.", "role": "PI"}, {"period": "2026.03.01 – 2030.02", "funder": "National Research Foundation of Korea", "amount": "KRW 80 Million", "no": "2710101182", "desc": "", "role": "Co-PI", "amountNote": "KRW 20 Million per year allocated to hibe lab", "amountNoteKo": "hibe lab 배정 연 2천만 원"}, {"period": "2025.09.01 – 2026.08", "funder": "National Research Foundation of Korea", "amount": "KRW 92.84 Million", "no": "2710090289", "desc": "The ultimate objective of this project is to develop a model that supports the design and operation of net-zero energy buildings at the community scale, thereby enabling informed decision-making regarding the urban applicability of photovoltaic systems. The specific objectives are as follows: (1) to preprocess and database public GIS data and construct foundational datasets for urban-scale machine learning and simulation; (2) use generative AI technics to massively augment realistic 3D urban models; and (3) to develop a physics-informed neural network (PINN) surrogate model that embeds radiative transfer constraints into the loss function, enabling fast prediction of urban-scale solar irradiance and photovoltaic potential, and to experimentally validate the proposed approach.", "role": "PI"}, {"period": "2024.07.01 – 2027.03", "funder": "Korea Agency for Infrastructure Technology Advancement", "amount": "KRW 212.62 Million", "no": "2610000200", "desc": "A cross-nation (Korea-United Kingdom) consortium-based research project aiming to develop a software suite to design and operate net-zero energy buildings at a community scale.\nOur group's objectives are to: i) develop a computationally efficient simulation method to estimate the solar harvesting potential of photovoltaic panels either attached or integrated into the buildings, at a community or urban scale; ii) experimentally validate the simulation method developed, based on public datasets; and iii) develop a time-resolved design optimization algorithm for BAPV and BIPV design at a community scale, that maximizes the energy autonomy of the communities.", "role": "Co-PI"}],
   /* 과제 이미지: projects 순서와 같음 */
   /* 과제 팝업에 추가로 보일 그림: 과제 순서별 목록 */
   projectMore: [["images/projects/project-1-overview.jpg"]],
@@ -548,7 +574,7 @@ const KO = {
     undergrad: [["57486","건축환경및설비"],["58107","공기조화설비"],["58105","친환경설비설계"],["42751","건축 시스템 설계"]],
     grad: [["47555","건물에너지분석"],["58184","건물빛환경세미나"],["51811","첨단건축설비세미나"]]
   },
-  projects: {"funders": {"Seoul Metropolitan Government": "서울특별시", "Ministry of Land, Infrastructure and Transport": "국토교통부", "National Research Foundation of Korea": "한국연구재단", "Korea Agency for Infrastructure Technology Advancement": "국토교통과학기술진흥원"}, "amounts": {"KRW 8,000 Million": "80억 원", "KRW 500 Million": "5억 원", "KRW 141.10 Million": "1억 4,110만 원", "KRW 2,302.00 Million": "23억 200만 원", "KRW 92.84 Million": "9,284만 원", "KRW 212.62 Million": "2억 1,262만 원"}},
+  projects: {"funders": {"Seoul Metropolitan Government": "서울특별시", "Ministry of Land, Infrastructure and Transport": "국토교통부", "National Research Foundation of Korea": "한국연구재단", "Korea Agency for Infrastructure Technology Advancement": "국토교통과학기술진흥원"}, "amounts": {"KRW 120 Million": "1억 2천만 원", "KRW 80 Million": "8천만 원", "KRW 8,000 Million": "80억 원", "KRW 500 Million": "5억 원", "KRW 141.10 Million": "1억 4,110만 원", "KRW 2,302.00 Million": "23억 200만 원", "KRW 92.84 Million": "9,284만 원", "KRW 212.62 Million": "2억 1,262만 원"}},
   groups: {"Graduate Research Assistants":"대학원 연구원","Undergraduate Research Assistants":"학부 연구원"},
   roles: {"Master's Researcher (2nd year)":"석사과정 (2년차)","Master's Researcher (1st year)":"석사과정 (1년차)","Undergrad. Researcher (Senior)":"학부연구생 (4학년)"},
   pubCats: {sci:"국제 저널 (SCI-E)",kci:"국내 저널 (KCI)",intconf:"국제 학술대회 발표",domconf:"국내 학술대회 발표"},
@@ -667,16 +693,7 @@ const views = {
   activities(){
     return `<section class="page wrap">${head("","Activities")}
       <div class="act-bar"><div class="seg" id="actSeg"><button aria-pressed="true" data-c="all">${T("All","전체")}</button><button aria-pressed="false" data-c="conf">${T("Scientific Conference Attendances","학술대회 참석")}</button><button aria-pressed="false" data-c="out">${T("Outreach &amp; Extra Activities","아웃리치 및 기타 활동")}</button></div>
-        <button class="btn-post" id="newPost" type="button">${T("+ New post","+ 새 게시물")}</button></div>
-      <form class="composer" id="composer" hidden>
-        <div class="row"><label for="pTitle">${T("Title","제목")}</label><input id="pTitle" required maxlength="120" placeholder="${T("e.g. Attended IBPSA 2025","예: IBPSA 2025 학회 참석")}"></div>
-        <div class="row two-col"><div><label for="pDate">${T("Date","날짜")}</label><input id="pDate" type="date" required></div>
-          <div><label for="pCat">${T("Category","분류")}</label><select id="pCat"><option value="conf">${T("Scientific Conference Attendances","학술대회 참석")}</option><option value="out">${T("Outreach &amp; Extra Activities","아웃리치 및 기타 활동")}</option></select></div></div>
-        <div class="row"><label for="pText">${T("Text","내용")}</label><textarea id="pText" rows="4" placeholder="${T("Describe the activity","활동 내용을 적어 주세요")}"></textarea></div>
-        <div class="row"><label for="pImgs">${T("Photos (multiple allowed)","사진 (여러 장 가능)")}</label><input id="pImgs" type="file" accept="image/*" multiple><div class="thumbs" id="pThumbs"></div></div>
-        <div class="row actions"><button type="submit" class="btn-post">${T("Post","올리기")}</button><button type="button" class="btn-ghost" id="pCancel">${T("Cancel","취소")}</button>
-          <span class="note">${T("In this draft, posts are saved only in this browser. On the real site, posts made in the admin page are visible to everyone.","시안에서는 이 브라우저에만 저장됩니다. 실제 사이트에서는 관리화면에서 올리면 모두에게 보입니다.")}</span></div>
-      </form>
+        ${ADMIN?.ok?`<button class="btn-post" id="newPost" type="button">${T("+ New post","+ 새 게시물")}</button>`:""}</div>
       <div class="feed" id="feed"></div><div class="sentinel" id="sentinel"></div><div class="feed-end" id="feedEnd" hidden></div></section>`;
   },
   join(){
@@ -795,7 +812,7 @@ function route(){
     /* 클릭(또는 탭)하면 과제 정보 */
     const open=i=>{const t=SITE.projects[i];
       const pimgs=[SITE.projectImgs?.[i],...(SITE.projectMore?.[i]||[])].filter(Boolean);
-      openModal(`${pimgs.length?galHTML(pimgs):`<div class="img">${T("Project image (to be replaced)","과제 이미지 (원본으로 교체 예정)")}</div>`}<div class="modal-body"><h3 id="mTitle">${esc(t)}</h3>${(f=>`<dl><dt>${T("Funded by","지원 기관")}</dt><dd>${f?esc(pFunder(f))+(f.amount?` (${esc(LANG==="ko"?KO.projects.amounts[f.amount]||f.amount:f.amount)}${usd(f.amount)})`:""):todo()}</dd>${f?.role?`<dt>${T("Role","역할")}</dt><dd>${f.role==="PI"?T("Principal Investigator (PI)","연구책임자 (PI)"):T("Co-Principal Investigator (Co-PI)","공동연구책임자 (Co-PI)")}</dd>`:""}<dt>${T("Period","기간")}</dt><dd>${f?esc(f.period):todo()}</dd>${f?.no?`<dt>${T("Project No.","과제 번호")}</dt><dd>${esc(f.no)}</dd>`:""}<dt>${T("Description","과제 설명")}</dt><dd class="pdesc">${f?.desc?esc(f.desc):todo()}</dd></dl>`)(SITE.projectInfo?.[i])}</div>`);$mc._full=pimgs;};
+      openModal(`${pimgs.length?galHTML(pimgs):`<div class="img">${T("Project image (to be replaced)","과제 이미지 (원본으로 교체 예정)")}</div>`}<div class="modal-body"><h3 id="mTitle">${esc(t)}</h3>${(f=>`<dl><dt>${T("Funded by","지원 기관")}</dt><dd>${f?esc(pFunder(f))+(f.amount?` (${esc(LANG==="ko"?KO.projects.amounts[f.amount]||f.amount:f.amount)}${usd(f.amount)})`:"")+(f.amountNote?`<br><small class="amt-note">${esc(LANG==="ko"&&f.amountNoteKo?f.amountNoteKo:f.amountNote)}</small>`:""):todo()}</dd>${f?.role?`<dt>${T("Role","역할")}</dt><dd>${f.role==="PI"?T("Principal Investigator (PI)","연구책임자 (PI)"):T("Co-Principal Investigator (Co-PI)","공동연구책임자 (Co-PI)")}</dd>`:""}<dt>${T("Period","기간")}</dt><dd>${f?esc(f.period):todo()}</dd>${f?.no?`<dt>${T("Project No.","과제 번호")}</dt><dd>${esc(f.no)}</dd>`:""}<dt>${T("Description","과제 설명")}</dt><dd class="pdesc">${f?.desc?esc(f.desc):todo()}</dd></dl>`)(SITE.projectInfo?.[i])}</div>`);$mc._full=pimgs;};
     track.addEventListener("click",e=>{if(moved){moved=false;return;}const s=e.target.closest(".slide");if(s)open(+s.dataset.i);});
     track.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();open(cur())}});
     const plist=document.getElementById("projList");
@@ -831,18 +848,15 @@ function route(){
     list.addEventListener("click",e=>{const t=e.target.closest(".ig-tile");if(t)openAw(+t.dataset.k);});
   }
   if(id==="activities"){
-    const KEY="hibe-draft-posts";
     const SAMPLE=OLD_POSTS;
-    const load=()=>{try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){return []}};
-    const save=a=>{try{localStorage.setItem(KEY,JSON.stringify(a));return true}catch(e){return false}};
     let filter="all";
     const catName={conf:T("Scientific Conference Attendances","학술대회 참석"),out:T("Outreach & Extra Activities","아웃리치 및 기타 활동")};
-    const all=()=>[...load(),...SAMPLE].sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+    const all=()=>[...SAMPLE].sort((a,b)=>(b.date||"").localeCompare(a.date||""));
     const PAGE=9; let shown=PAGE;
     const card=p=>`<article class="post" data-id="${p.id}" tabindex="0" role="button">
         <div class="ph">${p.imgs.length?`<img src="${p.imgs[0]}" alt="" loading="lazy">${p.imgs.length>1?`<span class="cnt">${p.imgs.length}${T("","장")}</span>`:""}`:`<div class="fake">${T("Photo","사진")}</div>`}</div>
         <div class="body"><span class="meta">${p.date?p.date.replaceAll("-",". ")+" · ":""}${esc(catName[p.cat])}</span><h3>${esc(p.title)}</h3>${p.text?`<p>${esc(p.text)}</p>`:""}
-        ${p.old?"":p.sample?`<span class="sample">${T("Sample","예시")}</span>`:`<button class="del" data-del="${p.id}" type="button">${T("Delete","삭제")}</button>`}</div></article>`;
+</div></article>`;
     const render=(reset)=>{if(reset!==false)shown=PAGE;const list=all().filter(p=>filter==="all"||p.cat===filter);
       document.getElementById("feedEnd").hidden=!(list.length>PAGE&&shown>=list.length);document.getElementById("feedEnd").textContent=T("You have seen all posts.","모든 게시물을 다 봤습니다.");
       document.getElementById("feed").innerHTML=list.slice(0,shown).map(card).join("")||`<div class="empty">${T("No posts in this category yet. Use \"+ New post\" to add one.","이 분류에는 아직 게시물이 없습니다. 오른쪽 위 \"+ 새 게시물\"로 올려 보세요.")}</div>`;};
@@ -851,26 +865,16 @@ function route(){
     document.getElementById("actSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;filter=b.dataset.c;
       document.querySelectorAll("#actSeg button").forEach(x=>x.setAttribute("aria-pressed",x===b));render();});
     const feed=document.getElementById("feed");
-    feed.addEventListener("click",e=>{const d=e.target.closest("[data-del]");if(d){e.stopPropagation();save(load().filter(p=>p.id!==d.dataset.del));render();return;}
-      const c=e.target.closest(".post");if(c)openPost(c.dataset.id);});
+    feed.addEventListener("click",e=>{const c=e.target.closest(".post");if(c)openPost(c.dataset.id);});
     feed.addEventListener("keydown",e=>{const c=e.target.closest(".post");if(c&&e.key==="Enter")openPost(c.dataset.id);});
-    const form=document.getElementById("composer"), imgsIn=document.getElementById("pImgs"), thumbs=document.getElementById("pThumbs");
-    let pending=[];
-    const shrink=f=>new Promise(res=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const w=Math.min(1000,im.width),h=Math.round(im.height*w/im.width);
-      const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);res(c.toDataURL("image/jpeg",.75));};im.src=fr.result;};fr.readAsDataURL(f);});
-    document.getElementById("newPost").onclick=()=>{form.hidden=!form.hidden;if(!form.hidden){document.getElementById("pDate").value=new Date().toISOString().slice(0,10);document.getElementById("pTitle").focus();}};
-    document.getElementById("pCancel").onclick=()=>{form.reset();pending=[];thumbs.innerHTML="";form.hidden=true;};
-    imgsIn.addEventListener("change",async()=>{pending=await Promise.all([...imgsIn.files].map(shrink));thumbs.innerHTML=pending.map(u=>`<img src="${u}" alt="">`).join("");});
-    form.addEventListener("submit",e=>{e.preventDefault();
-      const post={id:"p"+Date.now(),cat:document.getElementById("pCat").value,date:document.getElementById("pDate").value,title:document.getElementById("pTitle").value.trim(),text:document.getElementById("pText").value.trim(),imgs:pending};
-      if(!save([post,...load()])){thumbs.insertAdjacentHTML("afterend",`<p class="note">${T("The photos are too large to save in this browser. Try fewer photos.","사진 용량이 커서 이 브라우저에 저장하지 못했습니다. 사진 수를 줄여 다시 올려 주세요.")}</p>`);return;}
-      form.reset();pending=[];thumbs.innerHTML="";form.hidden=true;render();});
+    const np=document.getElementById("newPost");if(np)np.onclick=()=>{ADMTAB="posts";ADM_NEW="posts";location.hash="#admin";};
     /* 무한 스크롤: 바닥에 닿으면 다음 9개 */
     const io=new IntersectionObserver(es=>{if(!es[0].isIntersecting)return;const total=all().filter(p=>filter==="all"||p.cat===filter).length;
       if(shown<total){shown+=PAGE;render(false);}},{rootMargin:"400px"});
     io.observe(document.getElementById("sentinel"));
     render();
   }
+  if(id==="admin") admRender();
   if(id==="join"){
     document.getElementById("copy").addEventListener("click", e=>{
       const btn=e.currentTarget;
@@ -884,15 +888,195 @@ document.getElementById("menuBtn").addEventListener("click", e=>{const o=$nav.cl
 window.addEventListener("hashchange", route);
 route();
 /* 구글 스칼라 인용 수 (매일 GitHub Actions가 data/citations.json 갱신). 파일이 없으면 위 스냅샷 유지 */
-fetch("data/citations.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{
-  if(!d||!Array.isArray(d.articles)||!d.articles.length) return;
+let SCHOLAR=null;
+function scholarRemap(){const d=SCHOLAR;if(!d)return;
   Object.keys(CITES).forEach(k=>delete CITES[k]);
   const byTitle=new Map(d.articles.map(a=>[a.key||normT(a.title),+a.cites||0]));
   SITE.pubs.forEach(p=>{const c=byTitle.get(normT(p[3])); if(c!==undefined){ if(p[5]) CITES[p[5]]=c; else CITES["t:"+normT(p[3])]=c; }});
   CITES_SRC="Google Scholar"; CITES_SCHOLAR=true; CITES_DATE=d.updated||CITES_DATE;
   CITES_TOTAL=(typeof d.total==="number")?d.total:Object.values(CITES).reduce((a,b)=>a+b,0);
+}
+fetch("data/citations.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(d=>{
+  if(!d||!Array.isArray(d.articles)||!d.articles.length) return;
+  SCHOLAR=d; scholarRemap();
   const y=scrollY; route(); window.scrollTo(0,y);
 }).catch(()=>{});
+/* ================= 관리자 기능 (Supabase) =================
+   로그인한 관리자가 홈페이지 안에서 바로 내용을 고칩니다. 설정 방법은 ADMIN_SETUP.md.
+   아래 두 값은 Supabase 프로젝트 > Settings > API 에 있는 공개용 값입니다 (공개돼도 안전). */
+const SUPABASE_URL = "";
+const SUPABASE_ANON_KEY = "";
+const SUPABASE_LIB = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js";
+let sb = null, ADMIN = null, ADMTAB = "posts", ADM_NEW = null, ADM_RECOVERY = false;
+
+/* 편집할 구역: 화면의 데이터와 저장 형식을 서로 바꿔 줌 */
+const ADM = {
+  posts: {label:["Activities","활동"], get:()=>OLD_POSTS.map(p=>({...p})), set:a=>OLD_POSTS.splice(0,OLD_POSTS.length,...a),
+    sort:(a,b)=>(b.date||"").localeCompare(a.date||""), title:p=>p.title, sub:p=>`${p.date||""} · ${p.cat==="conf"?T("Conference","학술대회"):T("Outreach","아웃리치")}`, thumb:p=>p.imgs?.[0],
+    blank:()=>({id:"p"+Date.now(),cat:"conf",date:new Date().toISOString().slice(0,10),title:"",text:"",imgs:[],full:[]}),
+    fields:[["date","날짜","date"],["cat","분류","select",[["conf","학술대회 참석"],["out","아웃리치 및 기타 활동"]]],["title","제목","text",1],["text","내용","textarea"],["imgs","사진 (여러 장, 끌어서 순서 바꾸기는 ← → 버튼)","gallery"]]},
+  awards: {label:["Awards","수상"], get:()=>AWARDS.map(a=>({...a})), set:a=>AWARDS.splice(0,AWARDS.length,...a),
+    sort:(a,b)=>(b.date||"").localeCompare(a.date||""), title:p=>p.title, sub:p=>p.date||"", thumb:p=>p.imgs?.[0],
+    blank:()=>({id:"a"+Date.now(),date:new Date().toISOString().slice(0,10),title:"",text:"",imgs:[],full:[]}),
+    fields:[["date","날짜","date"],["title","수상명","text",1],["text","설명","textarea"],["imgs","사진 (상장 등)","gallery"]]},
+  projects: {label:["Projects","연구과제"], ordered:true,
+    get:()=>SITE.projects.map((t,i)=>({title:t,...(SITE.projectInfo?.[i]||{}),img:SITE.projectImgs?.[i]||"",more:[...(SITE.projectMore?.[i]||[])]})),
+    set:a=>{SITE.projects=a.map(p=>p.title);SITE.projectInfo=a.map(({title,img,more,...r})=>r);SITE.projectImgs=a.map(p=>p.img||"");SITE.projectMore=a.map(p=>p.more||[]);},
+    title:p=>p.title, sub:p=>`${p.role?p.role+" · ":""}${p.period||""}`, thumb:p=>p.img,
+    blank:()=>({title:"",role:"PI",period:"",funder:"",amount:"",no:"",desc:"",img:"",more:[]}),
+    fields:[["plan","연구개발계획서로 자동 작성","plan"],["title","과제명 (영문)","text",1],["role","역할","select",[["PI","PI (연구책임자)"],["Co-PI","Co-PI (공동연구책임자)"],["","표시 안 함"]]],
+      ["period","기간 (예: 2026.03.01 – 2031.02)","text"],["funder","지원 기관 (영문)","text"],["amount","연구비 (예: KRW 500 Million)","text"],["amountNote","연구비 설명 (영문, 예: Direct costs allocated to hibe lab)","text"],["amountNoteKo","연구비 설명 (국문)","text"],["no","과제 번호","text"],["desc","과제 설명 (영문)","textarea"],
+      ["img","대표 이미지 (카로셀)","image"],["more","팝업에 추가로 보일 그림","images"]]},
+  members: {label:["Members","구성원"], ordered:true, get:()=>SITE.members.map(m=>({...m,interests:[...(m.interests||[])]})), set:a=>{SITE.members=a;},
+    title:m=>m.name, sub:m=>`${m.group} · ${m.role}`, thumb:m=>m.photo,
+    blank:()=>({group:"Graduate Research Assistants",name:"",role:"",interests:[],email:"",cv:"",photo:""}),
+    fields:[["group","구분","select",[["Graduate Research Assistants","대학원 연구원"],["Undergraduate Research Assistants","학부 연구원"],["Alumni","졸업생"]]],
+      ["name","이름 (예: Hong, Gildong)","text",1],["role","학위과정·학년 (예: Master's Researcher (1st year))","text"],["interests","연구 주제 (한 줄에 하나)","lines"],
+      ["email","이메일","email"],["cv","CV 링크","url"],["photo","사진 (배경 없는 PNG 권장)","image"]]},
+  pubs: {label:["Publications","논문"], get:()=>SITE.pubs.map(([cat,year,authors,title,venue,doi,summary,corr])=>({cat,year,authors,title,venue,doi:doi||"",summary:summary||"",corr:corr||""})),
+    set:a=>{SITE.pubs=a.map(p=>[p.cat,+p.year,p.authors,p.title,p.venue,p.doi||"",p.summary||"",p.corr||""]);},
+    sort:(a,b)=>b.year-a.year, title:p=>p.title, sub:p=>`${p.year} · ${(SITE.pubCats.find(c=>c[0]===p.cat)||[,""])[1]}`,
+    blank:()=>({cat:"sci",year:new Date().getFullYear(),authors:"",title:"",venue:"",doi:"",summary:"",corr:""}),
+    fields:[["cat","분류","select",()=>SITE.pubCats.map(([k,en,kr])=>[k,kr+" · "+en])],["year","연도","number"],["title","제목","text",1],["authors","저자 (예: Kim, J., Lee, H., & Kim, M.)","text"],
+      ["venue","학술지·학회 (권호, 쪽)","text"],["doi","DOI (예: 10.1016/j.buildenv.2020.106912)","text"],["corr","교신저자 표시할 이름 (예: Kim, M.)","text"],["summary","요약","textarea"]]},
+};
+const ADM_KEYS=Object.keys(ADM);
+
+function admLib(){return window.supabase?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement("script");s.src=SUPABASE_LIB;s.onload=ok;s.onerror=no;document.head.appendChild(s);});}
+async function admInit(){
+  if(!SUPABASE_URL||!SUPABASE_ANON_KEY) return;
+  try{await admLib();}catch(e){return;}
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+  sb.auth.onAuthStateChange((ev,session)=>{if(ev==="PASSWORD_RECOVERY"){ADM_RECOVERY=true;location.hash="#admin";}admSession(session);});
+  const {data:{session}}=await sb.auth.getSession();await admSession(session);
+  const {data,error}=await sb.from("site_content").select("key,data");
+  if(!error&&data?.length){data.forEach(r=>{if(ADM[r.key]&&Array.isArray(r.data))ADM[r.key].set(r.data);});scholarRemap();const y=scrollY;route();window.scrollTo(0,y);}
+}
+async function admSession(session){
+  const was=ADMIN&&ADMIN.ok;ADMIN=session?{email:session.user.email,ok:false}:null;
+  if(ADMIN){const {data}=await sb.rpc("is_admin");ADMIN.ok=!!data;}
+  admBar();if(location.hash==="#admin"||was!==(ADMIN&&ADMIN.ok))route();
+}
+function admBar(){let b=document.getElementById("admBar");
+  if(!ADMIN?.ok){b?.remove();return;}
+  if(!b){b=document.createElement("div");b.id="admBar";b.className="adm-bar";document.body.appendChild(b);}
+  b.innerHTML=`<a href="#admin">관리 화면</a><span>${esc(ADMIN.email)}</span><button type="button" id="admOut">로그아웃</button>`;
+  b.querySelector("#admOut").onclick=()=>sb.auth.signOut();}
+
+views.admin=()=>`<section class="page wrap adm">${head("","Admin")}<div id="admRoot"></div></section>`;
+function admRender(){
+  const root=document.getElementById("admRoot");if(!root)return;
+  if(!sb){root.innerHTML=`<div class="adm-card"><p><b>관리자 기능이 아직 연결되지 않았습니다.</b></p><p>Supabase 프로젝트를 만들고 주소와 공개 키를 넣으면 이 자리에 로그인 화면이 나옵니다. 저장소의 ADMIN_SETUP.md를 따라 하시면 됩니다.</p></div>`;return;}
+  if(ADM_RECOVERY&&ADMIN){root.innerHTML=`<form class="adm-card adm-login" id="admPw"><h3>새 비밀번호 정하기</h3><label>새 비밀번호 (8자 이상)<input type="password" id="np" minlength="8" required autocomplete="new-password"></label><button class="btn-post">저장</button><p class="adm-msg" id="admMsg"></p></form>`;
+    root.querySelector("#admPw").onsubmit=async e=>{e.preventDefault();const {error}=await sb.auth.updateUser({password:root.querySelector("#np").value});
+      if(error)return admMsg(error.message);ADM_RECOVERY=false;admRender();};return;}
+  if(!ADMIN){root.innerHTML=`<form class="adm-card adm-login" id="admLogin"><h3>관리자 로그인</h3>
+      <label>이메일<input type="email" id="le" required autocomplete="username"></label>
+      <label>비밀번호<input type="password" id="lp" required autocomplete="current-password"></label>
+      <button class="btn-post" type="submit">로그인</button>
+      <div class="adm-links"><button type="button" class="link" id="lSign">처음이신가요? 계정 만들기</button><button type="button" class="link" id="lReset">비밀번호를 잊으셨나요?</button></div>
+      <p class="adm-msg" id="admMsg"></p><p class="adm-note">관리자 명단에 등록된 이메일만 내용을 고칠 수 있습니다. 명단에는 기존 관리자가 '관리자' 탭에서 추가합니다.</p></form>`;
+    const f=root.querySelector("#admLogin"),em=()=>f.querySelector("#le").value.trim().toLowerCase(),pw=()=>f.querySelector("#lp").value;
+    f.onsubmit=async e=>{e.preventDefault();admMsg("로그인 중…");const {error}=await sb.auth.signInWithPassword({email:em(),password:pw()});if(error)admMsg(error.message==="Invalid login credentials"?"이메일 또는 비밀번호가 맞지 않습니다.":error.message);};
+    f.querySelector("#lSign").onclick=async()=>{if(!em()||pw().length<8)return admMsg("이메일과 8자 이상 비밀번호를 먼저 입력해 주세요.");
+      const {error}=await sb.auth.signUp({email:em(),password:pw(),options:{emailRedirectTo:location.origin+location.pathname+"#admin"}});
+      admMsg(error?error.message:"확인 메일을 보냈습니다. 메일의 링크를 누른 뒤 여기서 로그인해 주세요.");};
+    f.querySelector("#lReset").onclick=async()=>{if(!em())return admMsg("이메일을 먼저 입력해 주세요.");
+      const {error}=await sb.auth.resetPasswordForEmail(em(),{redirectTo:location.origin+location.pathname+"#admin"});admMsg(error?error.message:"비밀번호 재설정 메일을 보냈습니다.");};
+    return;}
+  if(!ADMIN.ok){root.innerHTML=`<div class="adm-card"><p><b>${esc(ADMIN.email)}</b> 계정은 아직 관리자 명단에 없습니다. 기존 관리자에게 추가를 부탁해 주세요.</p><button class="btn-ghost" id="admOut2">로그아웃</button></div>`;root.querySelector("#admOut2").onclick=()=>sb.auth.signOut();return;}
+  const tabs=[...ADM_KEYS.map(k=>[k,ADM[k].label[1]]),["admins","관리자"]];
+  root.innerHTML=`<div class="tabs adm-tabs" role="tablist">${tabs.map(([k,l])=>`<button type="button" role="tab" data-t="${k}" aria-selected="${k===ADMTAB}">${l}</button>`).join("")}</div><div id="admBody"></div>`;
+  root.querySelector(".adm-tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;ADMTAB=b.dataset.t;admRender();};
+  if(ADMTAB==="admins")return admAdmins();
+  const S=ADM[ADMTAB],items=S.get(),order=items.map((_,i)=>i);if(S.sort)order.sort((a,b)=>S.sort(items[a],items[b]));
+  const body=root.querySelector("#admBody");
+  body.innerHTML=`<div class="adm-head"><span>${items.length}개</span><button class="btn-post" id="admAdd" type="button">+ 새로 추가</button></div>
+    <ul class="adm-list">${order.map(i=>{const it=items[i],th=S.thumb?.(it);return `<li data-i="${i}">${S.thumb?`<div class="adm-th">${th?`<img src="${esc(th)}" alt="" loading="lazy">`:""}</div>`:""}
+      <div class="adm-tx"><b>${esc(S.title(it)||"(제목 없음)")}</b><small>${esc(S.sub(it))}</small></div>
+      <div class="adm-act">${S.ordered?`<button type="button" data-a="up" aria-label="위로">↑</button><button type="button" data-a="down" aria-label="아래로">↓</button>`:""}<button type="button" data-a="edit">편집</button><button type="button" data-a="del" class="danger">삭제</button></div></li>`;}).join("")}</ul>`;
+  body.querySelector("#admAdd").onclick=()=>admEdit(ADMTAB,-1);
+  body.querySelector(".adm-list").onclick=async e=>{const b=e.target.closest("button[data-a]");if(!b)return;const i=+b.closest("li").dataset.i,a=b.dataset.a,arr=S.get();
+    if(a==="edit")return admEdit(ADMTAB,i);
+    if(a==="del"){if(!confirm(`"${S.title(arr[i])}" 을(를) 삭제할까요?`))return;arr.splice(i,1);}
+    if(a==="up"||a==="down"){const j=i+(a==="up"?-1:1);if(j<0||j>=arr.length)return;[arr[i],arr[j]]=[arr[j],arr[i]];}
+    await admSave(ADMTAB,arr);};
+  if(ADM_NEW===ADMTAB){ADM_NEW=null;admEdit(ADMTAB,-1);}
+}
+function admMsg(t){const m=document.getElementById("admMsg");if(m)m.textContent=t;}
+async function admSave(key,arr){
+  const S=ADM[key];if(S.sort)arr=[...arr].sort(S.sort);
+  const {error}=await sb.from("site_content").upsert({key,data:arr});
+  if(error){alert("저장하지 못했습니다: "+error.message);return false;}
+  S.set(arr);admRender();return true;}
+
+/* 사진: 브라우저에서 줄인 뒤 Supabase 저장소에 올림 */
+function admShrink(file,max){return new Promise((ok,no)=>{const im=new Image();im.onload=()=>{const r=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");
+  c.width=Math.round(im.width*r);c.height=Math.round(im.height*r);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(im.src);c.toBlob(b=>b?ok(b):no(new Error("이미지 변환 실패")),"image/webp",.86);};
+  im.onerror=()=>no(new Error("이미지를 읽지 못했습니다"));im.src=URL.createObjectURL(file);});}
+async function admUpload(file,max,folder){const blob=await admShrink(file,max),ext=blob.type==="image/webp"?"webp":blob.type==="image/png"?"png":"jpg";
+  const path=`${folder}/${Date.now()}-${Math.random().toString(36).slice(2,8)}-${max}.${ext}`;
+  const {error}=await sb.storage.from("media").upload(path,blob,{contentType:blob.type,cacheControl:"31536000"});if(error)throw error;
+  return sb.storage.from("media").getPublicUrl(path).data.publicUrl;}
+
+function admEdit(key,i){
+  const S=ADM[key],arr=S.get(),it=structuredClone(i<0?S.blank():arr[i]);
+  const imgList=(name,urls)=>`<div class="adm-imgs" data-f="${name}">${urls.map((u,j)=>`<figure data-j="${j}"><img src="${esc(u)}" alt=""><span><button type="button" data-m="l" aria-label="앞으로">←</button><button type="button" data-m="r" aria-label="뒤로">→</button><button type="button" data-m="x" aria-label="빼기">✕</button></span></figure>`).join("")}</div>`;
+  const fld=([k,label,type,opt])=>{const v=it[k];
+    if(type==="plan")return i>=0?"":`<div class="adm-f adm-plan"><label>${label}<input type="file" id="admPlan" accept="application/pdf,.txt,.md,text/plain"></label><small>PDF를 올리면 과제명·기간·기관·연구비·역할·설명을 채워 넣습니다. 채워진 내용은 꼭 확인해 주세요.</small><p class="adm-msg" id="admPlanMsg"></p></div>`;
+    if(type==="select"){const o=typeof opt==="function"?opt():opt;return `<label class="adm-f">${label}<select name="${k}">${o.map(([ov,ol])=>`<option value="${esc(ov)}"${ov===v?" selected":""}>${esc(ol)}</option>`).join("")}</select></label>`;}
+    if(type==="textarea")return `<label class="adm-f">${label}<textarea name="${k}" rows="6">${esc(v||"")}</textarea></label>`;
+    if(type==="lines")return `<label class="adm-f">${label}<textarea name="${k}" rows="4">${esc((v||[]).join("\n"))}</textarea></label>`;
+    if(type==="gallery")return `<div class="adm-f"><span>${label}</span>${imgList(k,it.imgs||[])}<input type="file" accept="image/*" multiple data-up="gallery"></div>`;
+    if(type==="images")return `<div class="adm-f"><span>${label}</span>${imgList(k,v||[])}<input type="file" accept="image/*" multiple data-up="${k}"></div>`;
+    if(type==="image")return `<div class="adm-f"><span>${label}</span>${imgList(k,v?[v]:[])}<input type="file" accept="image/*" data-up="${k}" data-one="1"></div>`;
+    return `<label class="adm-f">${label}<input name="${k}" type="${type}" value="${esc(v??"")}"${opt?" required":""}></label>`;};
+  openModal(`<form class="modal-body adm-form" id="admForm"><h3 id="mTitle">${S.label[1]} ${i<0?"새로 추가":"편집"}</h3>${S.fields.map(fld).join("")}
+    <div class="adm-foot"><button class="btn-post" type="submit">저장</button><button class="btn-ghost" type="button" id="admCancel">취소</button><span class="adm-msg" id="admFormMsg"></span></div></form>`);
+  const f=document.getElementById("admForm"),msg=t=>{f.querySelector("#admFormMsg").textContent=t;};
+  const redraw=k=>{const t=S.fields.find(x=>x[0]===k)[2],urls=t==="gallery"?it.imgs:t==="image"?(it[k]?[it[k]]:[]):it[k];f.querySelector(`.adm-imgs[data-f="${k}"]`).outerHTML=imgList(k,urls||[]);};
+  f.addEventListener("click",e=>{const b=e.target.closest("button[data-m]");if(!b)return;const box=b.closest(".adm-imgs"),k=box.dataset.f,j=+b.closest("figure").dataset.j,type=S.fields.find(x=>x[0]===k)[2];
+    const lists=type==="gallery"?[it.imgs,it.full||[]]:type==="image"?null:[it[k]];
+    if(!lists){it[k]="";return redraw(k);}
+    lists.forEach(L=>{if(b.dataset.m==="x")L.splice(j,1);else{const t=j+(b.dataset.m==="l"?-1:1);if(t>=0&&t<L.length)[L[j],L[t]]=[L[t],L[j]];}});redraw(k);});
+  f.addEventListener("change",async e=>{const inp=e.target.closest("input[data-up]");if(!inp||!inp.files.length)return;const files=[...inp.files];inp.disabled=true;
+    try{for(const [n,file] of files.entries()){msg(`사진 올리는 중… (${n+1}/${files.length})`);
+        if(inp.dataset.up==="gallery"){const [th,fu]=await Promise.all([admUpload(file,900,key),admUpload(file,2048,key+"/full")]);(it.imgs=it.imgs||[]).push(th);(it.full=it.full||[]).push(fu);redraw("imgs");}
+        else if(inp.dataset.one){it[inp.dataset.up]=await admUpload(file,key==="members"?800:1600,key);redraw(inp.dataset.up);}
+        else{(it[inp.dataset.up]=it[inp.dataset.up]||[]).push(await admUpload(file,2048,key));redraw(inp.dataset.up);}}msg("");}
+    catch(err){msg("사진을 올리지 못했습니다: "+(err.message||err));}inp.value="";inp.disabled=false;});
+  const plan=f.querySelector("#admPlan");
+  if(plan)plan.onchange=async()=>{const file=plan.files[0];if(!file)return;const pm=t=>{f.querySelector("#admPlanMsg").textContent=t;};
+    if(file.size>20e6)return pm("파일이 너무 큽니다 (20MB 이하).");pm("계획서를 읽고 개요를 쓰는 중입니다… (1분 정도 걸릴 수 있어요)");
+    try{const isPdf=file.type==="application/pdf"||/\.pdf$/i.test(file.name);
+      const body=isPdf?{filename:file.name,mime:"application/pdf",data:await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(String(fr.result).split(",")[1]);fr.readAsDataURL(file);})}:{filename:file.name,text:await file.text()};
+      const {data,error}=await sb.functions.invoke("summarize-plan",{body});
+      if(error||data?.error)throw new Error(data?.error||error.message);
+      ["title","role","period","funder","amount","no","desc"].forEach(k=>{const el=f.elements[k];if(el&&data[k]!==undefined&&data[k]!=="")el.value=data[k];});
+      pm(`채웠습니다${data.title_ko?` (국문 과제명: ${data.title_ko})`:""}. 내용을 확인한 뒤 대표 이미지를 넣고 저장해 주세요.`);}
+    catch(err){pm("자동 작성에 실패했습니다: "+(err.message||err));}};
+  f.querySelector("#admCancel").onclick=closeModal;
+  f.onsubmit=async e=>{e.preventDefault();
+    S.fields.forEach(([k,,type])=>{const el=f.elements[k];if(!el||["gallery","images","image","plan"].includes(type))return;
+      it[k]=type==="lines"?el.value.split("\n").map(s=>s.trim()).filter(Boolean):type==="number"?+el.value:el.value.trim();});
+    if(i<0)arr.unshift(it);else arr[i]=it;msg("저장 중…");if(await admSave(key,arr))closeModal();};
+}
+async function admAdmins(){
+  const body=document.getElementById("admBody");body.innerHTML=`<p>불러오는 중…</p>`;
+  const {data,error}=await sb.from("admins").select("email,added_at,added_by").order("added_at");
+  if(error){body.innerHTML=`<p class="adm-msg">${esc(error.message)}</p>`;return;}
+  body.innerHTML=`<form class="adm-head" id="admAddForm"><input type="email" id="admNew" placeholder="추가할 관리자 이메일" required><button class="btn-post">관리자 추가</button></form>
+    <p class="adm-note">추가된 분은 이 페이지에서 '처음이신가요? 계정 만들기'로 비밀번호를 정한 뒤 로그인하면 됩니다.</p>
+    <ul class="adm-list">${data.map(a=>`<li data-e="${esc(a.email)}"><div class="adm-tx"><b>${esc(a.email)}</b><small>${a.added_by?esc(a.added_by)+" 추가 · ":""}${(a.added_at||"").slice(0,10)}</small></div>
+      <div class="adm-act">${a.email===ADMIN.email.toLowerCase()?"<small>나</small>":`<button type="button" class="danger" data-a="rm">삭제</button>`}</div></li>`).join("")}</ul>`;
+  body.querySelector("#admAddForm").onsubmit=async e=>{e.preventDefault();const em=body.querySelector("#admNew").value.trim().toLowerCase();
+    const {error}=await sb.from("admins").insert({email:em,added_by:ADMIN.email.toLowerCase()});if(error)alert(error.message);admAdmins();};
+  body.querySelector(".adm-list").onclick=async e=>{const b=e.target.closest("[data-a=rm]");if(!b)return;const em=b.closest("li").dataset.e;
+    if(!confirm(`${em} 을(를) 관리자에서 뺄까요?`))return;const {error}=await sb.from("admins").delete().eq("email",em);if(error)alert(error.message);admAdmins();};
+}
+admInit();
+if(location.hash==="#admin")route();
+
 </script>
 
 </body>
