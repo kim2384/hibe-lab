@@ -220,9 +220,8 @@ p{max-width:68ch}
 .role-tag.done{border-color:var(--muted);color:var(--muted)}
 .pstats{display:flex;flex-wrap:wrap;gap:16px 40px;margin:0 0 28px}
 .proj-side{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:flex-end;gap:14px 40px;flex:1 1 auto}.proj-side .seg{margin-left:auto}
-.proj-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px 40px;margin-bottom:24px}.proj-head .page-title,.proj-head .pstats{margin:0}.proj-head .ps b{font-size:24px}
-.proj-tabbar .pstats{margin:0 0 10px}
-@media (min-width:900px){.proj-tabbar{display:grid;grid-template-columns:1fr auto 1fr}.proj-tabbar .pstats{justify-self:center}}
+.proj-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px 40px;margin-bottom:14px}.proj-head .page-title,.proj-head .pstats{margin:0}.proj-head .ps b{font-size:24px}
+@media (min-width:900px){.proj-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:end}.proj-head .pstats{justify-self:center}.proj-side{justify-self:end}}
 .ps{display:grid;gap:4px;align-content:start}
 .amt-note{color:var(--muted);font-size:13px;display:block}
 .amt{margin-top:2px}.amt b{font-weight:500}
@@ -745,8 +744,8 @@ const views = {
   },
   projects(){
     const info=i=>SITE.projectInfo?.[i];
-    return `<section class="page wrap"><div class="proj-head">${head("","Projects")}<div class="proj-side"><div class="seg" id="projFilter">${[["on","Ongoing","수행 중"],["done","Completed","완료"],["all","All","전체"]].map(([k,en,kr])=>`<button type="button" data-f="${k}" aria-pressed="${PROJFILTER===k}">${T(en,kr)}</button>`).join("")}</div></div></div>
-      <div class="proj-tabbar"><div class="tabs proj-tabs" role="tablist">${[["car","Carousel","카로셀"],["list","List","목록"]].map(([k,en,kr])=>`<button type="button" role="tab" data-v="${k}" aria-selected="${PROJVIEW===k}">${T(en,kr)}</button>`).join("")}</div>${projStats()}</div>
+    return `<section class="page wrap"><div class="proj-head">${head("","Projects")}${projStats()}<div class="proj-side"><div class="seg" id="projFilter">${[["on","Ongoing","수행 중"],["done","Completed","완료"],["all","All","전체"]].map(([k,en,kr])=>`<button type="button" data-f="${k}" aria-pressed="${PROJFILTER===k}">${T(en,kr)}</button>`).join("")}</div></div></div>
+      <div class="proj-tabbar"><div class="tabs proj-tabs" role="tablist">${[["car","Carousel","카로셀"],["list","List","목록"]].map(([k,en,kr])=>`<button type="button" role="tab" data-v="${k}" aria-selected="${PROJVIEW===k}">${T(en,kr)}</button>`).join("")}</div></div>
       <div id="carView"${PROJVIEW==="list"?" hidden":""}><div class="car-wrap"><button class="car-arrow l" id="prev" aria-label="${T("Previous","이전 과제")}">‹</button><button class="car-arrow r" id="next" aria-label="${T("Next","다음 과제")}">›</button>
       <div class="track" id="track">${pList().map(([t,i])=>`<article class="slide" data-i="${i}" role="button" tabindex="-1" aria-label="${esc(t)}">${SITE.projectImgs?.[i]?`<div class="img has"><img src="${SITE.projectImgs[i]}" alt="" draggable="false"${i?' loading="lazy"':""}></div>`:`<div class="img"><span>${T("Project image (to be replaced)","과제 이미지 (원본으로 교체 예정)")}</span></div>`}
         <div class="cap">${(f=>f?`<span class="k">${roleTag(f)}${esc(ym(f.period))} · ${esc(pFunder(f))}</span>`:"")(SITE.projectInfo?.[i])}<h3>${esc(t)}</h3></div></article>`).join("")}</div>
