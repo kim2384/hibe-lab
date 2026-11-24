@@ -340,7 +340,8 @@ p{max-width:68ch}
 .post p{white-space:pre-line;margin:0;font-size:13.5px;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;align-self:start;line-height:1.6;max-height:3.2em}
 .post .sample{justify-self:start;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--muted)}
 .post .del{justify-self:start;font:inherit;font-size:12px;background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
-.ig{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ig{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media (max-width:1000px){.ig{grid-template-columns:repeat(3,1fr)}}
 .ig-tile{position:relative;aspect-ratio:1;border:0;padding:0;margin:0;overflow:hidden;border-radius:10px;cursor:pointer;background:#f4f5f6;font:inherit;color:inherit;display:block}
 .ig-tile img{width:100%;height:100%;object-fit:contain;padding:2px;box-sizing:border-box;display:block;transition:transform .25s}
 .ig-tile .cnt{position:absolute;right:8px;top:8px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;border-radius:999px;padding:2px 8px}
@@ -942,7 +943,7 @@ function route(){
     sec.addEventListener("keydown",e=>{const c=e.target.closest(".member");if(c&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openM(+c.dataset.m);}});
   }
   if(id==="awards"){
-    const grid=document.getElementById("igGrid"),PAGE=12;let shown=0;
+    const grid=document.getElementById("igGrid"),PAGE=16;let shown=0;
     const tile=(a,k)=>`<button type="button" class="ig-tile" data-k="${k}" aria-label="${esc(a.title)}">${a.imgs.length?`<img src="${a.imgs[0]}" alt="" loading="lazy">`:`<span class="ig-noimg">${esc(a.title)}</span>`}${a.imgs.length>1?`<span class="cnt">${a.imgs.length}</span>`:""}<span class="ig-cap"><b>${esc(a.title)}</b><small>${a.date.replaceAll("-",". ")}</small></span></button>`;
     const LIST=AWARDS.map((a,k)=>[a,k]).filter(([a])=>AWYEAR==="all"||(a.date||"").startsWith(AWYEAR));
     document.getElementById("awYears").onchange=e=>{AWYEAR=e.target.value;const y=scrollY;route();window.scrollTo(0,y);};
