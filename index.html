@@ -373,7 +373,7 @@ p{max-width:68ch}
 .aw-body p{margin:0;font-size:13.5px;color:var(--muted);white-space:pre-line;line-height:1.6}
 @media (max-width:560px){.award{grid-template-columns:88px 1fr;gap:12px}}
 .igs{position:relative;background:#f1f2f3}
-.igs-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}.igs-track::-webkit-scrollbar{display:none}
+.igs-track{display:flex;width:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}.igs-track::-webkit-scrollbar{display:none}
 .igs-s{flex:0 0 100%;scroll-snap-align:center;height:clamp(240px,58vh,540px);display:flex;align-items:center;justify-content:center;overflow:hidden}
 .igs-s img{max-width:100%;max-height:100%;object-fit:contain;display:block;cursor:zoom-in}
 .igs-b{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#123;font-size:22px;line-height:1;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.2)}
@@ -382,7 +382,7 @@ p{max-width:68ch}
 .igs-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px}
 .igs-dots i{width:7px;height:7px;border-radius:50%;background:rgba(0,0,0,.25)}.igs-dots i.on{background:var(--teal)}
 .modal-box.max .igs-s{height:clamp(300px,78vh,860px)}
-@media (max-width:560px){.igs-s{height:clamp(220px,50vh,400px)}.igs-b{width:34px;height:34px;font-size:19px}}
+@media (max-width:560px){.igs-s{height:auto;min-height:200px}.igs-s img{width:100%;height:auto;max-height:72vh;object-fit:contain}.slide .cap{padding:16px 18px 8px;gap:4px}.slide h3{font-size:16px;line-height:1.4}.slide .cap .k{font-size:11px}.pr-body h3{font-size:15px}.pr-amt{font-size:12.5px}.igs-b{width:34px;height:34px;font-size:19px}}
 .gal{display:grid;gap:8px;padding:8px}
 .gal img{width:100%;height:auto;border-radius:8px;display:block;cursor:zoom-in}
 .lb{position:fixed;inset:0;z-index:1000;background:rgba(10,12,14,.94);display:grid;place-items:center}
@@ -484,6 +484,24 @@ form.adm-head input{flex:1;min-width:220px}
 .ncard .nimg.txt{align-items:flex-start}.ncard .nimg.txt span{margin-top:18%;padding-top:0;padding-bottom:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .nmeta{font-size:11.5px;color:var(--muted)}.nmeta b{color:var(--teal);font-weight:600}
 .ncard .nt{font-size:13px;line-height:1.4;height:4.2em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+@media (max-width:560px){
+body{font-size:14.5px;line-height:1.6}
+.page-title{font-size:24px;margin-bottom:20px}
+.lead{font-size:15.5px}.hero .tag{font-size:16px}
+.about-page .ab-h,.ab-h{font-size:17px;margin:22px 0 10px}
+.areas-title,.group-title{font-size:18px}.area-card b{font-size:15px}.area-card span,.areas span{font-size:13.5px}
+.pi-name{font-size:23px}.cv-grid h3,.pub-group h3{font-size:16px}.pi-cites b{font-size:16px}
+.member h4{font-size:15px}.member ul,.m-detail ul{font-size:13.5px}
+.join-card h3{font-size:16px}.join-card ul{font-size:14px}.apply h3{font-size:18px}.apply .mail{font-size:14px}
+.tabs a{font-size:15px}.tabs button{font-size:14.5px}
+.ps b,.proj-head .ps b{font-size:20px}
+.modal-body{padding:18px 18px 22px;gap:10px}.modal-body h3{font-size:18px}.modal-body dl{font-size:13.5px;grid-template-columns:80px 1fr}
+.modal-body .pdesc,.modal-body .ptext,.modal-body .sum{font-size:14px}
+.post h3{font-size:14.5px}.pub .a,.pub .v,.pub .ct{font-size:13px}
+.pub-tools input,.yr-pick select,.loc{font-size:14px}
+}
 </style>
 </head>
 <body>
