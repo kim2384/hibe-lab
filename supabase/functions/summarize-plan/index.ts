@@ -19,7 +19,7 @@ const SCHEMA = {
   properties: {
     title: { type: "string", description: "Official English project title (or a faithful English translation)" },
     title_ko: { type: "string", description: "Korean project title as written in the plan, empty if none" },
-    period: { type: "string", description: "Whole research period as 'YYYY.MM.DD – YYYY.MM' (end month only); empty if not stated" },
+    period: { type: "string", description: "Whole research period as 'YYYY.MM – YYYY.MM'; empty if not stated" },
     funder: { type: "string", description: "Funding agency in English, e.g. 'National Research Foundation of Korea'" },
     amount: { type: "string", description: "Total government funding over the whole period as 'KRW 1,234 Million'; empty if not stated" },
     role: { type: "string", enum: ["PI", "Co-PI", ""], description: "Role of Michael (Youngsu) Kim / 김영수 (Chung-Ang University)" },
