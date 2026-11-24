@@ -204,7 +204,7 @@ p{max-width:68ch}
 .car-arrow:disabled{opacity:0;pointer-events:none}
 .slide{opacity:.45;transform:scale(.96);transition:opacity .3s,transform .3s}.slide.on{opacity:1;transform:none}
 .car-nav{justify-content:center}.car-hint{font-size:12px;color:var(--muted);margin-left:8px}
-.proj-tabbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;border-bottom:1px solid var(--line);margin:-8px 0 24px}.proj-tabbar .tabs{border-bottom:0;margin:0}
+.proj-tabbar{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 16px;border-bottom:1px solid var(--line);margin:-8px 0 24px}.proj-tabbar .tabs{border-bottom:0;margin:0}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .yr-pick select{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 36px 8px 16px;cursor:pointer;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 55%,calc(100% - 13px) 55%;background-size:5px 5px;background-repeat:no-repeat}.proj-tabs{margin:0 0 28px}.tabs button{font:inherit;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;padding:12px 22px;font-size:16px;font-weight:500;color:var(--muted);cursor:pointer}
 .tabs button:hover{color:var(--ink);background:var(--teal-soft)}.tabs button[aria-selected="true"]{color:var(--teal);border-bottom-color:var(--teal)}
@@ -214,7 +214,8 @@ p{max-width:68ch}
 .pstats{display:flex;flex-wrap:wrap;gap:16px 40px;margin:0 0 28px}
 .proj-side{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:flex-end;gap:14px 40px;flex:1 1 auto}.proj-side .seg{margin-left:auto}
 .proj-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px 40px;margin-bottom:24px}.proj-head .page-title,.proj-head .pstats{margin:0}.proj-head .ps b{font-size:24px}
-@media (min-width:900px){.proj-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:end}.proj-side{display:contents}.proj-head .pstats{justify-self:center}.proj-side .seg{justify-self:end;margin:0}}
+.proj-tabbar .pstats{margin:0 0 10px}
+@media (min-width:900px){.proj-tabbar{display:grid;grid-template-columns:1fr auto 1fr}.proj-tabbar .pstats{justify-self:center}}
 .ps{display:grid;gap:4px;align-content:start}
 .amt-note{color:var(--muted);font-size:13px;display:block}
 .amt{margin-top:2px}.amt b{font-weight:500}
@@ -324,7 +325,8 @@ p{max-width:68ch}
 .composer .note{font-size:13px;color:var(--muted)}
 .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .thumbs img{width:72px;height:72px;object-fit:cover;border-radius:6px}
-.feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:5px}
+.feed{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+@media (max-width:1000px){.feed{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (max-width:760px){.feed{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:480px){.feed{grid-template-columns:1fr}}
 .feed .empty{grid-column:1/-1}
 .sentinel{height:1px}
 .feed-end{text-align:center;color:var(--muted);font-size:14px;padding:24px 0}
@@ -735,8 +737,8 @@ const views = {
   },
   projects(){
     const info=i=>SITE.projectInfo?.[i];
-    return `<section class="page wrap"><div class="proj-head">${head("","Projects")}<div class="proj-side">${projStats()}<div class="seg" id="projFilter">${[["on","Ongoing","수행 중"],["done","Completed","완료"],["all","All","전체"]].map(([k,en,kr])=>`<button type="button" data-f="${k}" aria-pressed="${PROJFILTER===k}">${T(en,kr)}</button>`).join("")}</div></div></div>
-      <div class="proj-tabbar"><div class="tabs proj-tabs" role="tablist">${[["car","Carousel","카로셀"],["list","List","목록"]].map(([k,en,kr])=>`<button type="button" role="tab" data-v="${k}" aria-selected="${PROJVIEW===k}">${T(en,kr)}</button>`).join("")}</div></div>
+    return `<section class="page wrap"><div class="proj-head">${head("","Projects")}<div class="proj-side"><div class="seg" id="projFilter">${[["on","Ongoing","수행 중"],["done","Completed","완료"],["all","All","전체"]].map(([k,en,kr])=>`<button type="button" data-f="${k}" aria-pressed="${PROJFILTER===k}">${T(en,kr)}</button>`).join("")}</div></div></div>
+      <div class="proj-tabbar"><div class="tabs proj-tabs" role="tablist">${[["car","Carousel","카로셀"],["list","List","목록"]].map(([k,en,kr])=>`<button type="button" role="tab" data-v="${k}" aria-selected="${PROJVIEW===k}">${T(en,kr)}</button>`).join("")}</div>${projStats()}</div>
       <div id="carView"${PROJVIEW==="list"?" hidden":""}><div class="car-wrap"><button class="car-arrow l" id="prev" aria-label="${T("Previous","이전 과제")}">‹</button><button class="car-arrow r" id="next" aria-label="${T("Next","다음 과제")}">›</button>
       <div class="track" id="track">${pList().map(([t,i])=>`<article class="slide" data-i="${i}" role="button" tabindex="-1" aria-label="${esc(t)}">${SITE.projectImgs?.[i]?`<div class="img has"><img src="${SITE.projectImgs[i]}" alt="" draggable="false"${i?' loading="lazy"':""}></div>`:`<div class="img"><span>${T("Project image (to be replaced)","과제 이미지 (원본으로 교체 예정)")}</span></div>`}
         <div class="cap">${(f=>f?`<span class="k">${roleTag(f)}${esc(ym(f.period))} · ${esc(pFunder(f))}</span>`:"")(SITE.projectInfo?.[i])}<h3>${esc(t)}</h3></div></article>`).join("")}</div>
@@ -962,7 +964,7 @@ function route(){
     let filter="all";
     const catName={conf:T("Scientific Conference Attendances","학술대회 참석"),out:T("Outreach & Extra Activities","아웃리치 및 기타 활동")};
     const all=()=>[...SAMPLE].sort((a,b)=>(b.date||"").localeCompare(a.date||""));
-    const PAGE=9; let shown=PAGE;
+    const PAGE=16; let shown=PAGE;
     const card=p=>`<article class="post" data-id="${p.id}" tabindex="0" role="button">
         <div class="ph">${p.imgs.length?`<img src="${p.imgs[0]}" alt="" loading="lazy">${p.imgs.length>1?`<span class="cnt">${p.imgs.length}${T("","장")}</span>`:""}`:`<div class="fake">${T("Photo","사진")}</div>`}</div>
         <div class="body"><span class="meta">${p.date?p.date.replaceAll("-",". ")+" · ":""}${esc(catName[p.cat])}</span><h3>${esc(p.title)}</h3>${p.text?`<p>${esc(p.text)}</p>`:""}
@@ -1026,7 +1028,7 @@ fetch("data/citations.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then
 const GH_REPO = "kim2384/hibe-lab";
 const GH_BRANCH = "main";
 const GH_AUTH = "";   // 로그인 중계 Worker 주소 (예: https://hibe-admin.아이디.workers.dev). 비어 있으면 관리자 기능이 꺼져 있음
-let GH_TOKEN = null, ADMIN = null, ADMTAB = "posts", ADM_NEW = null;
+var GH_TOKEN = null, ADMIN = null, ADMTAB = "posts", ADM_NEW = null;
 const CONTENT_SHA = {};
 
 /* 편집할 구역: 화면의 데이터와 저장 형식을 서로 바꿔 줌 */
