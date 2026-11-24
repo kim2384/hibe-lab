@@ -690,7 +690,9 @@ const views = {
       <p class="legend"><sup>†</sup> ${T("Corresponding author","교신저자")} · ${T(`Citation counts from ${CITES_SRC} as of ${CITES_DATE}`,`인용 수는 ${CITES_SRC==="OpenAlex"?"OpenAlex":"구글 스칼라"} 기준 (${CITES_DATE})`)}</p><div id="publist"></div></section>`;
   },
   awards(){
+    const yrs=[...new Set(AWARDS.map(a=>(a.date||"").slice(0,4)).filter(Boolean))].sort().reverse();
     return `<section class="page wrap">${head("","Awards")}
+      <div class="proj-bar"><div class="seg" id="awYears"><button type="button" data-y="all" aria-pressed="${AWYEAR==="all"}">${T("All","전체")}</button>${yrs.map(y=>`<button type="button" data-y="${y}" aria-pressed="${AWYEAR===y}">${y}</button>`).join("")}</div></div>
       <div class="ig" id="igGrid"></div><div class="sentinel" id="awSentinel"></div><div class="feed-end" id="awEnd" hidden></div></section>`;
   },
   activities(){
@@ -730,7 +732,7 @@ const projStats=()=>{const inf=SITE.projects.map((_,i)=>SITE.projectInfo?.[i]).f
 const krw=a=>{if(LANG!=="ko")return a;if(KO.projects.amounts[a])return KO.projects.amounts[a];const m=String(a).match(/KRW ([\d,.]+) Million/);if(!m)return a;const v=Math.round(parseFloat(m[1].replace(/,/g,""))*100),e=Math.floor(v/10000),man=v%10000;return `${e?e+"억 ":""}${man?man.toLocaleString()+"만 ":""}원`.replace(/ 원$/," 원");};
 const pFunder=f=>LANG==="ko"?KO.projects.funders[f.funder]||f.funder:f.funder;
 const authors=(a,corr)=>{let h=esc(a);if(corr)h=h.replace(esc(corr),esc(corr)+"<sup>†</sup>");return h.replace(/Kim, M\./g,'<span class="me">Kim, M.</span>');};
-let PUBSORT="new", PROJVIEW="car", PROJFILTER="on";
+let PUBSORT="new", PROJVIEW="car", PROJFILTER="on", AWYEAR="all";
 const pList=()=>SITE.projects.map((t,i)=>[t,i]).filter(([,i])=>{const f=SITE.projectInfo?.[i];return PROJFILTER==="all"||(PROJFILTER==="done")===isDone(f);});
 function renderPubs(){
   const q = (document.getElementById("q").value||"").toLowerCase();
@@ -849,8 +851,10 @@ function route(){
   if(id==="awards"){
     const grid=document.getElementById("igGrid"),PAGE=12;let shown=0;
     const tile=(a,k)=>`<button type="button" class="ig-tile" data-k="${k}" aria-label="${esc(a.title)}">${a.imgs.length?`<img src="${a.imgs[0]}" alt="" loading="lazy">`:`<span class="ig-noimg">${esc(a.title)}</span>`}${a.imgs.length>1?`<span class="cnt">${a.imgs.length}</span>`:""}<span class="ig-cap"><b>${esc(a.title)}</b><small>${a.date.replaceAll("-",". ")}</small></span></button>`;
-    const more=()=>{if(shown>=AWARDS.length)return;const next=AWARDS.slice(shown,shown+PAGE);grid.insertAdjacentHTML("beforeend",next.map((a,x)=>tile(a,shown+x)).join(""));shown+=next.length;
-      const end=document.getElementById("awEnd");end.hidden=!(shown>=AWARDS.length&&AWARDS.length>PAGE);end.textContent=T("You have seen all awards.","모든 수상 내역을 다 봤습니다.");};
+    const LIST=AWARDS.map((a,k)=>[a,k]).filter(([a])=>AWYEAR==="all"||(a.date||"").startsWith(AWYEAR));
+    document.getElementById("awYears").onclick=e=>{const b=e.target.closest("button");if(!b||b.dataset.y===AWYEAR)return;AWYEAR=b.dataset.y;const y=scrollY;route();window.scrollTo(0,y);};
+    const more=()=>{if(shown>=LIST.length)return;const next=LIST.slice(shown,shown+PAGE);grid.insertAdjacentHTML("beforeend",next.map(([a,k])=>tile(a,k)).join(""));shown+=next.length;
+      const end=document.getElementById("awEnd");end.hidden=!(shown>=LIST.length&&LIST.length>PAGE);end.textContent=T("You have seen all awards.","모든 수상 내역을 다 봤습니다.");};
     more();
     const awIo=new IntersectionObserver(es=>{if(es[0].isIntersecting)more();},{rootMargin:"400px"});awIo.observe(document.getElementById("awSentinel"));
     const list=grid;
