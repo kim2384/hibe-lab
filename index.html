@@ -204,14 +204,15 @@ p{max-width:68ch}
 .car-arrow:disabled{opacity:0;pointer-events:none}
 .slide{opacity:.45;transform:scale(.96);transition:opacity .3s,transform .3s}.slide.on{opacity:1;transform:none}
 .car-nav{justify-content:center}.car-hint{font-size:12px;color:var(--muted);margin-left:8px}
-.proj-bar{margin:-8px 0 18px}
+.proj-tabbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;border-bottom:1px solid var(--line);margin:-8px 0 24px}.proj-tabbar .tabs{border-bottom:0;margin:0}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .yr-pick select{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 36px 8px 16px;cursor:pointer;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 18px) 55%,calc(100% - 13px) 55%;background-size:5px 5px;background-repeat:no-repeat}.proj-tabs{margin:0 0 28px}.tabs button{font:inherit;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;padding:12px 22px;font-size:16px;font-weight:500;color:var(--muted);cursor:pointer}
 .tabs button:hover{color:var(--ink);background:var(--teal-soft)}.tabs button[aria-selected="true"]{color:var(--teal);border-bottom-color:var(--teal)}
 .role-tag{font-style:normal;font-family:var(--body);font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:999px;margin-right:8px;border:1px solid var(--teal);color:var(--teal);vertical-align:1px}
 .role-tag.pi{background:var(--teal);color:#fff}
 .role-tag.done{border-color:var(--muted);color:var(--muted)}
-.pstats{display:flex;flex-wrap:wrap;gap:20px 56px;margin:0 0 28px}
+.pstats{display:flex;flex-wrap:wrap;gap:16px 40px;margin:0 0 28px}
+.proj-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px 40px;margin-bottom:24px}.proj-head .page-title,.proj-head .pstats{margin:0}.proj-head .ps b{font-size:24px}
 .ps{display:grid;gap:4px}
 .amt-note{color:var(--muted);font-size:13px;display:block}
 .amt{margin-top:2px}.amt b{font-weight:500}
@@ -286,6 +287,11 @@ p{max-width:68ch}
 .pub .open{font-size:13px;color:var(--teal);margin-top:4px}
 .modal-body .cite{font-size:14px;color:var(--muted)}
 .modal-body .sum{font-size:15.5px;line-height:1.7}
+.pub-mb.has-cover{display:grid;grid-template-columns:minmax(0,180px) 1fr;gap:24px;align-items:start}
+.pub-cover{width:100%;height:auto;border-radius:4px}
+@media (max-width:560px){.pub-mb.has-cover{grid-template-columns:1fr}.pub-cover{max-width:180px}}
+.view-seg{margin-left:auto}
+.pgal{margin-top:10px}.pub-card .nt{-webkit-line-clamp:3}
 .legend{font-size:14px;color:var(--muted);margin:-8px 0 8px}
 .pub sup,.legend sup,.cite sup{color:var(--teal);font-weight:700}
 .pub .yr{font-family:var(--mono);font-size:14px;color:var(--teal);font-variant-numeric:tabular-nums;padding-top:1px}
@@ -445,7 +451,8 @@ form.adm-head input{flex:1;min-width:220px}
 .area-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:24px}
 .area-grid .area-card{width:auto}
 /* Home News: 인스타그램식 무한 스크롤 카드 */
-.nfeed{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px}
+.nfeed{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}
+@media (max-width:1200px){.nfeed{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media (max-width:1000px){.nfeed{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:760px){.nfeed{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:560px){.nfeed{grid-template-columns:1fr}}
@@ -454,10 +461,10 @@ form.adm-head input{flex:1;min-width:220px}
 .nimg{aspect-ratio:1/1;background:#f4f5f6;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .nimg img{width:100%;height:100%;object-fit:contain;padding:6px;box-sizing:border-box}
 .nimg.cover img{object-fit:cover;padding:0}
-.nimg.txt{background:linear-gradient(135deg,var(--teal),#349381 55%,#89b6ab)}.nimg.txt span{color:#fff;font-family:var(--display);font-size:clamp(16px,1.6vw,20px);font-weight:500;padding:24px;text-align:center;line-height:1.35}
-.nbody{padding:12px 14px 16px;display:grid;gap:6px}
-.nmeta{font-size:12.5px;color:var(--muted)}.nmeta b{color:var(--teal);font-weight:600}
-.ncard .nt{font-size:15px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.nimg.txt{background:linear-gradient(135deg,var(--teal),#349381 55%,#89b6ab)}.nimg.txt span{color:#fff;font-family:var(--display);font-size:clamp(14px,1.3vw,17px);font-weight:500;padding:18px;text-align:center;line-height:1.35}
+.nbody{padding:10px 12px 12px;display:grid;gap:4px}
+.nmeta{font-size:11.5px;color:var(--muted)}.nmeta b{color:var(--teal);font-weight:600}
+.ncard .nt{font-size:13px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 </style>
 </head>
 <body>
@@ -547,20 +554,20 @@ const SITE = {
   projectImgs: ["images/projects/project-1.jpg", "images/projects/project-2.jpg", "images/projects/project-3.jpg", "images/projects/project-4.jpg", "images/projects/project-5.jpg", "images/projects/project-6.jpg"],
   pubCats: [["sci","International Journal Papers (SCI-E)","국제 저널"],["kci","Domestic Journal Papers (KCI)","국내 저널"],["intconf","International Conference Presentations","국제 학술대회"],["domconf","Domestic Conference Presentations","국내 학술대회"]],
   pubs: [
-    ["sci",2026,"Yun, J., Moon, J., Bae, K., Kim, J., Lee, H., Kim, H., Sung, J., & Kim, M.","AI-driven non-intrusive occupant monitoring for occupant-centric control: A multi-domain review of thermal, air, and visual environments","Building and Environment, 299, 114673.","10.1016/j.buildenv.2026.114673","","Kim, M."],
-    ["sci",2022,"Kim, M., & Tzempelikos, A.","Performance evaluation of non-intrusive luminance mapping towards human-centered daylighting control","Building and Environment, 213, 108857.","10.1016/j.buildenv.2022.108857"],
-    ["sci",2021,"Kim, M., & Tzempelikos, A.","Semi-Automated Luminance Map Re-projection via High Dynamic Range Imaging and Indoor Space 3-D Reconstruction","Automation in Construction, 129, 103812.","10.1016/j.autcon.2021.103812"],
-    ["sci",2020,"Konstantzos, I., Sadeghi, S. A., Kim, M., Xiong, J., & Tzempelikos, A.","The Effect of Lighting Environment on Task Performance in Buildings – A Review","Energy and Buildings, 226, 110394.","10.1016/j.enbuild.2020.110394"],
-    ["sci",2020,"Kim, M., Konstantzos, I., & Tzempelikos, A.","Real-Time Daylight Glare Control Using a Low-Cost, Window-Mounted HDRI Sensor","Building and Environment, 177, 106912.","10.1016/j.buildenv.2020.106912"],
+    ["sci", 2026, "Yun, J., Moon, J., Bae, K., Kim, J., Lee, H., Kim, H., Sung, J., & Kim, M.", "AI-driven non-intrusive occupant monitoring for occupant-centric control: A multi-domain review of thermal, air, and visual environments", "Building and Environment, 299, 114673.", "10.1016/j.buildenv.2026.114673", "", "Kim, M.", "", "https://ars.els-cdn.com/content/image/X03601323.jpg"],
+    ["sci", 2022, "Kim, M., & Tzempelikos, A.", "Performance evaluation of non-intrusive luminance mapping towards human-centered daylighting control", "Building and Environment, 213, 108857.", "10.1016/j.buildenv.2022.108857", "", "", "", "https://ars.els-cdn.com/content/image/X03601323.jpg"],
+    ["sci", 2021, "Kim, M., & Tzempelikos, A.", "Semi-Automated Luminance Map Re-projection via High Dynamic Range Imaging and Indoor Space 3-D Reconstruction", "Automation in Construction, 129, 103812.", "10.1016/j.autcon.2021.103812", "", "", "", "https://ars.els-cdn.com/content/image/X09265805.jpg"],
+    ["sci", 2020, "Konstantzos, I., Sadeghi, S. A., Kim, M., Xiong, J., & Tzempelikos, A.", "The Effect of Lighting Environment on Task Performance in Buildings – A Review", "Energy and Buildings, 226, 110394.", "10.1016/j.enbuild.2020.110394", "", "", "", "https://ars.els-cdn.com/content/image/X03787788.jpg"],
+    ["sci", 2020, "Kim, M., Konstantzos, I., & Tzempelikos, A.", "Real-Time Daylight Glare Control Using a Low-Cost, Window-Mounted HDRI Sensor", "Building and Environment, 177, 106912.", "10.1016/j.buildenv.2020.106912", "", "", "", "https://ars.els-cdn.com/content/image/X03601323.jpg"],
     ["sci",2018,"Konstantzos, I., Kim, M. & Tzempelikos, A.","An Integrated Method and Web Tool to Assess Visual Environment in Spaces with Window Shades","Science and Technology for the Built Environment, 24(5), 470–482.","10.1080/23744731.2018.1438021"],
     ["kci",2025,"Yoon, D., Cho, H., Jang, H., Kang, Y., & Kim, M.","Sensitivity Analysis of Albedo Assumptions in Urban-Scale Solar Irradiance Simulations","The International Journal of The Korea Institute of Ecological Architecture and Environment, 25(2), 5-13.","10.12813/kieae.2025.25.2.005","","Kim, M."],
     ["intconf",2025,"Yoon, D., Kang, K., Jang, H., Cho, H., & Kim, M.","Sensitivity analysis of albedo input settings for vertical facades in community-scale solar irradiance simulation","Proceedings of the 19th International Building Performance Simulation Association Conference.","10.26868/25222708.2025.1773"],
     ["intconf",2022,"Kim, M., & Tzempelikos, A.","A Programmable Image Sensor for Smart Daylighting and Glare Control in Buildings","Presented in Indoor Air 2020 Conference, Athens, Greece, May 2022.",""],
     ["intconf",2022,"Kim, M., Zhang, H., Tzempelikos, A., Gasparella, A., & Cappelletti, F.","New Low-Cost Sensing Network for Indoor Environmental Monitoring and Control in Buildings","Presented in Indoor Air 2020 Conference, Athens, Greece, May 2022.",""],
-    ["intconf",2021,"Mah, D., Kim, M., & Tzempelikos, A.","Utilization of programmable cameras for web-based sensing and control of daylight in buildings","Journal of Physics: Conference Series, 2042(1). Presented in CISBAT 2021 Conference, Lausanne, Switzerland, September 2021.","10.1088/1742-6596/2042/1/012114"],
-    ["intconf",2021,"Kim, M., & Tzempelikos, A.","Non-intrusive luminance mapping via high dynamic range imaging and 3-d reconstruction","Journal of Physics: Conference Series, 2042(1). Presented in CISBAT 2021 Conference, Lausanne, Switzerland, September 2021.","10.1088/1742-6596/2042/1/012113"],
+    ["intconf", 2021, "Mah, D., Kim, M., & Tzempelikos, A.", "Utilization of programmable cameras for web-based sensing and control of daylight in buildings", "Journal of Physics: Conference Series, 2042(1). Presented in CISBAT 2021 Conference, Lausanne, Switzerland, September 2021.", "10.1088/1742-6596/2042/1/012114", "", "", "", "https://cms.iopscience.org/1be37246-ec1f-11e5-b0b6-759f86a2008e/journal_cover?guest=true"],
+    ["intconf", 2021, "Kim, M., & Tzempelikos, A.", "Non-intrusive luminance mapping via high dynamic range imaging and 3-d reconstruction", "Journal of Physics: Conference Series, 2042(1). Presented in CISBAT 2021 Conference, Lausanne, Switzerland, September 2021.", "10.1088/1742-6596/2042/1/012113", "", "", "", "https://cms.iopscience.org/1be37246-ec1f-11e5-b0b6-759f86a2008e/journal_cover?guest=true"],
     ["intconf",2021,"Zhang, H., Kim, M., Liu, X., & Tzempelikos, A.","A Comparison of Sensing Type and Control Complexity Techniques for Personalized Thermal Comfort","ASHRAE Transactions, 127(1), 2021.",""],
-    ["intconf",2019,"Kim, M., Konstantzos, I., & Tzempelikos, A.","A low-cost stereo-fisheye camera sensor for daylighting and glare control","Journal of Physics: Conference Series, 1343(1). Presented in CISBAT 2019 Conference, Lausanne, Switzerland, September 2021.","10.1088/1742-6596/1343/1/012157"],
+    ["intconf", 2019, "Kim, M., Konstantzos, I., & Tzempelikos, A.", "A low-cost stereo-fisheye camera sensor for daylighting and glare control", "Journal of Physics: Conference Series, 1343(1). Presented in CISBAT 2019 Conference, Lausanne, Switzerland, September 2021.", "10.1088/1742-6596/1343/1/012157", "", "", "", "https://cms.iopscience.org/1be37246-ec1f-11e5-b0b6-759f86a2008e/journal_cover?guest=true"],
     ["intconf",2018,"Kim, M., Konstantzos, I., & Tzempelikos, A.","A New Control Framework for the Visual Environment Based on Low-Cost HDR Luminance Acquisition","Proceedings of 5th High Performance Buildings Conference at Purdue.",""],
     ["domconf",2025,"Kang, K., Kang, Y., Yoon, D., & Kim, M.","Automated solar disk definition algorithm for high dynamic range image-based daylighting simulation","2025 Fall Conference of KIAEBS, Chungbuk, Republic of Korea (2025, November 13–14).",""],
     ["domconf",2025,"Jang, H., Cho, H., Yoon, D., & Kim, M.","GIS-based 3D urban modeling and tensor database construction process for urban solar irradiance analysis","2025 Fall Conference of KIAEBS, Chungbuk, Republic of Korea (2025, November 13–14).",""],
@@ -717,8 +724,8 @@ const views = {
   },
   projects(){
     const info=i=>SITE.projectInfo?.[i];
-    return `<section class="page wrap">${head("","Projects")}<div class="proj-bar"><div class="seg" id="projFilter">${[["on","Ongoing","수행 중"],["done","Completed","완료"],["all","All","전체"]].map(([k,en,kr])=>`<button type="button" data-f="${k}" aria-pressed="${PROJFILTER===k}">${T(en,kr)}</button>`).join("")}</div></div>${projStats()}
-      <div class="tabs proj-tabs" role="tablist">${[["car","Carousel","카로셀"],["list","List","목록"]].map(([k,en,kr])=>`<button type="button" role="tab" data-v="${k}" aria-selected="${PROJVIEW===k}">${T(en,kr)}</button>`).join("")}</div>
+    return `<section class="page wrap"><div class="proj-head">${head("","Projects")}${projStats()}</div>
+      <div class="proj-tabbar"><div class="tabs proj-tabs" role="tablist">${[["car","Carousel","카로셀"],["list","List","목록"]].map(([k,en,kr])=>`<button type="button" role="tab" data-v="${k}" aria-selected="${PROJVIEW===k}">${T(en,kr)}</button>`).join("")}</div><div class="seg" id="projFilter">${[["on","Ongoing","수행 중"],["done","Completed","완료"],["all","All","전체"]].map(([k,en,kr])=>`<button type="button" data-f="${k}" aria-pressed="${PROJFILTER===k}">${T(en,kr)}</button>`).join("")}</div></div>
       <div id="carView"${PROJVIEW==="list"?" hidden":""}><div class="car-wrap"><button class="car-arrow l" id="prev" aria-label="${T("Previous","이전 과제")}">‹</button><button class="car-arrow r" id="next" aria-label="${T("Next","다음 과제")}">›</button>
       <div class="track" id="track">${pList().map(([t,i])=>`<article class="slide" data-i="${i}" role="button" tabindex="-1" aria-label="${esc(t)}">${SITE.projectImgs?.[i]?`<div class="img has"><img src="${SITE.projectImgs[i]}" alt="" draggable="false"${i?' loading="lazy"':""}></div>`:`<div class="img"><span>${T("Project image (to be replaced)","과제 이미지 (원본으로 교체 예정)")}</span></div>`}
         <div class="cap">${(f=>f?`<span class="k">${roleTag(f)}${esc(ym(f.period))} · ${esc(pFunder(f))}</span>`:"")(SITE.projectInfo?.[i])}<h3>${esc(t)}</h3></div></article>`).join("")}</div>
@@ -734,7 +741,8 @@ const views = {
     return `<section class="page wrap">${head("","Publications")}
       <div class="pub-tools"><input id="q" type="search" placeholder="${T("Search by title, author or journal","제목, 저자, 학술지로 찾기")}" aria-label="${T("Search publications","논문 검색")}">
         <div class="seg" id="seg"><button aria-pressed="true" data-c="all">${T("All","전체")}</button>${SITE.pubCats.map(([k,en,kr])=>`<button aria-pressed="false" data-c="${k}">${T(en.replace(/ Papers| Presentations/g,""),kr)}</button>`).join("")}</div></div>
-      <div class="sort-row"><span>${T("Sort","정렬")}</span><div class="seg" id="sortSeg">${[["new","Newest","최신순"],["cite","Most cited","인용순"]].map(([k,en,kr])=>`<button aria-pressed="${k===PUBSORT}" data-s="${k}">${T(en,kr)}</button>`).join("")}</div></div>
+      <div class="sort-row"><span>${T("Sort","정렬")}</span><div class="seg" id="sortSeg">${[["new","Newest","최신순"],["cite","Most cited","인용순"]].map(([k,en,kr])=>`<button aria-pressed="${k===PUBSORT}" data-s="${k}">${T(en,kr)}</button>`).join("")}</div>
+        <div class="seg view-seg" id="viewSeg">${[["list","List","리스트"],["gallery","Gallery","갤러리"]].map(([k,en,kr])=>`<button aria-pressed="${k===PUBVIEW}" data-v="${k}">${T(en,kr)}</button>`).join("")}</div></div>
       <p class="legend"><sup>†</sup> ${T("Corresponding author","교신저자")} · ${T(`Citation counts from ${CITES_SRC} as of ${CITES_DATE}`,`인용 수는 ${CITES_SRC==="OpenAlex"?"OpenAlex":"구글 스칼라"} 기준 (${CITES_DATE})`)}</p><div id="publist"></div></section>`;
   },
   awards(){
@@ -781,6 +789,8 @@ const pFunder=f=>LANG==="ko"?KO.projects.funders[f.funder]||f.funder:f.funder;
 const authors=(a,corr)=>{let h=esc(a);if(corr)h=h.replace(esc(corr),esc(corr)+"<sup>†</sup>");return h.replace(/Kim, M\./g,'<span class="me">Kim, M.</span>');};
 /* 대문 News: 수상·활동·과제 수주·논문을 날짜순으로 자동 모음 (관리 화면에서 올리면 바로 반영) */
 let NEWS_OPEN=null, NEWS_N=8;
+function imgFail(im){const b=im.parentNode;b.classList.remove("cover");b.classList.add("txt");const sp=document.createElement("span");sp.textContent=im.dataset.v||"";im.replaceWith(sp);}
+function pubVenue(r){const vs=String(r[4]||""),pm=vs.match(/Presented in ([^,]+)/);return (pm?pm[1]:vs.split(",")[0]).replace(/\.$/,"").trim();}
 function newsItems(){
   const out=[],pad=d=>(d+"-00-00").slice(0,10),L=(en,ko)=>LANG==="ko"&&ko?ko:en;
   AWARDS.forEach((a,k)=>a.date&&out.push({d:a.date,c:["Award","수상"],t:L(a.news||`Received the ${a.title}`,a.newsKo||`${a.title} 수상`),img:a.imgs?.[0],fit:"contain",go:["awards",k]}));
@@ -788,12 +798,12 @@ function newsItems(){
   SITE.projects.forEach((t,i)=>{const f=SITE.projectInfo?.[i]||{},m=String(f.period||"").match(/^(\d{4})\.(\d{2})/);if(!m)return;
     const r=f.role?` as ${f.role}`:"",rk=f.role?`(${f.role}) `:"";
     out.push({d:`${m[1]}-${m[2]}`,c:["New project","과제 수주"],t:L(`Launched a new project${r}: ${t}${f.funder?`, funded by ${f.funder}`:""}`,`신규 과제 ${rk}수주: ${t}${f.funder?` (${pFunder(f)})`:""}`),img:SITE.projectImgs?.[i],fit:"contain",go:["projects",i]});});
-  SITE.pubs.forEach((r,k)=>{const j=r[0]==="sci"||r[0]==="kci",vs=String(r[4]||""),pm=vs.match(/Presented in ([^,]+)/),v=(pm?pm[1]:vs.split(",")[0]).replace(/\.$/,"").trim();
-    out.push({d:r[8]||String(r[1]),c:j?["New paper","논문 게재"]:["Presentation","학술 발표"],t:j?L(`Published in ${v}: “${r[3]}”`,`${v} 논문 게재: “${r[3]}”`):L(`Presented “${r[3]}” at ${v}`,`${v} 발표: “${r[3]}”`),venue:v,go:["publications",k]});});
+  SITE.pubs.forEach((r,k)=>{const j=r[0]==="sci"||r[0]==="kci",v=pubVenue(r);
+    out.push({d:r[8]||String(r[1]),c:j?["New paper","논문 게재"]:["Presentation","학술 발표"],t:j?L(`Published in ${v}: “${r[3]}”`,`${v} 논문 게재: “${r[3]}”`):L(`Presented “${r[3]}” at ${v}`,`${v} 발표: “${r[3]}”`),venue:v,img:r[9]||"",fit:"contain",go:["publications",k]});});
   return out.sort((a,b)=>pad(b.d).localeCompare(pad(a.d)));
 }
 const newsDate=d=>d.length===4?d:d.replaceAll("-",". ");
-let PUBSORT="new", PROJVIEW="car", PROJFILTER="on", AWYEAR="all";
+let PUBVIEW="list", PUBSORT="new", PROJVIEW="car", PROJFILTER="on", AWYEAR="all";
 const pList=()=>SITE.projects.map((t,i)=>[t,i]).filter(([,i])=>{const f=SITE.projectInfo?.[i];return PROJFILTER==="all"||(PROJFILTER==="done")===isDone(f);});
 function renderPubs(){
   const q = (document.getElementById("q").value||"").toLowerCase();
@@ -802,6 +812,9 @@ function renderPubs(){
     const items = SITE.pubs.map((p,i)=>[p,i]).filter(([p])=>p[0]===k && (p.join(" ").toLowerCase().includes(q)))
       .sort(([a,i],[b,j])=>PUBSORT==="cite" ? (citeOf(b[5],b[3])-citeOf(a[5],a[3]) || b[1]-a[1] || i-j) : (b[1]-a[1] || i-j)).map(([p])=>p);
     if(!items.length) return "";
+    if(PUBVIEW==="gallery") return `<div class="pub-group"><h3>${LANG==="ko"?KO.pubCats[k]:label}<span class="n">${items.length}</span></h3><div class="nfeed pgal">${items.map(r=>{const [,y,,t,,doi]=r,cv=r[9],v=pubVenue(r),c=citeOf(doi,t);
+      return `<button type="button" class="ncard pub-card" data-k="${SITE.pubs.findIndex(p=>p[3]===t)}"><div class="nimg${cv?"":" txt"}">${cv?`<img src="${cv}" alt="" loading="lazy" data-v="${esc(v)}" onerror="imgFail(this)">`:`<span>${esc(v)}</span>`}</div>
+      <div class="nbody"><span class="nmeta"><b>${y}</b>${c?" · "+T("Cited by "+c,"인용 "+c+"회"):""}</span><span class="nt">${esc(t)}</span></div></button>`;}).join("")}</div></div>`;
     return `<div class="pub-group"><h3>${LANG==="ko"?KO.pubCats[k]:label}<span class="n">${items.length}</span></h3><ul class="pubs">${items.map(([,y,a,t,v,doi,,corr])=>`<li class="pub" tabindex="0" role="button" data-k="${SITE.pubs.findIndex(p=>p[3]===t)}"><span class="yr">${y}</span><div>
       <div class="t">${esc(t)}</div><div class="a">${authors(a,corr)}</div>
       <div class="v">${esc(v)}</div></div><div class="ct">${citeOf(doi,t)?T("Cited by "+citeOf(doi,t),"인용 "+citeOf(doi,t)+"회"):""}</div></li>`).join("")}</ul></div>`;
@@ -840,9 +853,9 @@ document.getElementById("mClose").onclick=closeModal;
 document.getElementById("mClose").setAttribute("aria-label","Close");
 $modal.addEventListener("click",e=>{if(e.target===$modal)closeModal();});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$modal.hidden)closeModal();});
-function openPub(k){const [cat,y,a,t,v,doi,sum,corr]=SITE.pubs[k];const label=SITE.pubCats.find(c=>c[0]===cat)[1];
+function openPub(k){const [cat,y,a,t,v,doi,sum,corr,,cover]=SITE.pubs[k];const label=SITE.pubCats.find(c=>c[0]===cat)[1];
   openModal(`<div class="modal-body"><h3 id="mTitle">${esc(t)}</h3><div class="cite">${authors(a,corr)}<br>${esc(v)}</div>
-  <div><div class="sum">${sum?esc(sum):todo()}</div></div>
+  <div class="pub-mb${cover?" has-cover":""}">${cover?`<img class="pub-cover" src="${cover}" alt="" onerror="this.parentNode.classList.remove('has-cover');this.remove()">`:""}<div class="sum">${sum?esc(sum):todo()}</div></div>
   ${citeOf(doi,t)?`<div class="cite-note">${T(`Cited by ${citeOf(doi,t)} (${CITES_SRC}, ${CITES_DATE})`,`인용 ${citeOf(doi,t)}회 (${CITES_SRC==="OpenAlex"?"OpenAlex":"구글 스칼라"}, ${CITES_DATE} 기준)`)}</div>`:""}
   ${doi?`<a href="https://doi.org/${doi}" target="_blank" rel="noopener">${T("Read the paper","원문 보기")} (doi:${doi})</a>`:""}</div>`);}
 
@@ -857,13 +870,15 @@ function route(){
     renderPubs();
     if(NEWS_OPEN?.sec==="publications"){const k=NEWS_OPEN.key;NEWS_OPEN=null;openPub(k);}
     const pl=document.getElementById("publist");
-    pl.addEventListener("click",e=>{const li=e.target.closest(".pub");if(li)openPub(+li.dataset.k);});
+    pl.addEventListener("click",e=>{const li=e.target.closest(".pub,.pub-card");if(li)openPub(+li.dataset.k);});
     pl.addEventListener("keydown",e=>{const li=e.target.closest(".pub");if(li&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openPub(+li.dataset.k);}});
     document.getElementById("q").addEventListener("input", renderPubs);
     document.getElementById("seg").addEventListener("click", e=>{const b=e.target.closest("button"); if(!b) return;
       document.querySelectorAll("#seg button").forEach(x=>x.setAttribute("aria-pressed", x===b)); renderPubs();});
     document.getElementById("sortSeg").addEventListener("click", e=>{const b=e.target.closest("button"); if(!b) return; PUBSORT=b.dataset.s;
       document.querySelectorAll("#sortSeg button").forEach(x=>x.setAttribute("aria-pressed", x===b)); renderPubs();});
+    document.getElementById("viewSeg").addEventListener("click", e=>{const b=e.target.closest("button"); if(!b) return; PUBVIEW=b.dataset.v;
+      document.querySelectorAll("#viewSeg button").forEach(x=>x.setAttribute("aria-pressed", x===b)); renderPubs();});
   }
   if(id==="projects"){
     document.getElementById("projFilter").onclick=e=>{const b=e.target.closest("button");if(!b||b.dataset.f===PROJFILTER)return;PROJFILTER=b.dataset.f;const y=scrollY;route();window.scrollTo(0,y);};
@@ -953,8 +968,8 @@ function route(){
     io.observe(document.getElementById("sentinel"));
     render();
   }
-  if(id==="home"){const feed=document.getElementById("newsFeed"),ALL=newsItems(),PAGE=16;let shown=0;
-    const card=(n,x)=>`<button type="button" class="ncard" data-x="${x}"><div class="nimg${n.img?(n.fit==="cover"?" cover":""):" txt"}">${n.img?`<img src="${n.img}" alt="" loading="lazy">`:`<span>${esc(n.venue||"")}</span>`}</div>
+  if(id==="home"){const feed=document.getElementById("newsFeed"),ALL=newsItems(),PAGE=25;let shown=0;
+    const card=(n,x)=>`<button type="button" class="ncard" data-x="${x}"><div class="nimg${n.img?(n.fit==="cover"?" cover":""):" txt"}">${n.img?`<img src="${n.img}" alt="" loading="lazy" data-v="${esc(n.venue||"")}" onerror="imgFail(this)">`:`<span>${esc(n.venue||"")}</span>`}</div>
       <div class="nbody"><span class="nmeta"><b>${T(...n.c)}</b> · ${newsDate(n.d)}</span><span class="nt">${esc(n.t)}</span></div></button>`;
     const more=()=>{if(shown>=ALL.length)return;feed.insertAdjacentHTML("beforeend",ALL.slice(shown,shown+PAGE).map((n,k)=>card(n,shown+k)).join(""));shown=Math.min(ALL.length,shown+PAGE);
       const end=document.getElementById("newsEnd");end.hidden=shown<ALL.length;end.textContent=T("You're all caught up.","모든 소식을 다 봤습니다.");};
@@ -1020,12 +1035,12 @@ const ADM = {
     fields:[["group","구분","select",[["Graduate Research Assistants","대학원 연구원"],["Undergraduate Research Assistants","학부 연구원"],["Alumni","졸업생"]]],
       ["name","이름 (예: Hong, Gildong)","text",1],["role","학위과정·학년 (예: Master's Researcher (1st year))","text"],["interests","연구 주제 (한 줄에 하나)","lines"],
       ["email","이메일","email"],["cv","CV 링크","url"],["photo","사진 (배경 없는 PNG 권장)","image"]]},
-  pubs: {label:["Publications","논문"], get:()=>SITE.pubs.map(([cat,year,authors,title,venue,doi,summary,corr,added])=>({cat,year,authors,title,venue,doi:doi||"",summary:summary||"",corr:corr||"",added:added||""})),
-    set:a=>{SITE.pubs=a.map(p=>[p.cat,+p.year,p.authors,p.title,p.venue,p.doi||"",p.summary||"",p.corr||"",p.added||""]);},
+  pubs: {label:["Publications","논문"], get:()=>SITE.pubs.map(([cat,year,authors,title,venue,doi,summary,corr,added,cover])=>({cat,year,authors,title,venue,doi:doi||"",summary:summary||"",corr:corr||"",added:added||"",cover:cover||""})),
+    set:a=>{SITE.pubs=a.map(p=>[p.cat,+p.year,p.authors,p.title,p.venue,p.doi||"",p.summary||"",p.corr||"",p.added||"",p.cover||""]);},
     sort:(a,b)=>b.year-a.year, title:p=>p.title, sub:p=>`${p.year} · ${(SITE.pubCats.find(c=>c[0]===p.cat)||[,""])[1]}`,
-    blank:()=>({cat:"sci",year:new Date().getFullYear(),authors:"",title:"",venue:"",doi:"",summary:"",corr:""}),
+    blank:()=>({cat:"sci",year:new Date().getFullYear(),authors:"",title:"",venue:"",doi:"",summary:"",corr:"",cover:""}),
     fields:[["cat","분류","select",()=>SITE.pubCats.map(([k,en,kr])=>[k,kr+" · "+en])],["year","연도","number"],["title","제목","text",1],["authors","저자 (예: Kim, J., Lee, H., & Kim, M.)","text"],
-      ["venue","학술지·학회 (권호, 쪽)","text"],["doi","DOI (예: 10.1016/j.buildenv.2020.106912)","text"],["corr","교신저자 표시할 이름 (예: Kim, M.)","text"],["summary","요약","textarea"]]},
+      ["venue","학술지·학회 (권호, 쪽)","text"],["doi","DOI (예: 10.1016/j.buildenv.2020.106912)","text"],["corr","교신저자 표시할 이름 (예: Kim, M.)","text"],["summary","요약","textarea"],["cover","논문 표지 이미지 (저널 표지·첫 페이지·대표 그림)","image"]]},
 };
 const ADM_KEYS=Object.keys(ADM);
 
