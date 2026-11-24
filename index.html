@@ -727,7 +727,7 @@ const projStats=()=>{const inf=SITE.projects.map((_,i)=>SITE.projectInfo?.[i]).f
   const pi=on.filter(f=>f.role==="PI").length,co=on.filter(f=>f.role==="Co-PI").length;
   const krwM=on.reduce((s,f)=>{const m=String(f.amount||"").match(/KRW ([\d,.]+) Million/);return s+(m?parseFloat(m[1].replace(/,/g,"")):0)},0),usdM=krwM*1e6/USD_RATE/1e6;
   const amt=LANG==="ko"?krw(`KRW ${krwM.toFixed(2)} Million`):krwM>=1000?`KRW ${(krwM/1000).toFixed(2)}B`:`KRW ${Math.round(krwM)}M`;
-  const L={on:["Ongoing projects","진행 중 과제"],done:["Completed projects","완료 과제"],all:["All projects","전체 과제"]}[PROJFILTER];
+  const L={on:["Ongoing projects","진행 중 과제"],done:["Completed projects","완료 과제"],all:["Entire projects","전체 과제"]}[PROJFILTER];
   const tile=(n,l)=>`<div class="ps"><b>${n}</b><span>${l}</span></div>`;
   return `<div class="pstats">${tile(on.length,T(...L))}${tile(pi,T("as PI","PI"))}${tile(co,T("as Co-PI","Co-PI"))}${tile(amt,T(`Funding · hibe lab portion (≈ USD ${usdM.toFixed(2)}M)`,`연구비 · hibe lab 배정 (≈ USD ${usdM.toFixed(2)}M)`))}</div>`;};
 const krw=a=>{if(LANG!=="ko")return a;if(KO.projects.amounts[a])return KO.projects.amounts[a];const m=String(a).match(/KRW ([\d,.]+) Million/);if(!m)return a;const v=Math.round(parseFloat(m[1].replace(/,/g,""))*100),e=Math.floor(v/10000),man=v%10000;return `${e?e+"억 ":""}${man?man.toLocaleString()+"만 ":""}원`.replace(/ 원$/," 원");};
