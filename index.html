@@ -425,6 +425,19 @@ form.adm-head input{flex:1;min-width:220px}
 .nd{font-family:var(--mono);font-size:13px;color:var(--muted)}.nc{font-size:13px;font-weight:600;color:var(--teal)}.nt{font-size:15px;line-height:1.45}
 .news-more{margin-top:10px;font:inherit;font-size:14px;background:none;border:1px solid var(--line);border-radius:999px;padding:7px 16px;cursor:pointer;color:var(--ink)}
 @media (max-width:640px){.news-list button{grid-template-columns:1fr;gap:2px}.nd,.nc{display:inline}}
+/* 대문: 소개 → 연구 분야 가로 카로셀 → News */
+.intro{display:block;padding-block:20px 8px}
+.intro p{margin:0 0 12px;max-width:920px}
+.hq-track{align-items:flex-start}
+.areas-band{padding-block:20px 8px}.areas-band .areas-title{font-size:17px;margin:0 0 10px}
+.hmarquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.hq-track{display:flex;gap:14px;width:max-content;animation:hq 50s linear infinite}
+.hmarquee:hover .hq-track{animation-play-state:paused}
+@keyframes hq{to{transform:translateX(calc(-50% - 7px))}}
+.areas-band .area-card{width:300px;padding:16px 18px;gap:6px;border-radius:10px}
+.areas-band .area-card b{font-size:15px}.areas-band .area-card span{font-size:13.5px;line-height:1.55}
+.news{padding-block:20px 56px}
+@media (prefers-reduced-motion:reduce){.hq-track{animation:none}.hmarquee{overflow-x:auto}}
 </style>
 </head>
 <body>
@@ -641,14 +654,15 @@ const views = {
       ${LANG==="ko" ? `<h1>${a.ko}</h1><p class="ko">Hyper-Intelligent Built Environment Laboratory at <span class="nw">Chung-Ang University</span></p>`
         : `<h1>Hyper-Intelligent Built Environment Laboratory<br>at <span class="nw">Chung-Ang University</span></h1><p class="ko">${a.ko}</p>`}
     </div></div>
+    <div class="wrap intro">
+      <p class="tag">${esc(ko("about.tagline",a.tagline))}</p>${ko("about.paras",a.paras).map(p=>`<p>${esc(p)}</p>`).join("")}
+      <div class="funders"><span class="chip">KAIA</span><span class="chip">NRF</span></div>
+    </div>
+    <section class="wrap areas-band"><h2 class="areas-title">${T("Core Research Areas","핵심 연구 분야")}</h2>
+      <div class="hmarquee"><div class="hq-track">${[0,1].map(k=>areas.map(([t,d])=>`<article class="area-card"${k?' aria-hidden="true"':''}><b>${t}</b><span>${d}</span></article>`).join("")).join("")}</div></div></section>
     <section class="wrap news"><h2>News</h2><ul class="news-list" id="newsList">${newsItems().slice(0,NEWS_N).map((n,x)=>`<li><button type="button" data-x="${x}"><span class="nd">${newsDate(n.d)}</span><span class="nc">${T(...n.c)}</span><span class="nt">${esc(n.t)}</span></button></li>`).join("")}</ul>
       ${newsItems().length>NEWS_N?`<button type="button" class="news-more" id="newsMore">${T("More news","소식 더 보기")}</button>`:""}</section>
-    <div class="wrap intro">
-      <div><p class="tag">${esc(ko("about.tagline",a.tagline))}</p>${ko("about.paras",a.paras).map(p=>`<p>${esc(p)}</p>`).join("")}
-        <div class="funders"><span class="chip">KAIA</span><span class="chip">NRF</span></div></div>
-      <aside class="areas-side"><h2 class="areas-title">${T("Core Research Areas","핵심 연구 분야")}</h2>
-        <div class="vmarquee"><div class="vq-track">${[0,1].map(k=>areas.map(([t,d])=>`<article class="area-card"${k?' aria-hidden="true"':''}><b>${t}</b><span>${d}</span></article>`).join("")).join("")}</div></div></aside>
-    </div>`;
+    `;
   },
   pi(){
     const p = SITE.pi;
