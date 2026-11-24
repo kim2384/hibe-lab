@@ -1,0 +1,39 @@
+name: Paper first-page images
+
+on:
+  push:
+    paths:
+      - "index.html"
+      - "content/pubs.json"
+      - "scripts/paper_pages.py"
+      - ".github/workflows/paper-pages.yml"
+  schedule:
+    - cron: "0 19 * * 1"   # every Tuesday 04:00 KST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paper-pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pymupdf==1.24.10 pillow==10.4.0
+      - name: Make first-page images
+        run: python scripts/paper_pages.py
+      - name: Commit if changed
+        run: |
+          git config user.name "paper-pages"
+          git config user.email "actions@users.noreply.github.com"
+          git add images/papers data/pub-pages.json 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "Add paper first-page images"
+          git pull --rebase -q || true
+          git push
