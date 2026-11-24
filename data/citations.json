@@ -1,0 +1,99 @@
+{
+  "updated": "2026-11-24",
+  "source": "Google Scholar (via SerpApi)",
+  "total": 412,
+  "h_index": 7,
+  "i10_index": 5,
+  "articles": [
+    {
+      "title": "The effect of lighting environment on task performance in buildings–A review",
+      "key": "theeffectoflightingenvironmentontaskperformanceinbuildingsareview",
+      "year": "2020",
+      "cites": 248
+    },
+    {
+      "title": "Real-time daylight glare control using a low-cost, window-mounted HDRI sensor",
+      "key": "realtimedaylightglarecontrolusingalowcostwindowmountedhdrisensor",
+      "year": "2020",
+      "cites": 60
+    },
+    {
+      "title": "Performance evaluation of non-intrusive luminance mapping towards human-centered daylighting control",
+      "key": "performanceevaluationofnonintrusiveluminancemappingtowardshumancentereddaylightingcontrol",
+      "year": "2022",
+      "cites": 35
+    },
+    {
+      "title": "Semi-automated luminance map re-projection via high dynamic range imaging and indoor space 3-D reconstruction",
+      "key": "semiautomatedluminancemapreprojectionviahighdynamicrangeimagingandindoorspace3dreconstruction",
+      "year": "2021",
+      "cites": 27
+    },
+    {
+      "title": "An integrated method and web tool to assess visual environment in spaces with window shades",
+      "key": "anintegratedmethodandwebtooltoassessvisualenvironmentinspaceswithwindowshades",
+      "year": "2018",
+      "cites": 12
+    },
+    {
+      "title": "A low-cost stereo-fisheye camera sensor for daylighting and glare control",
+      "key": "alowcoststereofisheyecamerasensorfordaylightingandglarecontrol",
+      "year": "2019",
+      "cites": 9
+    },
+    {
+      "title": "Utilization of programmable cameras for web-based sensing and control of daylight in buildings",
+      "key": "utilizationofprogrammablecamerasforwebbasedsensingandcontrolofdaylightinbuildings",
+      "year": "2021",
+      "cites": 7
+    },
+    {
+      "title": "A new control framework for the visual environment based on low-cost HDR luminance acquisition",
+      "key": "anewcontrolframeworkforthevisualenvironmentbasedonlowcosthdrluminanceacquisition",
+      "year": "2018",
+      "cites": 7
+    },
+    {
+      "title": "AI-Driven Non-Intrusive Occupant Monitoring for Occupant-Centric Control: A Multi-Domain Review of Thermal, Air, and Visual Environments",
+      "key": "aidrivennonintrusiveoccupantmonitoringforoccupantcentriccontrolamultidomainreviewofthermalairandvisualenvironments",
+      "year": "2026",
+      "cites": 4
+    },
+    {
+      "title": "New low-cost sensing network for indoor environmental monitoring and control in buildings",
+      "key": "newlowcostsensingnetworkforindoorenvironmentalmonitoringandcontrolinbuildings",
+      "year": "2023",
+      "cites": 2
+    },
+    {
+      "title": "Development of mobile app to enable local update on mapping API: Construction sites monitoring through digital twin",
+      "key": "developmentofmobileapptoenablelocalupdateonmappingapiconstructionsitesmonitoringthroughdigitaltwin",
+      "year": "2023",
+      "cites": 1
+    },
+    {
+      "title": "Sensitivity analysis of albedo input settings for vertical facades in community-scale solar irradiance simulation",
+      "key": "sensitivityanalysisofalbedoinputsettingsforverticalfacadesincommunityscalesolarirradiancesimulation",
+      "year": "2025",
+      "cites": 0
+    },
+    {
+      "title": "Sensitivity Analysis of Albedo Assumptions in Urban-Scale Solar Irradiance Simulations",
+      "key": "sensitivityanalysisofalbedoassumptionsinurbanscalesolarirradiancesimulations",
+      "year": "2025",
+      "cites": 0
+    },
+    {
+      "title": "Luminance Monitoring and Daylighting Control in Buildings Using Low-Cost Cameras",
+      "key": "luminancemonitoringanddaylightingcontrolinbuildingsusinglowcostcameras",
+      "year": "2021",
+      "cites": 0
+    },
+    {
+      "title": "Sensitivity Analysis of Albedo Input Settings for Vertical Facades in Community-Scale Solar Irradiance Simulation",
+      "key": "sensitivityanalysisofalbedoinputsettingsforverticalfacadesincommunityscalesolarirradiancesimulation",
+      "year": "",
+      "cites": 0
+    }
+  ]
+}
