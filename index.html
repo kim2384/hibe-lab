@@ -711,7 +711,6 @@ const views = {
       <div class="join-grid">${card(T("Who We Are Looking For","이런 분을 찾습니다"),j.who)}${card(T("Who Should Apply","이런 분께 추천합니다"),j.should)}${card(T("Perks","지원 사항"),j.perks)}</div>
       <div class="apply"><h3>${T("Join the Team","지원 방법")}</h3><p style="margin:0">${T("Send the following to Prof. Michael Kim:","아래 서류를 Michael Kim 교수에게 보내 주세요:")}</p><ol>${j.apply.map(i=>`<li>${esc(i)}</li>`).join("")}</ol>
         <div class="mail"><span id="mailtxt">myk127@cau.ac.kr</span><button id="copy" type="button">${T("Copy","주소 복사")}</button></div></div>
-      <div class="loc"><b>${T("Contact hibe","문의")}</b><span>${T("Contact myk127@cau.ac.kr to get more information on the project.","과제에 대한 자세한 내용은 myk127@cau.ac.kr 로 문의해 주세요.")}</span><a href="https://www.google.com/maps?q=37.503556,126.957605" target="_blank" rel="noopener">${T("View on map (CAU Seoul campus)","지도에서 보기 (중앙대 서울캠퍼스)")}</a></div>
     </section>`;
   }
 };
