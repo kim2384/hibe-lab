@@ -444,6 +444,19 @@ form.adm-head input{flex:1;min-width:220px}
 .about-page .tag{margin:0 0 10px}.ab-p{max-width:920px;margin:0 0 12px;line-height:1.75}
 .area-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:24px}
 .area-grid .area-card{width:auto}
+/* Home News: 인스타그램식 무한 스크롤 카드 */
+.nfeed{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+@media (max-width:900px){.nfeed{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.nfeed{grid-template-columns:1fr}}
+.ncard{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;background:var(--surface);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:transform .15s}
+.ncard:hover{transform:translateY(-2px)}.ncard:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.nimg{aspect-ratio:1/1;background:#f4f5f6;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.nimg img{width:100%;height:100%;object-fit:contain;padding:6px;box-sizing:border-box}
+.nimg.cover img{object-fit:cover;padding:0}
+.nimg.txt{background:linear-gradient(135deg,var(--teal),#349381 55%,#89b6ab)}.nimg.txt span{color:#fff;font-family:var(--display);font-size:clamp(16px,1.6vw,20px);font-weight:500;padding:24px;text-align:center;line-height:1.35}
+.nbody{padding:12px 14px 16px;display:grid;gap:6px}
+.nmeta{font-size:12.5px;color:var(--muted)}.nmeta b{color:var(--teal);font-weight:600}
+.ncard .nt{font-size:15px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 </style>
 </head>
 <body>
@@ -659,8 +672,7 @@ const views = {
       ${LANG==="ko" ? `<h1>${a.ko}</h1><p class="ko">Hyper-Intelligent Built Environment Laboratory at <span class="nw">Chung-Ang University</span></p>`
         : `<h1>Hyper-Intelligent Built Environment Laboratory<br>at <span class="nw">Chung-Ang University</span></h1><p class="ko">${a.ko}</p>`}
     </div></div>
-    <section class="wrap news"><h2>News</h2><ul class="news-list" id="newsList">${newsItems().slice(0,NEWS_N).map((n,x)=>`<li><button type="button" data-x="${x}"><span class="nd">${newsDate(n.d)}</span><span class="nc">${T(...n.c)}</span><span class="nt">${esc(n.t)}</span></button></li>`).join("")}</ul>
-      ${newsItems().length>NEWS_N?`<button type="button" class="news-more" id="newsMore">${T("More news","소식 더 보기")}</button>`:""}</section>`;
+    <section class="wrap news"><h2>News</h2><div class="nfeed" id="newsFeed"></div><div class="sentinel" id="newsSentinel"></div><div class="feed-end" id="newsEnd" hidden></div></section>`;
   },
   about(){
     const a = SITE.about;
@@ -770,13 +782,13 @@ const authors=(a,corr)=>{let h=esc(a);if(corr)h=h.replace(esc(corr),esc(corr)+"<
 let NEWS_OPEN=null, NEWS_N=8;
 function newsItems(){
   const out=[],pad=d=>(d+"-00-00").slice(0,10),L=(en,ko)=>LANG==="ko"&&ko?ko:en;
-  AWARDS.forEach((a,k)=>a.date&&out.push({d:a.date,c:["Award","수상"],t:L(a.news||`Received the ${a.title}`,a.newsKo||`${a.title} 수상`),go:["awards",k]}));
-  OLD_POSTS.forEach(p=>p.date&&out.push({d:p.date,c:p.cat==="conf"?["Conference","학술대회"]:["Event","행사"],t:L(p.news||(p.cat==="conf"?`Attended ${p.title}`:p.title),p.newsKo||(p.cat==="conf"?`${p.title} 참석`:p.title)),go:["activities",p.id]}));
+  AWARDS.forEach((a,k)=>a.date&&out.push({d:a.date,c:["Award","수상"],t:L(a.news||`Received the ${a.title}`,a.newsKo||`${a.title} 수상`),img:a.imgs?.[0],fit:"contain",go:["awards",k]}));
+  OLD_POSTS.forEach(p=>p.date&&out.push({d:p.date,c:p.cat==="conf"?["Conference","학술대회"]:["Event","행사"],t:L(p.news||(p.cat==="conf"?`Attended ${p.title}`:p.title),p.newsKo||(p.cat==="conf"?`${p.title} 참석`:p.title)),img:p.imgs?.[0],fit:"cover",go:["activities",p.id]}));
   SITE.projects.forEach((t,i)=>{const f=SITE.projectInfo?.[i]||{},m=String(f.period||"").match(/^(\d{4})\.(\d{2})/);if(!m)return;
     const r=f.role?` as ${f.role}`:"",rk=f.role?`(${f.role}) `:"";
-    out.push({d:`${m[1]}-${m[2]}`,c:["New project","과제 수주"],t:L(`Launched a new project${r}: ${t}${f.funder?`, funded by ${f.funder}`:""}`,`신규 과제 ${rk}수주: ${t}${f.funder?` (${pFunder(f)})`:""}`),go:["projects",i]});});
-  SITE.pubs.forEach((r,k)=>{const j=r[0]==="sci"||r[0]==="kci",v=String(r[4]||"").split(/,| \d/)[0].trim();
-    out.push({d:r[8]||String(r[1]),c:j?["New paper","논문 게재"]:["Presentation","학술 발표"],t:j?L(`Published in ${v}: “${r[3]}”`,`${v} 논문 게재: “${r[3]}”`):L(`Presented “${r[3]}” at ${v}`,`${v} 발표: “${r[3]}”`),go:["publications",k]});});
+    out.push({d:`${m[1]}-${m[2]}`,c:["New project","과제 수주"],t:L(`Launched a new project${r}: ${t}${f.funder?`, funded by ${f.funder}`:""}`,`신규 과제 ${rk}수주: ${t}${f.funder?` (${pFunder(f)})`:""}`),img:SITE.projectImgs?.[i],fit:"contain",go:["projects",i]});});
+  SITE.pubs.forEach((r,k)=>{const j=r[0]==="sci"||r[0]==="kci",vs=String(r[4]||""),pm=vs.match(/Presented in ([^,]+)/),v=(pm?pm[1]:vs.split(",")[0]).replace(/\.$/,"").trim();
+    out.push({d:r[8]||String(r[1]),c:j?["New paper","논문 게재"]:["Presentation","학술 발표"],t:j?L(`Published in ${v}: “${r[3]}”`,`${v} 논문 게재: “${r[3]}”`):L(`Presented “${r[3]}” at ${v}`,`${v} 발표: “${r[3]}”`),venue:v,go:["publications",k]});});
   return out.sort((a,b)=>pad(b.d).localeCompare(pad(a.d)));
 }
 const newsDate=d=>d.length===4?d:d.replaceAll("-",". ");
@@ -940,10 +952,14 @@ function route(){
     io.observe(document.getElementById("sentinel"));
     render();
   }
-  if(id==="home"){const nl=document.getElementById("newsList");
-    nl.onclick=e=>{const b=e.target.closest("button[data-x]");if(!b)return;const n=newsItems()[+b.dataset.x];NEWS_OPEN={sec:n.go[0],key:n.go[1]};
-      if(n.go[0]==="awards")AWYEAR="all";if(n.go[0]==="projects")PROJFILTER="all";location.hash="#"+n.go[0];};
-    const mo=document.getElementById("newsMore");if(mo)mo.onclick=()=>{NEWS_N+=8;const y=scrollY;route();window.scrollTo(0,y);};}
+  if(id==="home"){const feed=document.getElementById("newsFeed"),ALL=newsItems(),PAGE=9;let shown=0;
+    const card=(n,x)=>`<button type="button" class="ncard" data-x="${x}"><div class="nimg${n.img?(n.fit==="cover"?" cover":""):" txt"}">${n.img?`<img src="${n.img}" alt="" loading="lazy">`:`<span>${esc(n.venue||"")}</span>`}</div>
+      <div class="nbody"><span class="nmeta"><b>${T(...n.c)}</b> · ${newsDate(n.d)}</span><span class="nt">${esc(n.t)}</span></div></button>`;
+    const more=()=>{if(shown>=ALL.length)return;feed.insertAdjacentHTML("beforeend",ALL.slice(shown,shown+PAGE).map((n,k)=>card(n,shown+k)).join(""));shown=Math.min(ALL.length,shown+PAGE);
+      const end=document.getElementById("newsEnd");end.hidden=shown<ALL.length;end.textContent=T("You're all caught up.","모든 소식을 다 봤습니다.");};
+    more();new IntersectionObserver(es=>{if(es[0].isIntersecting)more();},{rootMargin:"500px"}).observe(document.getElementById("newsSentinel"));
+    feed.onclick=e=>{const b=e.target.closest(".ncard");if(!b)return;const n=ALL[+b.dataset.x];NEWS_OPEN={sec:n.go[0],key:n.go[1]};
+      if(n.go[0]==="awards")AWYEAR="all";if(n.go[0]==="projects")PROJFILTER="all";location.hash="#"+n.go[0];};}
   if(id==="admin") admRender();
   if(id==="join"){
     document.getElementById("copy").addEventListener("click", e=>{
