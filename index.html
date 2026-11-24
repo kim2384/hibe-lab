@@ -590,11 +590,11 @@ const views = {
         <p class="pi-cites"><b>${CITES_TOTAL}</b>${CITES_SCHOLAR?T(` citations (Google Scholar, ${CITES_DATE})`,`회 인용 (구글 스칼라, ${CITES_DATE} 기준)`):T(`citations to papers with a DOI (OpenAlex, ${CITES_DATE})`,`회 인용 · DOI 등록 논문 합계 (OpenAlex, ${CITES_DATE} 기준)`)}</p>
       </div></div>
       <div class="cv-grid">
+        <div><h3>${T("Research Interests","연구 분야")}</h3><ul class="plain">${ko("pi.interests",p.interests).map(i=>`<li>${i}</li>`).join("")}</ul></div>
         <div><h3>${T("Education","학력")}</h3><ul class="tl edu-tl">${p.education.map((e,i)=>{const k=ko("pi.education",[])[i]||{};const d=LANG==="ko"?{...e,...k}:e;return `<li><span class="y">${e.year}</span>
           <span>${esc(d.degree)}, ${d.school}${(d.place==="Seoul, Korea"||d.place==="서울")?"":", "+d.place}</span>
           <span class="edu-logo">${e.logo?`<img src="${e.logo}" alt="${e.school}"${e.seal?' class="seal"':""}>`:`<span class="ph">${e.school}</span>`}</span></li>`}).join("")}</ul></div>
         <div><h3>${T("Professional Experience","경력")}</h3>${tl(ko("pi.experience",p.experience))}</div>
-        <div><h3>${T("Research Interests","연구 분야")}</h3><ul class="plain">${ko("pi.interests",p.interests).map(i=>`<li>${i}</li>`).join("")}</ul></div>
         <div><h3>${T("Affiliations","학회 활동")}</h3><ul class="plain">${ko("pi.affiliations",p.affiliations).map(i=>`<li>${i}</li>`).join("")}</ul></div>
         <div><h3>${T("Teaching · Undergraduate","강의 · 학부")}</h3>${courses(ko("pi.undergrad",p.undergrad))}</div>
         <div><h3>${T("Teaching · Graduate","강의 · 대학원")}</h3>${courses(ko("pi.grad",p.grad))}</div>
