@@ -317,8 +317,8 @@ p{max-width:68ch}
 .post p{white-space:pre-line;margin:0;font-size:13.5px;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;align-self:start;line-height:1.6;max-height:3.2em}
 .post .sample{justify-self:start;font-size:12px;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--muted)}
 .post .del{justify-self:start;font:inherit;font-size:12px;background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
-.ig{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
-.ig-tile{position:relative;aspect-ratio:1;border:0;padding:0;margin:0;overflow:hidden;cursor:pointer;background:#eef0f1;font:inherit;color:inherit;display:block}
+.ig{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ig-tile{position:relative;aspect-ratio:1;border:0;padding:0;margin:0;overflow:hidden;border-radius:10px;cursor:pointer;background:#eef0f1;font:inherit;color:inherit;display:block}
 .ig-tile img{width:100%;height:100%;object-fit:contain;padding:2px;box-sizing:border-box;display:block;transition:transform .25s}
 .ig-tile .cnt{position:absolute;right:8px;top:8px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;border-radius:999px;padding:2px 8px}
 .ig-noimg{display:grid;place-items:center;height:100%;padding:12px;font-size:13px}
@@ -339,6 +339,17 @@ p{max-width:68ch}
 .aw-body h3{margin:0;font-size:15.5px;font-weight:500;line-height:1.45}
 .aw-body p{margin:0;font-size:13.5px;color:var(--muted);white-space:pre-line;line-height:1.6}
 @media (max-width:560px){.award{grid-template-columns:88px 1fr;gap:12px}}
+.igs{position:relative;background:#f1f2f3}
+.igs-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}.igs-track::-webkit-scrollbar{display:none}
+.igs-s{flex:0 0 100%;scroll-snap-align:center;height:min(68vh,640px);display:grid;place-items:center}
+.igs-s img{max-width:100%;max-height:100%;object-fit:contain;display:block;cursor:zoom-in}
+.igs-b{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#123;font-size:22px;line-height:1;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.2)}
+.igs-p{left:12px}.igs-n{right:12px}.igs-b[hidden]{display:none}
+.igs-c{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;border-radius:999px;padding:2px 9px}
+.igs-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px}
+.igs-dots i{width:7px;height:7px;border-radius:50%;background:rgba(0,0,0,.25)}.igs-dots i.on{background:var(--teal)}
+.modal-box.max .igs-s{height:72vh}
+@media (max-width:560px){.igs-s{height:min(58vh,420px)}.igs-b{width:34px;height:34px;font-size:19px}}
 .gal{display:grid;gap:8px;padding:8px}
 .gal img{width:100%;height:auto;border-radius:8px;display:block;cursor:zoom-in}
 .lb{position:fixed;inset:0;z-index:1000;background:rgba(10,12,14,.94);display:grid;place-items:center}
@@ -705,7 +716,14 @@ function openLightbox(urls,i){
   lb.addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>50)show(i+(dx<0?1:-1));});
   show(i);lb.querySelector(".lb-x").focus();
 }
-document.getElementById("mContent").addEventListener("click",e=>{const g=e.target.closest(".gal img");if(g&&$mc._full)openLightbox($mc._full,+g.dataset.i);});
+/* 게시물 사진: 인스타그램처럼 한 장씩 넘겨 보기 */
+const galHTML=imgs=>!imgs.length?"":`<div class="igs"><div class="igs-track">${imgs.map((u,j)=>`<div class="igs-s"><img src="${u}" alt="" data-i="${j}"${j?' loading="lazy"':""}></div>`).join("")}</div>${imgs.length>1?`<button class="igs-b igs-p" type="button" aria-label="Previous photo" hidden>‹</button><button class="igs-b igs-n" type="button" aria-label="Next photo">›</button><span class="igs-c">1 / ${imgs.length}</span><div class="igs-dots">${imgs.map((_,j)=>`<i${j?"":' class="on"'}></i>`).join("")}</div>`:""}</div>`;
+$mc.addEventListener("click",e=>{
+  const b=e.target.closest(".igs-b");if(b){const t=b.parentNode.querySelector(".igs-track");t.scrollBy({left:(b.classList.contains("igs-n")?1:-1)*t.clientWidth,behavior:"smooth"});return;}
+  const g=e.target.closest(".gal img, .igs img");if(g&&$mc._full)openLightbox($mc._full,+g.dataset.i);});
+$mc.addEventListener("scroll",e=>{const t=e.target;if(!t.classList||!t.classList.contains("igs-track"))return;const n=t.children.length,i=Math.round(t.scrollLeft/t.clientWidth),w=t.parentNode;
+  w.querySelectorAll(".igs-dots i").forEach((d,j)=>d.classList.toggle("on",j===i));const c=w.querySelector(".igs-c");if(c)c.textContent=`${i+1} / ${n}`;
+  const pv=w.querySelector(".igs-p"),nx=w.querySelector(".igs-n");if(pv)pv.hidden=i===0;if(nx)nx.hidden=i===n-1;},true);
 const todo=()=>`<span class="todo">${T("Not on the current site yet. It will show here once added in the admin tool.","원본 사이트에 없는 정보입니다. 관리툴에서 입력하면 표시됩니다.")}</span>`;
 function openModal(html){$mc.innerHTML=html;const bx=$modal.querySelector(".modal-box");bx.classList.remove("max");bx.style.width=bx.style.height="";bx.scrollTop=0;document.getElementById("mMax").textContent="⤢";$modal.hidden=false;document.getElementById("mClose").focus();}
 document.getElementById("mMax").onclick=()=>{const bx=$modal.querySelector(".modal-box"),on=bx.classList.toggle("max");document.getElementById("mMax").textContent=on?"⤡":"⤢";};
@@ -788,7 +806,7 @@ function route(){
     more();
     const awIo=new IntersectionObserver(es=>{if(es[0].isIntersecting)more();},{rootMargin:"400px"});awIo.observe(document.getElementById("awSentinel"));
     const list=grid;
-    const openAw=k=>{const a=AWARDS[k];openModal(`${a.imgs.length?`<div class="gal">${a.imgs.map((u,j)=>`<img src="${u}" alt="" data-i="${j}">`).join("")}</div>`:""}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${a.date.replaceAll("-",". ")}</span><h3 id="mTitle">${esc(a.title)}</h3>${a.text?`<div class="ptext">${esc(a.text)}</div>`:""}</div>`);$mc._full=a.full||a.imgs;};
+    const openAw=k=>{const a=AWARDS[k];openModal(`${galHTML(a.imgs)}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${a.date.replaceAll("-",". ")}</span><h3 id="mTitle">${esc(a.title)}</h3>${a.text?`<div class="ptext">${esc(a.text)}</div>`:""}</div>`);$mc._full=a.full||a.imgs;};
     list.addEventListener("click",e=>{const t=e.target.closest(".ig-tile");if(t)openAw(+t.dataset.k);});
   }
   if(id==="activities"){
@@ -808,7 +826,7 @@ function route(){
       document.getElementById("feedEnd").hidden=!(list.length>PAGE&&shown>=list.length);document.getElementById("feedEnd").textContent=T("You have seen all posts.","모든 게시물을 다 봤습니다.");
       document.getElementById("feed").innerHTML=list.slice(0,shown).map(card).join("")||`<div class="empty">${T("No posts in this category yet. Use \"+ New post\" to add one.","이 분류에는 아직 게시물이 없습니다. 오른쪽 위 \"+ 새 게시물\"로 올려 보세요.")}</div>`;};
     const openPost=id=>{const p=all().find(x=>x.id===id);if(!p)return;
-      openModal(`${p.imgs.length?`<div class="gal">${p.imgs.map((u,j)=>`<img src="${u}" alt="" data-i="${j}">`).join("")}</div>`:""}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${p.date?p.date.replaceAll("-",". ")+" · ":""}${esc(catName[p.cat])}</span><h3 id="mTitle">${esc(p.title)}</h3>${p.text?`<div class="ptext">${esc(p.text)}</div>`:""}</div>`);$mc._full=p.full||p.imgs;};
+      openModal(`${galHTML(p.imgs)}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${p.date?p.date.replaceAll("-",". ")+" · ":""}${esc(catName[p.cat])}</span><h3 id="mTitle">${esc(p.title)}</h3>${p.text?`<div class="ptext">${esc(p.text)}</div>`:""}</div>`);$mc._full=p.full||p.imgs;};
     document.getElementById("actSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;filter=b.dataset.c;
       document.querySelectorAll("#actSeg button").forEach(x=>x.setAttribute("aria-pressed",x===b));render();});
     const feed=document.getElementById("feed");
