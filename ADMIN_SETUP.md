@@ -2,7 +2,9 @@
 
 홈페이지 맨 아래 **Admin** 을 누르면 관리자 로그인 화면이 나옵니다. 관리자는 **GitHub 계정으로 로그인**해서 활동·수상·연구과제·구성원·논문을 홈페이지 안에서 바로 추가·수정·삭제하고, 다른 관리자를 초대할 수 있습니다.
 
-- 관리자 = 이 저장소(`kim2384/hibe-lab`)에 쓰기 권한이 있는 GitHub 계정
+- **관리자 (P.I. 등)** = 이 저장소(`kim2384/hibe-lab`)에 쓰기 권한이 있는 GitHub 계정. 모든 메뉴를 편집하고 관리자·학생을 추가합니다. 홈페이지 구조·디자인은 저장소의 `index.html`을 직접(또는 클로드에게 부탁해) 고칩니다.
+- **학생 연구원** = 관리 화면 '관리자' 탭의 학생 명단에 넣은 GitHub 계정. 저장소 권한 없이 **활동·수상·논문**만 추가·수정·삭제할 수 있습니다. 이 제한은 Worker가 서버에서 막기 때문에 다른 방법으로 우회할 수 없습니다.
+- **자동 작성** = 관리 화면 맨 위에 상장 사진, 논문 PDF, 연구개발계획서, 행사 사진 등을 올리면 어느 메뉴에 무엇을 쓸지 초안을 만들어 줍니다. 초안은 저장 전에 꼭 확인합니다.
 - 저장하면 내용은 `content/<메뉴>.json`, 사진은 `images/uploads/` 에 커밋되고 **1~2분 뒤** 홈페이지에 반영됩니다.
 - 모든 수정이 저장소 기록(커밋)으로 남으므로, 잘못 고쳐도 GitHub에서 이전 버전으로 되돌릴 수 있습니다.
 
@@ -34,9 +36,18 @@ Cloudflare의 Worker 화면 **Settings > Variables and Secrets > Add** 에서:
 | `GITHUB_CLIENT_SECRET` | **Secret** | 3번의 client secret |
 | `SITE_ORIGINS` | Text | `https://kim2384.github.io` (경로 없이 주소 앞부분만. 학교 도메인을 연결하면 쉼표로 추가: `https://kim2384.github.io,https://hibe.cau.ac.kr`) |
 | `GITHUB_REPO` | Text | `kim2384/hibe-lab` |
-| `ANTHROPIC_API_KEY` | **Secret** | (선택) 연구개발계획서 PDF로 과제 자동 작성을 쓸 때만 |
+| `GITHUB_WRITE_TOKEN` | **Secret** | 학생 연구원 저장용 토큰 (아래 4-1) |
+| `ANTHROPIC_API_KEY` | **Secret** | 자동 작성(파일 → 초안)과 연구개발계획서 요약을 쓸 때. https://console.anthropic.com 에서 발급 |
 
-비밀 키(client secret, API 키)는 이 화면에만 넣고 다른 곳(채팅, 메일, 저장소)에 붙여넣지 마세요.
+### 4-1. 학생 연구원 저장용 토큰 만들기
+학생은 저장소 권한이 없으므로, 학생이 저장하면 Worker가 이 토큰으로 대신 저장합니다. 이 토큰은 이 저장소의 파일 읽기·쓰기만 할 수 있습니다.
+1. https://github.com/settings/personal-access-tokens/new (Fine-grained token)
+2. Token name: `hibe-admin-worker`, Expiration: 가능한 길게(만료되면 새로 만들어 다시 넣으면 됩니다)
+3. Repository access: **Only select repositories** → `kim2384/hibe-lab`
+4. Permissions > Repository permissions > **Contents: Read and write** (다른 권한은 건드리지 않음)
+5. Generate token → 나온 값을 Worker의 `GITHUB_WRITE_TOKEN`(Secret)에 넣습니다.
+
+비밀 키(client secret, API 키, 토큰)는 이 화면에만 넣고 다른 곳(채팅, 메일, 저장소)에 붙여넣지 마세요.
 
 ## 5. 홈페이지에 Worker 주소 넣기
 `index.html` 에서 아래 줄에 2번의 Worker 주소를 넣습니다. 공개돼도 괜찮은 값이라 클로드에게 알려 주셔도 됩니다.
@@ -47,8 +58,10 @@ const GH_AUTH = "https://hibe-admin.hyde1207.workers.dev";
 
 ## 6. 첫 로그인과 관리자 추가
 1. 홈페이지 맨 아래 **Admin > GitHub로 로그인**. 처음 한 번은 GitHub가 권한 승인을 묻습니다.
-2. **관리자** 탭에서 추가할 분의 GitHub 아이디로 초대합니다 (초대·삭제는 저장소 소유자만 가능).
-3. 초대받은 분이 GitHub 메일이나 알림에서 수락하면 바로 로그인할 수 있습니다. GitHub 계정은 github.com에서 무료로 만들 수 있습니다.
+2. **관리자** 탭에서
+   - 모든 메뉴를 편집할 관리자: 위쪽 '관리자 초대'에 GitHub 아이디를 넣습니다. 초대받은 분이 GitHub 메일이나 알림에서 수락해야 합니다.
+   - 학생 연구원: 아래쪽 '학생 추가'에 GitHub 아이디를 넣습니다. 수락 절차 없이 바로 로그인할 수 있습니다.
+3. GitHub 계정은 github.com에서 무료로 만들 수 있습니다.
 
 ## 참고
 - 로그인 정보는 그 브라우저 탭에만 보관되고, 탭을 닫으면 사라집니다.
