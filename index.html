@@ -219,6 +219,7 @@ p{max-width:68ch}
 .role-tag.done{border-color:var(--muted);color:var(--muted)}
 .pstats{display:flex;flex-wrap:wrap;gap:16px 40px;margin:0 0 28px}
 .proj-side{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:flex-end;gap:14px 40px;flex:1 1 auto}.proj-side .seg{margin-left:auto}
+.aw-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.aw-head .page-title{margin:0}
 .proj-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px 40px;margin-bottom:14px}.proj-head .page-title,.proj-head .pstats{margin:0}.proj-head .ps b{font-size:24px}
 @media (min-width:900px){.proj-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:end}.proj-head .pstats{justify-self:center}.proj-head .page-title{align-self:start}.proj-side{justify-self:end}}
 .ps{display:grid;gap:4px;align-content:start}
@@ -800,8 +801,7 @@ const views = {
   },
   awards(){
     const yrs=[...new Set(AWARDS.map(a=>(a.date||"").slice(0,4)).filter(Boolean))].sort().reverse();
-    return `<section class="page wrap">${head("","Awards")}
-      <div class="proj-bar"><label class="yr-pick"><span class="sr">${T("Year","연도")}</span><select id="awYears"><option value="all"${AWYEAR==="all"?" selected":""}>${T("All years","전체 연도")}</option>${yrs.map(y=>`<option value="${y}"${AWYEAR===y?" selected":""}>${y}</option>`).join("")}</select></label></div>
+    return `<section class="page wrap"><div class="aw-head">${head("","Awards")}<label class="yr-pick"><span class="sr">${T("Year","연도")}</span><select id="awYears"><option value="all"${AWYEAR==="all"?" selected":""}>${T("All years","전체 연도")}</option>${yrs.map(y=>`<option value="${y}"${AWYEAR===y?" selected":""}>${y}</option>`).join("")}</select></label></div>
       <div class="ig" id="igGrid"></div><div class="sentinel" id="awSentinel"></div><div class="feed-end" id="awEnd" hidden></div></section>`;
   },
   activities(){
