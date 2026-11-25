@@ -905,7 +905,10 @@ function openCV(url,name){const local=!/^https?:/i.test(url)||url.startsWith(loc
     <iframe src="${esc(src)}${local?"#view=FitH":""}" title="CV" allow="fullscreen"></iframe></div>`);
   $modal.querySelector(".modal-box").classList.add("max","cv-box");document.getElementById("mMax").textContent="⤡";
   document.getElementById("cvPrint")?.addEventListener("click",()=>{try{$mc.querySelector("iframe").contentWindow.print();}catch(e){window.open(src,"_blank");}});}
-document.addEventListener("click",e=>{const a=e.target.closest("a[data-cv]");if(!a||e.ctrlKey||e.metaKey)return;e.preventDefault();openCV(a.getAttribute("href"),a.dataset.cv);});
+/* CV는 별도 브라우저 창(팝업)으로 열기: PDF는 브라우저 PDF 뷰어(확대·축소·인쇄), 드라이브 링크는 드라이브 화면 */
+document.addEventListener("click",e=>{const a=e.target.closest("a[data-cv]");if(!a||e.ctrlKey||e.metaKey)return;e.preventDefault();
+  const u=new URL(a.getAttribute("href"),location.href).href,w=Math.min(960,screen.availWidth-40),h=screen.availHeight-60;
+  const win=window.open(u,"hibeCV",`popup=yes,width=${w},height=${h},left=${Math.max(0,(screen.availWidth-w)/2)},top=20`);if(win)win.focus();else openCV(a.getAttribute("href"),a.dataset.cv);});
 function openModal(html){$modal.querySelector(".modal-box")?.classList.remove("cv-box");$mc.innerHTML=html;const bx=$modal.querySelector(".modal-box");bx.classList.remove("max");bx.style.width=bx.style.height="";bx.scrollTop=0;document.getElementById("mMax").textContent="⤢";$modal.hidden=false;document.getElementById("mClose").focus();}
 document.getElementById("mMax").onclick=()=>{const bx=$modal.querySelector(".modal-box"),on=bx.classList.toggle("max");document.getElementById("mMax").textContent=on?"⤡":"⤢";};
 function closeModal(){$modal.hidden=true;}
