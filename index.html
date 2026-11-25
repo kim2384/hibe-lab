@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="color-scheme" content="only light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>hibe lab | Chung-Ang University</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,13 +19,8 @@ body{margin:0}
   --body:"Roboto","Noto Sans KR",Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --mono:"Roboto Mono",ui-monospace,Menlo,Consolas,monospace;
   --nav-bg:rgba(246,248,247,.9);
+  color-scheme:only light;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0e1513; --surface:#151f1c; --ink:#e6eeeb; --muted:#97a8a3; --line:#25332f;
-  --teal:#4cc3a7; --teal-soft:#16302a; --sun:#f3b24a; --nav-bg:rgba(14,21,19,.9); color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0e1513; --surface:#151f1c; --ink:#e6eeeb; --muted:#97a8a3; --line:#25332f;
-  --teal:#4cc3a7; --teal-soft:#16302a; --sun:#f3b24a; --nav-bg:rgba(14,21,19,.9); color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--nav-bg)}
@@ -49,9 +45,6 @@ header .wrap{display:flex;align-items:center;gap:16px;padding-block:9px;flex-wra
 .brand small{display:block;font-family:var(--body);font-weight:500;font-size:11px;color:var(--muted);letter-spacing:.02em}
 .brand img{display:block;height:32px;width:auto}
 .logo-d{display:none!important}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .logo-l{display:none!important}:root:not([data-theme="light"]) .logo-d{display:block!important}}
-:root[data-theme="dark"] .logo-l{display:none!important}
-:root[data-theme="dark"] .logo-d{display:block!important}
 nav{margin-left:auto;display:flex;gap:2px;flex-wrap:wrap}
 nav a{font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px}
 nav a:hover{color:var(--teal)}
@@ -99,8 +92,6 @@ p{max-width:68ch}
 .hero{padding-block:24px 8px}
 .hero h1{font-size:clamp(24px,3.4vw,38px);font-weight:500;margin:0 0 10px;line-height:1.2;color:var(--h1a);background:linear-gradient(180deg,var(--h1a) 0%,var(--h1b) 55%,var(--h1c) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 :root{--h1a:#0b7162;--h1b:#349381;--h1c:#89b6ab;--card-gray:#949495}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--h1a:#4cc3a7;--h1b:#6fb9a8;--h1c:#a3c6bd;--card-gray:#a3a3a4}}
-:root[data-theme="dark"]{--h1a:#4cc3a7;--h1b:#6fb9a8;--h1c:#a3c6bd;--card-gray:#a3a3a4}
 .hero h1 .nw{white-space:nowrap}
 .hero .ko{font-size:clamp(15px,1.9vw,18px);color:var(--card-gray);margin:0 0 12px;font-weight:500}
 .hero .tag{font-family:var(--display);font-weight:700;font-size:20px;color:var(--teal);margin:0 0 8px}
@@ -166,8 +157,6 @@ p{max-width:68ch}
 .edu-logo{width:136px;height:83px;display:flex;align-items:center;justify-content:center}
 .edu-logo img{width:83px;height:83px;object-fit:contain;display:block}
 .edu-logo img[alt="Yonsei University"]{width:77px;height:77px}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .edu-logo img{background:#fff;padding:6px;border-radius:6px}}
-:root[data-theme="dark"] .edu-logo img{background:#fff;padding:6px;border-radius:6px}
 .edu-logo .ph{width:100%;height:100%;border:1px dashed var(--line);border-radius:6px;display:grid;place-content:center;text-align:center;font-size:10.5px;line-height:1.2;color:var(--muted);padding:0 4px}
 @media (max-width:480px){.edu-tl li{grid-template-columns:52px 1fr}.edu-tl .edu-logo{grid-column:2;justify-content:flex-start}}
 
