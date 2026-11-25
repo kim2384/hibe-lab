@@ -1070,7 +1070,7 @@ const GH_BRANCH = "main";
 const GH_AUTH = "https://hibe-admin.hyde1207.workers.dev";   // 로그인 중계 Worker 주소 (예: https://hibe-admin.아이디.workers.dev). 비어 있으면 관리자 기능이 꺼져 있음
 var GH_TOKEN = null, ADMIN = null, ADMTAB = "posts", ADM_NEW = null, ADM_AUTO = {files:[],out:null};
 /* 학생 연구원이 편집할 수 있는 메뉴 (Worker의 STUDENT_PATHS와 맞춰야 함) */
-const STUDENT_KEYS = ["posts","awards","pubs"];
+const STUDENT_KEYS = ["posts","awards","projects","pubs"];
 const admKeys = () => ADMIN?.student ? STUDENT_KEYS : ADM_KEYS;
 const CONTENT_SHA = {};
 
@@ -1350,13 +1350,13 @@ async function admAdmins(){
     admAdmins();};
   admStudents(body);
 }
-/* 학생 연구원: 저장소 권한 없이, 활동·수상·논문만 편집 (명단은 content/roles.json) */
+/* 학생 연구원: 저장소 권한 없이, 활동·수상·연구과제·논문만 편집 (명단은 content/roles.json) */
 async function admStudents(body){
   const sec=document.createElement("div");sec.className="adm-students";body.appendChild(sec);
   const roles=await rolesLoad(),list=roles.data.students;
-  sec.innerHTML=`<h3>학생 연구원 <small>활동·수상·논문만 추가·수정·삭제</small></h3>
+  sec.innerHTML=`<h3>학생 연구원 <small>활동·수상·연구과제·논문만 추가·수정·삭제</small></h3>
     <form class="adm-head" id="admStuForm"><input id="admStuId" placeholder="GitHub 아이디" required autocomplete="off"><input id="admStuName" placeholder="이름 (선택)" autocomplete="off"><button class="btn-post">학생 추가</button></form>
-    <p class="adm-note">학생은 저장소 초대가 필요 없습니다. 여기에 GitHub 아이디를 넣으면 바로 'GitHub로 로그인'으로 들어와 활동·수상·논문 메뉴만 편집할 수 있습니다. 위의 관리자는 모든 메뉴를 편집합니다.</p>
+    <p class="adm-note">학생은 저장소 초대가 필요 없습니다. 여기에 GitHub 아이디를 넣으면 바로 'GitHub로 로그인'으로 들어와 활동·수상·연구과제·논문 메뉴만 편집할 수 있습니다. 위의 관리자는 모든 메뉴를 편집합니다.</p>
     <ul class="adm-list">${list.length?list.map((x,j)=>`<li data-j="${j}"><div class="adm-th"><img src="https://github.com/${encodeURIComponent(x.login)}.png?size=96" alt=""></div><div class="adm-tx"><b>${esc(x.login)}</b><small>${esc(x.name||"학생 연구원")}</small></div><div class="adm-act"><button type="button" class="danger" data-s="rm">삭제</button></div></li>`).join(""):`<li><div class="adm-tx"><small>아직 없습니다.</small></div></li>`}</ul>`;
   const save=async(next,what)=>{const r=await ghApi(`/repos/${GH_REPO}/contents/content/roles.json`,{method:"PUT",body:JSON.stringify({message:`관리 화면: 학생 연구원 ${what} (${ADMIN.login})`,branch:GH_BRANCH,content:b64(JSON.stringify({students:next},null,1)+"\n"),...(roles.sha?{sha:roles.sha}:{})})});
     if(!r.ok)alert("저장하지 못했습니다: "+((await r.json().catch(()=>({}))).message||r.status));sec.remove();admStudents(body);};
