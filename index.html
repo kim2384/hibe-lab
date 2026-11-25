@@ -178,7 +178,8 @@ p{max-width:68ch}
 .member .avatar{width:100%;max-width:150px;height:auto;aspect-ratio:5/6;font-size:28px;margin-bottom:10px}
 .member .role{margin:0}
 .member{display:flex;flex-direction:column;align-items:center}
-.member ul.m-ints{list-style:none;margin:12px 0 0;padding:0;font-size:12.5px;line-height:1.4;color:var(--muted);display:grid;gap:3px}.member ul.m-ints li{margin:0;padding:0}
+.members .member .role{margin:2px 0 0}
+.member ul.m-ints{list-style:none;margin:8px 0 0;padding:0;font-size:12.5px;line-height:1.4;color:var(--muted);display:grid;gap:3px}.member ul.m-ints li{margin:0;padding:0}
 .member .m-links{margin-top:auto;padding-top:14px}
 .m-links{display:flex;gap:8px;justify-content:center;margin-top:12px;font-size:12.5px}.m-links a{display:inline-flex;align-items:center;gap:5px;color:var(--teal);font-weight:500;text-decoration:none;padding:4px 10px;border-radius:999px;background:var(--teal-soft);transition:background .15s,color .15s}.m-links a:hover{background:var(--teal);color:#fff}
 .role .r1,.role .r2{display:inline-block;white-space:nowrap}.role .r2{font-size:.86em;opacity:.75;margin-left:6px;white-space:nowrap}
@@ -577,14 +578,14 @@ const SITE = {
     grad: [["47555","Building Performance Simulation (건물에너지분석)"],["58184","Building Illumination & Daylighting Seminar (건물빛환경세미나)"],["51811","Advanced Building Systems Seminar (첨단건축설비세미나)"]]
   },
   members: [
-    {group:"Graduate Research Assistants", name:"Yoon, Daemin", role:"Master's Researcher (2nd year)", interests:["Urban Energy Modelling","Photovoltaics (BAPV & BIPV)","High Dynamic Range Imaging"], email:"ydm900407@cau.ac.kr", cv:"https://drive.google.com/file/d/19P3FS9rpUyyx5Xuuqbl-lKyQYYIBVIL9/view", photo:"images/members/yoon-daemin.webp"},
-    {group:"Graduate Research Assistants", name:"Cho, Hyung Joon", role:"Master's Researcher (1st year)", interests:["Urban Energy Modelling & Building Digital Twin","Building Envelopes","Photovoltaics (BAPV & BIPV)"], email:"ericcho@cau.ac.kr", cv:"https://drive.google.com/file/d/1-N5zmfSSCq8dcr-5Oy97RdkEKnVVCCc3/view", photo:"images/members/cho-hyungjoon.webp"},
-    {group:"Graduate Research Assistants", name:"Jang, Hyeonjin", role:"Master's Researcher (1st year)", interests:["Urban Energy Modeling","Machine Learning","Photovoltaics (BAPV & BIPV)"], email:"jhyeonjin74@cau.ac.kr", cv:"https://drive.google.com/file/d/15rDHrS8Y6_thkq65Xzi7-fw4DgbGtro1/view", photo:"images/members/jang-hyeonjin.webp"},
-    {group:"Graduate Research Assistants", name:"Kang, Kyungmin", role:"Master's Researcher (1st year)", interests:["Human-Centric Lighting Environment","HDR Image-Based Daylighting Simulation","Computer Vision"], email:"stars9207@cau.ac.kr", cv:"https://drive.google.com/file/d/1u584UgEu9HKXxVzXPG5DV6Dkkn1TY4-4/view?usp=sharing", photo:"images/members/kang-kyungmin.webp"},
-    {group:"Undergraduate Research Assistants", name:"Kang, Yeongjun", role:"Undergrad. Researcher (Senior)", interests:["Human-Centric Lighting & Visual Comfort","Daylighting (Simulation & Control)","Building Performance(Energy) Modeling"], email:"thunder11@cau.ac.kr", cv:"https://drive.google.com/file/d/1r0QFl0szulEZNIT_DMkF0fM-jqrqoCO4/view?usp=drive_link", photo:"images/members/kang-yeongjun.webp"},
-    {group:"Undergraduate Research Assistants", name:"Lee, Sunghyun", role:"Undergrad. Researcher (Senior)", interests:["Daylighting (Simulation & Control)","Building Envelopes","Building Performance (Energy) Modelling"], email:"sunghyun05@cau.ac.kr", cv:"https://docs.google.com/document/d/17fBvpKJE_GMO9QNgzh0GdSNwbC7r6Wvb6tVAWakZ_Fc/edit?usp=sharing", photo:"images/members/lee-sunghyun.webp"},
-    {group:"Undergraduate Research Assistants", name:"Yong, Taehyun", role:"Undergrad. Researcher (Senior)", interests:["Urban Energy Modelling","Building Energy Performance","Photovoltaic (PV) System Design"], email:"yth0428@cau.ac.kr", cv:"https://docs.google.com/document/d/1Y2FXMtRTQ6a8RDGVvOb--Mdhdj0T3N0p/edit?usp=drive_link", photo:"images/members/yong-taehyun.webp"},
-    {group:"Undergraduate Research Assistants", name:"Kim, Yunseong", role:"Undergrad. Researcher (Senior)", interests:["Urban energy modeling","Daylighting (Simulation & Control)","Building Performance (Energy) Modelling"], email:"mc3061@cau.ac.kr", cv:"https://docs.google.com/document/d/1SYJ6Byc4zQm7tswzJhnSR9LQ7wk9U44X/edit?usp=drive_link", photo:"images/members/kim-yunseong.webp"}
+    {group:"Graduate Research Assistants", name:"Yoon, Daemin", role:"Master's Researcher (2nd year)", interests:["Urban Energy Modelling","Photovoltaics (BAPV & BIPV)","High Dynamic Range Imaging"], email:"ydm900407@cau.ac.kr", cv:"", photo:"images/members/yoon-daemin.webp"},
+    {group:"Graduate Research Assistants", name:"Cho, Hyung Joon", role:"Master's Researcher (1st year)", interests:["Urban Energy Modelling & Building Digital Twin","Building Envelopes","Photovoltaics (BAPV & BIPV)"], email:"ericcho@cau.ac.kr", cv:"", photo:"images/members/cho-hyungjoon.webp"},
+    {group:"Graduate Research Assistants", name:"Jang, Hyeonjin", role:"Master's Researcher (1st year)", interests:["Urban Energy Modeling","Machine Learning","Photovoltaics (BAPV & BIPV)"], email:"jhyeonjin74@cau.ac.kr", cv:"", photo:"images/members/jang-hyeonjin.webp"},
+    {group:"Graduate Research Assistants", name:"Kang, Kyungmin", role:"Master's Researcher (1st year)", interests:["Human-Centric Lighting Environment","HDR Image-Based Daylighting Simulation","Computer Vision"], email:"stars9207@cau.ac.kr", cv:"", photo:"images/members/kang-kyungmin.webp"},
+    {group:"Undergraduate Research Assistants", name:"Kang, Yeongjun", role:"Undergrad. Researcher (Senior)", interests:["Human-Centric Lighting & Visual Comfort","Daylighting","Building Performance(Energy) Modeling"], email:"thunder11@cau.ac.kr", cv:"", photo:"images/members/kang-yeongjun.webp"},
+    {group:"Undergraduate Research Assistants", name:"Lee, Sunghyun", role:"Undergrad. Researcher (Senior)", interests:["Daylighting","Building Envelopes","Building Performance (Energy) Modelling"], email:"sunghyun05@cau.ac.kr", cv:"", photo:"images/members/lee-sunghyun.webp"},
+    {group:"Undergraduate Research Assistants", name:"Yong, Taehyun", role:"Undergrad. Researcher (Senior)", interests:["Urban Energy Modelling","Building Energy Performance","Photovoltaic (PV) System Design"], email:"yth0428@cau.ac.kr", cv:"", photo:"images/members/yong-taehyun.webp"},
+    {group:"Undergraduate Research Assistants", name:"Kim, Yunseong", role:"Undergrad. Researcher (Senior)", interests:["Urban energy modeling","Daylighting","Building Performance (Energy) Modelling"], email:"mc3061@cau.ac.kr", cv:"", photo:"images/members/kim-yunseong.webp"}
   ],
   projects: [
     "Seoul ANCHOR 10 Challenge",
@@ -771,7 +772,7 @@ const views = {
       <div class="members">${ms.map(m=>`<article class="member"><div class="avatar" aria-hidden="true">${m.photo?`<img src="${m.photo}" alt="" loading="lazy">`:initials(m.name)}</div>
         <h4>${m.name}</h4><div class="role">${roleHTML(m.role)}</div>
         ${m.interests?.length?`<ul class="m-ints">${m.interests.map(i=>`<li>${esc(i)}</li>`).join("")}</ul>`:""}
-        <div class="m-links">${m.email?`<a href="mailto:${esc(m.email)}" title="${esc(m.email)}" aria-label="Email ${esc(m.email)}">${ICON_MAIL}<span>Email</span></a>`:""}${m.cv?`<a href="${esc(m.cv)}" data-cv="${esc(m.name)}" aria-label="CV">${ICON_DOC}<span>CV</span></a>`:""}</div></article>`).join("")}</div>`}).join("")}
+        <div class="m-links">${m.email?`<a href="mailto:${esc(m.email)}" title="${esc(m.email)}" aria-label="Email ${esc(m.email)}">${ICON_MAIL}<span>Email</span></a>`:""}${m.cv&&!/google\.com/.test(m.cv)?`<a href="${esc(m.cv)}" data-cv="${esc(m.name)}" aria-label="CV">${ICON_DOC}<span>CV</span></a>`:""}</div></article>`).join("")}</div>`}).join("")}
     </section>`;
   },
   projects(){
