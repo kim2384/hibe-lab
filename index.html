@@ -428,6 +428,15 @@ form.adm-head input{flex:1;min-width:220px}
 .adm-act{display:flex;gap:6px;flex:none}.adm-act button,.adm-imgs button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:4px 10px;cursor:pointer}
 .adm-act .danger{color:#b3261e}
 .adm-form{display:grid;gap:16px}.adm-f{display:grid;gap:6px;font-size:14px;color:var(--muted)}.adm-f small{font-size:12px}
+.adm-auto{border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:24px;background:var(--surface);display:grid;gap:12px}
+.adm-auto-h{display:grid;gap:4px}.adm-auto-h b{font-size:17px;color:var(--teal)}.adm-auto-h span{font-size:14px;color:var(--muted)}
+.adm-drop{display:block;border:1.5px dashed var(--teal);border-radius:10px;padding:18px;text-align:center;font-size:14px;color:var(--muted);cursor:pointer;background:rgba(52,147,129,.05)}
+.adm-drop.on{background:rgba(52,147,129,.15)}.adm-drop input{display:none}
+.adm-auto textarea{font:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical}
+.adm-auto-act{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.adm-auto-out{border-top:1px solid var(--line);padding-top:12px;display:grid;gap:8px}.adm-auto-out p{margin:0}.adm-auto-out>p:first-child{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.adm .adm-auto-out select{font:inherit;padding:4px 8px;width:auto;display:inline-block}.adm-auto-out .btn-post{justify-self:start}
+.adm-auto-t{font-weight:500}
+.adm-students{margin-top:36px}.adm-students h3{font-size:17px;margin:0 0 12px}.adm-students h3 small{font-size:13px;color:var(--muted);font-weight:400;margin-left:6px}
 .adm-plan{border:1px dashed var(--teal);border-radius:10px;padding:14px;background:rgba(52,147,129,.06)}
 .adm-imgs{display:flex;gap:8px;flex-wrap:wrap}.adm-imgs figure{margin:0;width:110px;display:grid;gap:4px}
 .adm-imgs img{width:110px;height:110px;object-fit:contain;background:#f4f5f6;border-radius:8px}.adm-imgs span{display:flex;gap:4px}.adm-imgs button{padding:2px 7px}
@@ -1067,7 +1076,10 @@ fetch("data/citations.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then
 const GH_REPO = "kim2384/hibe-lab";
 const GH_BRANCH = "main";
 const GH_AUTH = "";   // 로그인 중계 Worker 주소 (예: https://hibe-admin.아이디.workers.dev). 비어 있으면 관리자 기능이 꺼져 있음
-var GH_TOKEN = null, ADMIN = null, ADMTAB = "posts", ADM_NEW = null;
+var GH_TOKEN = null, ADMIN = null, ADMTAB = "posts", ADM_NEW = null, ADM_AUTO = {files:[],out:null};
+/* 학생 연구원이 편집할 수 있는 메뉴 (Worker의 STUDENT_PATHS와 맞춰야 함) */
+const STUDENT_KEYS = ["posts","awards","pubs"];
+const admKeys = () => ADMIN?.student ? STUDENT_KEYS : ADM_KEYS;
 const CONTENT_SHA = {};
 
 /* 편집할 구역: 화면의 데이터와 저장 형식을 서로 바꿔 줌 */
@@ -1110,6 +1122,14 @@ async function contentLoad(){
   if(any){scholarRemap();const y=scrollY;route();window.scrollTo(0,y);}
 }
 function ghApi(path,init={}){return fetch("https://api.github.com"+path,{...init,headers:{Authorization:`Bearer ${GH_TOKEN}`,Accept:"application/vnd.github+json",...(init.body?{"Content-Type":"application/json"}:{}),...(init.headers||{})}});}
+/* 저장: P.I.·관리자는 GitHub에 직접, 학생 연구원은 Worker를 거쳐 (허용된 메뉴만) */
+function ghPut(path,{message,content,sha}){
+  if(!ADMIN?.student)return ghApi(`/repos/${GH_REPO}/contents/${path}`,{method:"PUT",body:JSON.stringify({message,branch:GH_BRANCH,content,...(sha?{sha}:{})})});
+  return fetch(`${GH_AUTH}/put`,{method:"POST",headers:{Authorization:`Bearer ${GH_TOKEN}`,"Content-Type":"application/json"},body:JSON.stringify({path,message,content,sha:sha||""})});}
+/* 학생 연구원 명단 (content/roles.json) */
+async function rolesLoad(){const r=await ghApi(`/repos/${GH_REPO}/contents/content/roles.json?ref=${GH_BRANCH}`);
+  if(!r.ok)return {sha:null,data:{students:[]}};const f=await r.json();
+  try{const d=JSON.parse(unb64(f.content));return {sha:f.sha,data:{students:Array.isArray(d.students)?d.students:[]}};}catch(e){return {sha:f.sha,data:{students:[]}};}}
 const b64=s=>{const u=new TextEncoder().encode(s);let o="";for(let i=0;i<u.length;i+=0x8000)o+=String.fromCharCode(...u.subarray(i,i+0x8000));return btoa(o);};
 const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\s/g,"")),c=>c.charCodeAt(0)));
 /* 관리자: GitHub에서 바로 최신 내용을 읽음 (사이트 반영 전의 수정도 보이도록) */
@@ -1128,7 +1148,10 @@ async function admSession(){
   if(GH_TOKEN){const [u,r]=await Promise.all([ghApi("/user"),ghApi(`/repos/${GH_REPO}`)]);
     if(u.status===401){admLogout();return;}
     const user=u.ok?await u.json():{},perm=r.ok?(await r.json()).permissions||{}:{};
-    ADMIN={login:user.login||"",name:user.name||user.login||"",ok:!!perm.push,owner:!!perm.admin};
+    ADMIN={login:user.login||"",name:user.name||user.login||"",ok:!!perm.push,owner:!!perm.admin,student:false};
+    if(!ADMIN.ok&&ADMIN.login){const roles=await rolesLoad();
+      if((roles.data.students||[]).some(x=>String(x.login||"").toLowerCase()===ADMIN.login.toLowerCase())){ADMIN.ok=true;ADMIN.student=true;}}
+    if(ADMIN.student&&!STUDENT_KEYS.includes(ADMTAB))ADMTAB=STUDENT_KEYS[0];
     if(ADMIN.ok)await ghContentLoad();}
   admBar();if(location.hash==="#admin"||was!==(ADMIN&&ADMIN.ok)){const y=scrollY;route();window.scrollTo(0,y);}
 }
@@ -1154,10 +1177,12 @@ function admRender(){
       <p class="adm-msg" id="admMsg"></p><p class="adm-note">이 홈페이지 저장소(${GH_REPO})에 쓰기 권한이 있는 GitHub 계정만 내용을 고칠 수 있습니다. 권한은 기존 관리자가 '관리자' 탭에서 초대합니다.</p></div>`;
     root.querySelector("#admGh").onclick=admLogin;return;}
   if(!ADMIN.ok){root.innerHTML=`<div class="adm-card"><p><b>${esc(ADMIN.login)}</b> 계정은 아직 이 홈페이지 저장소의 관리자가 아닙니다. 기존 관리자에게 초대를 부탁해 주세요. 초대를 받았다면 GitHub 알림이나 메일에서 수락한 뒤 다시 로그인해 주세요.</p><button class="btn-ghost" id="admOut2">로그아웃</button></div>`;root.querySelector("#admOut2").onclick=admLogout;return;}
-  const tabs=[...ADM_KEYS.map(k=>[k,ADM[k].label[1]]),["admins","관리자"]];
-  root.innerHTML=`<div class="tabs adm-tabs" role="tablist">${tabs.map(([k,l])=>`<button type="button" role="tab" data-t="${k}" aria-selected="${k===ADMTAB}">${l}</button>`).join("")}</div><div id="admBody"></div>`;
+  const tabs=[...admKeys().map(k=>[k,ADM[k].label[1]]),...(ADMIN.student?[]:[["admins","관리자"]])];
+  root.innerHTML=`${admAutoHTML()}<div class="tabs adm-tabs" role="tablist">${tabs.map(([k,l])=>`<button type="button" role="tab" data-t="${k}" aria-selected="${k===ADMTAB}">${l}</button>`).join("")}</div><div id="admBody"></div>`;
+  admAutoBind(root);
   root.querySelector(".adm-tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;ADMTAB=b.dataset.t;admRender();};
   if(ADMTAB==="admins")return admAdmins();
+  if(!admKeys().includes(ADMTAB))ADMTAB=admKeys()[0];
   const S=ADM[ADMTAB],items=S.get(),order=items.map((_,i)=>i);if(S.sort)order.sort((a,b)=>S.sort(items[a],items[b]));
   const body=root.querySelector("#admBody");
   body.innerHTML=`<div class="adm-head"><span>${items.length}개</span><button class="btn-post" id="admAdd" type="button">+ 새로 추가</button></div>
@@ -1175,8 +1200,7 @@ function admRender(){
 function admMsg(t){const m=document.getElementById("admMsg");if(m)m.textContent=t;}
 async function admSave(key,arr){
   const S=ADM[key];if(S.sort)arr=[...arr].sort(S.sort);
-  const put=()=>ghApi(`/repos/${GH_REPO}/contents/content/${key}.json`,{method:"PUT",body:JSON.stringify({
-    message:`관리 화면: ${S.label[1]} 수정 (${ADMIN.login})`,branch:GH_BRANCH,content:b64(JSON.stringify(arr,null,1)+"\n"),...(CONTENT_SHA[key]?{sha:CONTENT_SHA[key]}:{})})});
+  const put=()=>ghPut(`content/${key}.json`,{message:`관리 화면: ${S.label[1]} 수정 (${ADMIN.login})`,content:b64(JSON.stringify(arr,null,1)+"\n"),sha:CONTENT_SHA[key]});
   let r=await put();
   if(r.status===409||r.status===422){const old=CONTENT_SHA[key];await ghContentLoad();
     if(CONTENT_SHA[key]!==old){alert("그사이 다른 관리자가 같은 메뉴를 고쳤습니다. 최신 내용을 불러왔으니 다시 한 번 수정해 주세요.");admRender();return false;}r=await put();}
@@ -1198,15 +1222,16 @@ function admShrink(file,max){return new Promise((ok,no)=>{const im=new Image();i
 async function admUpload(file,max,folder){const blob=await admShrink(file,max),ext=blob.type==="image/webp"?"webp":blob.type==="image/png"?"png":"jpg";
   const path=`${folder}/${Date.now()}-${Math.random().toString(36).slice(2,8)}-${max}.${ext}`;
   const data=await new Promise(ok=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(",")[1]);fr.readAsDataURL(blob);});
-  const full=`images/uploads/${path}`,r=await ghApi(`/repos/${GH_REPO}/contents/${full}`,{method:"PUT",body:JSON.stringify({message:`관리 화면: 사진 추가 (${ADMIN.login})`,branch:GH_BRANCH,content:data})});
+  const full=`images/uploads/${path}`,r=await ghPut(full,{message:`관리 화면: 사진 추가 (${ADMIN.login})`,content:data});
   if(!r.ok)throw new Error((await r.json().catch(()=>({}))).message||r.status);
   ADM_PREVIEW[full]=URL.createObjectURL(blob);return full;}
 /* 방금 올린 사진은 사이트 반영 전까지 미리보기 주소로 보여줌 */
 const ADM_PREVIEW={};
 document.addEventListener("error",e=>{const im=e.target;if(im.tagName==="IMG"){const k=im.getAttribute("src");if(ADM_PREVIEW[k])im.src=ADM_PREVIEW[k];}},true);
 
-function admEdit(key,i){
+function admEdit(key,i,pre){
   const S=ADM[key],arr=S.get(),it=structuredClone(i<0?S.blank():arr[i]);
+  if(pre?.fields)Object.assign(it,pre.fields);
   const imgList=(name,urls)=>`<div class="adm-imgs" data-f="${name}">${urls.map((u,j)=>`<figure data-j="${j}"><img src="${esc(u)}" alt=""><span><button type="button" data-m="l" aria-label="앞으로">←</button><button type="button" data-m="r" aria-label="뒤로">→</button><button type="button" data-m="x" aria-label="빼기">✕</button></span></figure>`).join("")}</div>`;
   const fld=([k,label,type,opt])=>{const v=it[k];
     if(type==="pdfpage")return `<div class="adm-f adm-plan"><label>${label}<input type="file" id="admPdf" accept="application/pdf"></label><small>PDF 파일은 저장되지 않고, 첫 페이지 그림만 저장됩니다. 공개 PDF가 있는 논문은 저장 후 자동으로도 만들어집니다.</small><p class="adm-msg" id="admPdfMsg"></p></div>`;
@@ -1226,12 +1251,21 @@ function admEdit(key,i){
     const lists=type==="gallery"?[it.imgs,it.full||[]]:type==="image"?null:[it[k]];
     if(!lists){it[k]="";return redraw(k);}
     lists.forEach(L=>{if(b.dataset.m==="x")L.splice(j,1);else{const t=j+(b.dataset.m==="l"?-1:1);if(t>=0&&t<L.length)[L[j],L[t]]=[L[t],L[j]];}});redraw(k);});
-  f.addEventListener("change",async e=>{const inp=e.target.closest("input[data-up]");if(!inp||!inp.files.length)return;const files=[...inp.files];inp.disabled=true;
+  const addImgs=async(up,one,files)=>{
     try{for(const [n,file] of files.entries()){msg(`사진 올리는 중… (${n+1}/${files.length})`);
-        if(inp.dataset.up==="gallery"){const th=await admUpload(file,900,key),fu=await admUpload(file,2048,key+"/full");(it.imgs=it.imgs||[]).push(th);(it.full=it.full||[]).push(fu);redraw("imgs");}
-        else if(inp.dataset.one){it[inp.dataset.up]=await admUpload(file,key==="members"?800:1600,key);redraw(inp.dataset.up);}
-        else{(it[inp.dataset.up]=it[inp.dataset.up]||[]).push(await admUpload(file,2048,key));redraw(inp.dataset.up);}}msg("");}
-    catch(err){msg("사진을 올리지 못했습니다: "+(err.message||err));}inp.value="";inp.disabled=false;});
+        if(up==="gallery"){const th=await admUpload(file,900,key),fu=await admUpload(file,2048,key+"/full");(it.imgs=it.imgs||[]).push(th);(it.full=it.full||[]).push(fu);redraw("imgs");}
+        else if(one){it[up]=await admUpload(file,key==="members"?800:1600,key);redraw(up);}
+        else{(it[up]=it[up]||[]).push(await admUpload(file,2048,key));redraw(up);}}msg("");return true;}
+    catch(err){msg("사진을 올리지 못했습니다: "+(err.message||err));return false;}};
+  f.addEventListener("change",async e=>{const inp=e.target.closest("input[data-up]");if(!inp||!inp.files.length)return;inp.disabled=true;
+    await addImgs(inp.dataset.up,inp.dataset.one,[...inp.files]);inp.value="";inp.disabled=false;});
+  /* 자동 작성에서 넘어온 파일: 사진은 알맞은 칸에 올리고, 논문 PDF는 첫 페이지를 표지로 */
+  if(pre?.files?.length)(async()=>{const imgs=pre.files.filter(x=>/^image\//.test(x.type)),pdfs=pre.files.filter(x=>x.type==="application/pdf");
+    if(key==="posts"||key==="awards"){if(imgs.length)await addImgs("gallery",0,imgs);}
+    else if(key==="pubs"){if(pdfs.length){try{msg("논문 첫 페이지를 그리는 중…");it.cover=await admUpload(await pdfFirstPage(pdfs[0]),1400,"papers");redraw("cover");msg("");}catch(err){msg("첫 페이지 이미지를 만들지 못했습니다: "+(err.message||err));}}
+      else if(imgs.length)await addImgs("cover",1,imgs.slice(0,1));}
+    else if(key==="projects"){if(imgs.length)await addImgs("img",1,imgs.slice(0,1));if(imgs.length>1)await addImgs("more",0,imgs.slice(1));}
+    else if(key==="members"){if(imgs.length)await addImgs("photo",1,imgs.slice(0,1));}})();
   const pdfIn=f.querySelector("#admPdf");
   if(pdfIn)pdfIn.onchange=async()=>{const file=pdfIn.files[0];if(!file)return;const pm=t=>{f.querySelector("#admPdfMsg").textContent=t;};
     try{pm("첫 페이지를 그리는 중…");const blob=await pdfFirstPage(file);pm("올리는 중…");it.cover=await admUpload(blob,1400,"papers");redraw("cover");pm("첫 페이지 이미지를 만들었습니다. 저장을 눌러 주세요.");}
@@ -1252,12 +1286,53 @@ function admEdit(key,i){
       it[k]=type==="lines"?el.value.split("\n").map(s=>s.trim()).filter(Boolean):type==="number"?+el.value:el.value.trim();});
     if(i<0){it.added=new Date().toISOString().slice(0,10);arr.unshift(it);}else arr[i]=it;msg("저장 중…");if(await admSave(key,arr))closeModal();};
 }
+/* 자동 작성: 파일을 올리면 어느 메뉴에 무엇을 쓸지 초안을 만들어 줌 (Worker /draft → Claude) */
+function admAutoHTML(){const A=ADM_AUTO,o=A.out;
+  return `<div class="adm-auto" id="admAuto"><div class="adm-auto-h"><b>자동 작성</b><span>상장 사진, 논문 PDF, 연구개발계획서, 행사 사진 등을 올리면 어느 메뉴에 어떤 내용으로 올릴지 초안을 만들어 드립니다.</span></div>
+    <label class="adm-drop" id="admDrop"><input type="file" id="admAutoIn" multiple accept="image/*,application/pdf,.txt,.md,text/plain"><span>${A.files.length?A.files.map(x=>esc(x.name)).join(", "):"여기에 파일을 끌어 놓거나 눌러서 고르세요 (여러 개 가능)"}</span></label>
+    <textarea id="admAutoNote" rows="2" placeholder="메모 (선택): 예) 강경민 학생, ALC2026 최우수 학생논문상, 8월 21일 나고야">${esc(A.note||"")}</textarea>
+    <div class="adm-auto-act"><button type="button" class="btn-post" id="admAutoGo"${A.busy?" disabled":""}>${A.busy?"읽는 중… (1분 정도)":"초안 만들기"}</button>${A.files.length?`<button type="button" class="btn-ghost" id="admAutoClear">파일 비우기</button>`:""}<span class="adm-msg" id="admAutoMsg">${esc(A.msg||"")}</span></div>
+    ${o?`<div class="adm-auto-out"><p><b>제안:</b> <select id="admAutoSec">${admKeys().map(k=>`<option value="${k}"${k===o.section?" selected":""}>${ADM[k].label[1]} (${ADM[k].label[0]})</option>`).join("")}</select> 메뉴에 새 게시물</p>
+      <p class="adm-note">${esc(o.reason||"")}</p>${o.fields?.title?`<p class="adm-auto-t">${esc(o.fields.title)}</p>`:""}
+      <button type="button" class="btn-post" id="admAutoOpen">초안 열어서 확인하기</button></div>`:""}</div>`;}
+function admAutoFields(sec,F){const g=k=>String(F?.[k]||"").trim(),pick=(o)=>Object.fromEntries(Object.entries(o).filter(([,v])=>v!==""&&v!=null&&!(Array.isArray(v)&&!v.length)));
+  if(sec==="posts")return pick({date:g("date"),cat:g("cat")||"conf",title:g("title"),text:g("text"),news:g("news"),newsKo:g("newsKo")});
+  if(sec==="awards")return pick({date:g("date"),title:g("title"),text:g("text"),news:g("news"),newsKo:g("newsKo")});
+  if(sec==="pubs")return pick({cat:g("pubcat")||"sci",year:+g("year")||new Date().getFullYear(),title:g("title"),authors:g("authors"),venue:g("venue"),doi:g("doi").replace(/^https?:\/\/(dx\.)?doi\.org\//,""),corr:g("corr"),summary:g("summary")});
+  if(sec==="projects")return pick({title:g("title"),role:g("role"),period:g("period"),funder:g("funder"),total:g("total"),amount:g("amount"),no:g("no"),desc:g("desc")});
+  if(sec==="members")return pick({name:g("name"),group:g("group")||"Graduate Research Assistants",role:g("mrole"),interests:g("interests").split("\n").map(x=>x.trim()).filter(Boolean)});
+  return {};}
+const fileB64=f=>new Promise((ok,no)=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(",")[1]);fr.onerror=()=>no(new Error("파일을 읽지 못했습니다"));fr.readAsDataURL(f);});
+function admAutoBind(root){const A=ADM_AUTO,box=root.querySelector("#admAuto");if(!box)return;
+  const take=fl=>{A.files=[...A.files,...[...fl].filter(x=>/^image\/|application\/pdf|^text\//.test(x.type)||/\.(pdf|txt|md)$/i.test(x.name))].slice(0,12);A.out=null;A.msg="";admRender();};
+  box.querySelector("#admAutoIn").onchange=e=>take(e.target.files);
+  const drop=box.querySelector("#admDrop");
+  drop.ondragover=e=>{e.preventDefault();drop.classList.add("on");};drop.ondragleave=()=>drop.classList.remove("on");
+  drop.ondrop=e=>{e.preventDefault();drop.classList.remove("on");take(e.dataTransfer.files);};
+  box.querySelector("#admAutoNote").oninput=e=>{A.note=e.target.value;};
+  const clr=box.querySelector("#admAutoClear");if(clr)clr.onclick=()=>{A.files=[];A.out=null;A.msg="";admRender();};
+  box.querySelector("#admAutoGo").onclick=async()=>{if(!A.files.length&&!(A.note||"").trim()){A.msg="파일이나 메모를 넣어 주세요.";return admRender();}
+    A.busy=true;A.msg="";A.out=null;admRender();
+    try{let size=0;const files=[];
+      for(const f of A.files){if(/^image\//.test(f.type)){const b=await admShrink(f,1568);size+=b.size;files.push({name:f.name,mime:b.type,data:await fileB64(b)});}
+        else if(f.type==="application/pdf"||/\.pdf$/i.test(f.name)){size+=f.size;files.push({name:f.name,mime:"application/pdf",data:await fileB64(f)});}
+        else files.push({name:f.name,text:await f.text()});}
+      if(size>24e6)throw new Error("파일이 너무 큽니다 (합계 24MB 이하로 줄여 주세요).");
+      const r=await fetch(`${GH_AUTH}/draft`,{method:"POST",headers:{Authorization:`Bearer ${GH_TOKEN}`,"Content-Type":"application/json"},body:JSON.stringify({files,note:A.note||"",today:new Date().toISOString().slice(0,10)})});
+      const d=await r.json().catch(()=>({}));if(!r.ok||d.error)throw new Error(d.error||r.status);A.out=d;}
+    catch(err){A.msg="초안을 만들지 못했습니다: "+(err.message||err);}
+    A.busy=false;if(document.getElementById("admAuto"))admRender();};
+  const open=box.querySelector("#admAutoOpen");
+  if(open)open.onclick=()=>{const sec=box.querySelector("#admAutoSec").value,o=A.out;
+    const use=new Set((o.images||[]).filter(x=>x.use).map(x=>x.index)),files=A.files.filter((f,i)=>!(o.images||[]).length||use.has(i)||f.type==="application/pdf");
+    ADMTAB=sec;admRender();admEdit(sec,-1,{fields:admAutoFields(sec,o.fields),files});A.files=[];A.out=null;A.note="";};
+}
 async function admAdmins(){
   const body=document.getElementById("admBody");body.innerHTML=`<p>불러오는 중…</p>`;
   const [cr,ir]=await Promise.all([ghApi(`/repos/${GH_REPO}/collaborators?per_page=100`),ADMIN.owner?ghApi(`/repos/${GH_REPO}/invitations`):null]);
   if(!cr.ok){body.innerHTML=`<p class="adm-msg">관리자 명단을 읽지 못했습니다 (${cr.status}).</p>`;return;}
   const list=(await cr.json()).filter(c=>c.permissions?.push),inv=ir?.ok?await ir.json():[];
-  body.innerHTML=`${ADMIN.owner?`<form class="adm-head" id="admAddForm"><input id="admNew" placeholder="추가할 관리자의 GitHub 아이디" required autocomplete="off"><button class="btn-post">관리자 초대</button></form>
+  body.innerHTML=`<div class="adm-students" style="margin-top:0"><h3>관리자 <small>모든 메뉴 편집 · 저장소 쓰기 권한</small></h3></div>${ADMIN.owner?`<form class="adm-head" id="admAddForm"><input id="admNew" placeholder="추가할 관리자의 GitHub 아이디" required autocomplete="off"><button class="btn-post">관리자 초대</button></form>
     <p class="adm-note">초대받은 분이 GitHub 메일이나 알림에서 초대를 수락하면, 이 페이지에서 'GitHub로 로그인'으로 들어올 수 있습니다. GitHub 계정이 없으면 github.com에서 무료로 만들면 됩니다.</p>`:`<p class="adm-note">관리자 초대·삭제는 저장소 소유자만 할 수 있습니다.</p>`}
     <ul class="adm-list">${list.map(c=>`<li data-u="${esc(c.login)}"><div class="adm-th"><img src="${esc(c.avatar_url)}&s=96" alt=""></div><div class="adm-tx"><b>${esc(c.login)}</b><small>${c.permissions.admin?"소유자":"관리자"}</small></div>
       <div class="adm-act">${c.login===ADMIN.login?"<small>나</small>":ADMIN.owner&&!c.permissions.admin?`<button type="button" class="danger" data-a="rm">삭제</button>`:""}</div></li>`).join("")}
@@ -1271,6 +1346,23 @@ async function admAdmins(){
       const r=await ghApi(`/repos/${GH_REPO}/collaborators/${encodeURIComponent(u)}`,{method:"DELETE"});if(!r.ok)alert("삭제하지 못했습니다 ("+r.status+")");}
     if(b.dataset.a==="cancel"){const r=await ghApi(`/repos/${GH_REPO}/invitations/${li.dataset.inv}`,{method:"DELETE"});if(!r.ok)alert("취소하지 못했습니다 ("+r.status+")");}
     admAdmins();};
+  admStudents(body);
+}
+/* 학생 연구원: 저장소 권한 없이, 활동·수상·논문만 편집 (명단은 content/roles.json) */
+async function admStudents(body){
+  const sec=document.createElement("div");sec.className="adm-students";body.appendChild(sec);
+  const roles=await rolesLoad(),list=roles.data.students;
+  sec.innerHTML=`<h3>학생 연구원 <small>활동·수상·논문만 추가·수정·삭제</small></h3>
+    <form class="adm-head" id="admStuForm"><input id="admStuId" placeholder="GitHub 아이디" required autocomplete="off"><input id="admStuName" placeholder="이름 (선택)" autocomplete="off"><button class="btn-post">학생 추가</button></form>
+    <p class="adm-note">학생은 저장소 초대가 필요 없습니다. 여기에 GitHub 아이디를 넣으면 바로 'GitHub로 로그인'으로 들어와 활동·수상·논문 메뉴만 편집할 수 있습니다. 위의 관리자는 모든 메뉴를 편집합니다.</p>
+    <ul class="adm-list">${list.length?list.map((x,j)=>`<li data-j="${j}"><div class="adm-th"><img src="https://github.com/${encodeURIComponent(x.login)}.png?size=96" alt=""></div><div class="adm-tx"><b>${esc(x.login)}</b><small>${esc(x.name||"학생 연구원")}</small></div><div class="adm-act"><button type="button" class="danger" data-s="rm">삭제</button></div></li>`).join(""):`<li><div class="adm-tx"><small>아직 없습니다.</small></div></li>`}</ul>`;
+  const save=async(next,what)=>{const r=await ghApi(`/repos/${GH_REPO}/contents/content/roles.json`,{method:"PUT",body:JSON.stringify({message:`관리 화면: 학생 연구원 ${what} (${ADMIN.login})`,branch:GH_BRANCH,content:b64(JSON.stringify({students:next},null,1)+"\n"),...(roles.sha?{sha:roles.sha}:{})})});
+    if(!r.ok)alert("저장하지 못했습니다: "+((await r.json().catch(()=>({}))).message||r.status));sec.remove();admStudents(body);};
+  sec.querySelector("#admStuForm").onsubmit=async e=>{e.preventDefault();const u=sec.querySelector("#admStuId").value.trim().replace(/^@/,""),n=sec.querySelector("#admStuName").value.trim();
+    const chk=await ghApi(`/users/${encodeURIComponent(u)}`);if(!chk.ok)return alert("그런 GitHub 아이디가 없습니다.");const login=(await chk.json()).login;
+    if(list.some(x=>x.login.toLowerCase()===login.toLowerCase()))return alert("이미 명단에 있습니다.");await save([...list,{login,name:n}],"추가");};
+  sec.querySelector(".adm-list").onclick=async e=>{const b=e.target.closest("[data-s]");if(!b)return;const j=+b.closest("li").dataset.j;
+    if(!confirm(`${list[j].login} 을(를) 학생 연구원 명단에서 뺄까요?`))return;await save(list.filter((_,k)=>k!==j),"삭제");};
 }
 contentLoad();admInit();
 if(location.hash==="#admin")route();
