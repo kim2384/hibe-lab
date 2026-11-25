@@ -122,7 +122,10 @@ async function who(req, env) {
   if (!env.GITHUB_WRITE_TOKEN) return null;
   const f = await gh(`/repos/${env.GITHUB_REPO}/contents/content/roles.json`, env.GITHUB_WRITE_TOKEN, { headers: { Accept: "application/vnd.github.raw+json" } });
   const roles = f.ok ? await f.json().catch(() => ({})) : {};
-  const hit = (roles.students || []).some((s) => String(s.login || "").toLowerCase() === login.toLowerCase());
+  // 학생 명단은 GitHub 아이디 또는 이메일(GitHub 계정에 인증된 이메일)로 등록할 수 있음
+  const e = await gh("/user/emails", token);
+  const emails = e.ok ? (await e.json().catch(() => [])).filter((x) => x.verified).map((x) => String(x.email).toLowerCase()) : [];
+  const hit = (roles.students || []).some((s) => (s.login && String(s.login).toLowerCase() === login.toLowerCase()) || (s.email && emails.includes(String(s.email).toLowerCase())));
   return hit ? { login, role: "student" } : null;
 }
 
@@ -138,7 +141,7 @@ export default {
       const go = new URL("https://github.com/login/oauth/authorize");
       go.searchParams.set("client_id", env.GITHUB_CLIENT_ID);
       go.searchParams.set("redirect_uri", `${url.origin}/callback`);
-      go.searchParams.set("scope", "public_repo");
+      go.searchParams.set("scope", "public_repo user:email");
       go.searchParams.set("state", state);
       return new Response(null, { status: 302, headers: { Location: go.toString(), "Set-Cookie": `hibe_oauth=${state}.${encodeURIComponent(origin)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600` } });
     }

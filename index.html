@@ -256,7 +256,7 @@ p{max-width:68ch}
 .cv-bar span{display:flex;gap:8px}.cv-bar .btn-ghost{font-size:13px;padding:5px 12px;text-decoration:none}.cv-view iframe{flex:1;width:100%;border:0;background:#fff}
 .modal-box{background:var(--surface);color:var(--ink);border-radius:14px;width:min(640px,100%);max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 @media (min-width:768px){.modal-box{width:min(1000px,92vw);max-width:96vw;max-height:min(92vh,1100px);min-width:420px;min-height:260px;resize:both}
-  .modal-body{padding:28px 40px 36px}.modal-body h3{font-size:26px}.modal-body dl{grid-template-columns:120px 1fr;font-size:16px}.modal-body .pdesc,.modal-body .ptext,.modal-body .sum{font-size:16.5px}
+  .modal-body{padding:28px 40px 36px}.modal-body h3{font-size:19px}.modal-body dl{grid-template-columns:120px 1fr;font-size:16px}.modal-body .pdesc,.modal-body .ptext,.modal-body .sum{font-size:16.5px}
   .gal{grid-template-columns:repeat(auto-fill,minmax(320px,1fr));padding:12px}}
 @media (min-width:768px){.modal-box .img{aspect-ratio:auto;height:clamp(240px,58vh,540px)}.modal-box.max .img{height:clamp(300px,78vh,860px)}}
 .modal-box .img.has{display:flex;align-items:center;justify-content:center;overflow:hidden}.modal-box .img.has img{width:auto;height:auto;max-width:100%;max-height:100%}
@@ -267,7 +267,7 @@ p{max-width:68ch}
 @media (max-width:767px){.modal-max{display:none}}
 .modal-box .img{aspect-ratio:16/9;display:grid;place-items:center;background:linear-gradient(135deg,var(--teal-soft),var(--surface));color:var(--muted);font-size:13px}
 .modal-body{padding:24px 28px 28px;display:grid;gap:14px}
-.modal-body h3{margin:0;font-size:22px;line-height:1.35}
+.modal-body h3{margin:0;font-size:19px;line-height:1.4}
 .modal-body dl{display:grid;grid-template-columns:96px 1fr;gap:8px 16px;margin:0;font-size:15px}
 .modal-body dt{color:var(--muted)}
 .modal-body dd{margin:0}
@@ -503,7 +503,7 @@ body{font-size:14.5px;line-height:1.6}
 .join-card h3{font-size:16px}.join-card ul{font-size:14px}.apply h3{font-size:18px}.apply .mail{font-size:14px}
 .tabs a{font-size:15px}.tabs button{font-size:14.5px}
 .ps b,.proj-head .ps b{font-size:20px}
-.modal-body{padding:18px 18px 22px;gap:10px}.modal-body h3{font-size:18px}.modal-body dl{font-size:13.5px;grid-template-columns:80px 1fr}
+.modal-body{padding:18px 18px 22px;gap:10px}.modal-body h3{font-size:16px}.modal-body dl{font-size:13.5px;grid-template-columns:80px 1fr}
 .modal-body .pdesc,.modal-body .ptext,.modal-body .sum{font-size:14px}
 .post h3{font-size:14.5px}.pub .a,.pub .v,.pub .ct{font-size:13px}
 .pub-tools input,.yr-pick select,.loc{font-size:14px}
@@ -1168,7 +1168,8 @@ async function admSession(){
     const user=u.ok?await u.json():{},perm=r.ok?(await r.json()).permissions||{}:{};
     ADMIN={login:user.login||"",name:user.name||user.login||"",ok:!!perm.push,owner:!!perm.admin,student:false};
     if(!ADMIN.ok&&ADMIN.login){const roles=await rolesLoad();
-      if((roles.data.students||[]).some(x=>String(x.login||"").toLowerCase()===ADMIN.login.toLowerCase())){ADMIN.ok=true;ADMIN.student=true;}}
+      const em=await ghApi("/user/emails").then(r=>r.ok?r.json():[]).then(a=>a.filter(x=>x.verified).map(x=>String(x.email).toLowerCase())).catch(()=>[]);
+      if((roles.data.students||[]).some(x=>(x.login&&String(x.login).toLowerCase()===ADMIN.login.toLowerCase())||(x.email&&em.includes(String(x.email).toLowerCase())))){ADMIN.ok=true;ADMIN.student=true;}}
     if(ADMIN.student&&!STUDENT_KEYS.includes(ADMTAB))ADMTAB=STUDENT_KEYS[0];
     if(ADMIN.ok)await ghContentLoad();}
   admBar();if(location.hash==="#admin"||was!==(ADMIN&&ADMIN.ok)){const y=scrollY;route();window.scrollTo(0,y);}
@@ -1378,7 +1379,7 @@ async function admAdmins(){
       <div class="adm-act">${c.login===ADMIN.login?"<small>나</small>":ADMIN.owner&&!c.permissions.admin?`<button type="button" class="danger" data-a="rm">삭제</button>`:""}</div></li>`).join("")}
     ${inv.map(v=>`<li data-inv="${v.id}"><div class="adm-th"></div><div class="adm-tx"><b>${esc(v.invitee?.login||"")}</b><small>초대 수락 대기 중</small></div><div class="adm-act"><button type="button" class="danger" data-a="cancel">초대 취소</button></div></li>`).join("")}</ul>`;
   const f=body.querySelector("#admAddForm");
-  if(f)f.onsubmit=async e=>{e.preventDefault();const u=body.querySelector("#admNew").value.trim().replace(/^@/,"");
+  if(f)f.onsubmit=async e=>{e.preventDefault();const u=body.querySelector("#admNew").value.trim().replace(/^@/,"");if(u.includes("@"))return alert("이메일이 아니라 GitHub 아이디를 넣어 주세요. 아이디는 github.com 오른쪽 위 프로필을 누르면 보입니다.\n\n학생 연구원(게시물만 편집)이라면 아래쪽 학생 연구원 칸에 넣어 주세요.");
     const r=await ghApi(`/repos/${GH_REPO}/collaborators/${encodeURIComponent(u)}`,{method:"PUT",body:JSON.stringify({permission:"push"})});
     if(!r.ok)alert(r.status===404?"그런 GitHub 아이디가 없습니다.":"초대하지 못했습니다: "+((await r.json().catch(()=>({}))).message||r.status));admAdmins();};
   body.querySelector(".adm-list").onclick=async e=>{const b=e.target.closest("[data-a]");if(!b)return;const li=b.closest("li");
@@ -1393,16 +1394,17 @@ async function admStudents(body){
   const sec=document.createElement("div");sec.className="adm-students";body.appendChild(sec);
   const roles=await rolesLoad(),list=roles.data.students;
   sec.innerHTML=`<h3>학생 연구원 <small>활동·수상·연구과제·논문만 추가·수정·삭제</small></h3>
-    <form class="adm-head" id="admStuForm"><input id="admStuId" placeholder="GitHub 아이디" required autocomplete="off"><input id="admStuName" placeholder="이름 (선택)" autocomplete="off"><button class="btn-post">학생 추가</button></form>
-    <p class="adm-note">학생은 저장소 초대가 필요 없습니다. 여기에 GitHub 아이디를 넣으면 바로 'GitHub로 로그인'으로 들어와 활동·수상·연구과제·논문 메뉴만 편집할 수 있습니다. 위의 관리자는 모든 메뉴를 편집합니다.</p>
-    <ul class="adm-list">${list.length?list.map((x,j)=>`<li data-j="${j}"><div class="adm-th"><img src="https://github.com/${encodeURIComponent(x.login)}.png?size=96" alt=""></div><div class="adm-tx"><b>${esc(x.login)}</b><small>${esc(x.name||"학생 연구원")}</small></div><div class="adm-act"><button type="button" class="danger" data-s="rm">삭제</button></div></li>`).join(""):`<li><div class="adm-tx"><small>아직 없습니다.</small></div></li>`}</ul>`;
+    <form class="adm-head" id="admStuForm"><input id="admStuId" placeholder="GitHub 아이디 또는 GitHub에 등록된 이메일 (예: name@gmail.com)" required autocomplete="off"><input id="admStuName" placeholder="이름 (선택)" autocomplete="off"><button class="btn-post">학생 추가</button></form>
+    <p class="adm-note">학생은 저장소 초대가 필요 없습니다. 여기에 GitHub 아이디나 이메일(구글 계정으로 GitHub에 가입했다면 그 Gmail)을 넣으면 바로 'GitHub로 로그인'으로 들어와 활동·수상·연구과제·논문 메뉴만 편집할 수 있습니다. 위의 관리자는 모든 메뉴를 편집합니다.</p>
+    <ul class="adm-list">${list.length?list.map((x,j)=>`<li data-j="${j}"><div class="adm-th">${x.login?`<img src="https://github.com/${encodeURIComponent(x.login)}.png?size=96" alt="">`:""}</div><div class="adm-tx"><b>${esc(x.login||x.email)}</b><small>${esc(x.name||"학생 연구원")}</small></div><div class="adm-act"><button type="button" class="danger" data-s="rm">삭제</button></div></li>`).join(""):`<li><div class="adm-tx"><small>아직 없습니다.</small></div></li>`}</ul>`;
   const save=async(next,what)=>{const r=await ghApi(`/repos/${GH_REPO}/contents/content/roles.json`,{method:"PUT",body:JSON.stringify({message:`관리 화면: 학생 연구원 ${what} (${ADMIN.login})`,branch:GH_BRANCH,content:b64(JSON.stringify({students:next},null,1)+"\n"),...(roles.sha?{sha:roles.sha}:{})})});
     if(!r.ok)alert("저장하지 못했습니다: "+((await r.json().catch(()=>({}))).message||r.status));sec.remove();admStudents(body);};
-  sec.querySelector("#admStuForm").onsubmit=async e=>{e.preventDefault();const u=sec.querySelector("#admStuId").value.trim().replace(/^@/,""),n=sec.querySelector("#admStuName").value.trim();
+  sec.querySelector("#admStuForm").onsubmit=async e=>{e.preventDefault();const u=sec.querySelector("#admStuId").value.trim().replace(/^@/,""),n=sec.querySelector("#admStuName").value.trim();if(u.includes("@")){const em=u.toLowerCase();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em))return alert("이메일 주소를 확인해 주세요.");
+      if(list.some(x=>String(x.email||"").toLowerCase()===em))return alert("이미 명단에 있습니다.");return save([...list,{email:em,name:n}],"추가");}
     const chk=await ghApi(`/users/${encodeURIComponent(u)}`);if(!chk.ok)return alert("그런 GitHub 아이디가 없습니다.");const login=(await chk.json()).login;
-    if(list.some(x=>x.login.toLowerCase()===login.toLowerCase()))return alert("이미 명단에 있습니다.");await save([...list,{login,name:n}],"추가");};
+    if(list.some(x=>String(x.login||"").toLowerCase()===login.toLowerCase()))return alert("이미 명단에 있습니다.");await save([...list,{login,name:n}],"추가");};
   sec.querySelector(".adm-list").onclick=async e=>{const b=e.target.closest("[data-s]");if(!b)return;const j=+b.closest("li").dataset.j;
-    if(!confirm(`${list[j].login} 을(를) 학생 연구원 명단에서 뺄까요?`))return;await save(list.filter((_,k)=>k!==j),"삭제");};
+    if(!confirm(`${list[j].login||list[j].email} 을(를) 학생 연구원 명단에서 뺄까요?`))return;await save(list.filter((_,k)=>k!==j),"삭제");};
 }
 contentLoad();admInit();
 if(location.hash==="#admin")route();
