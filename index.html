@@ -1119,6 +1119,7 @@ function roleKo(r){if(KO.roles[r])return KO.roles[r];const {deg,yr}=roleParse(r)
   return deg==="alum"?"졸업생":deg==="bs"?`학부연구생 (${yr}학년)`:`${DEG.find(x=>x[0]===deg)[1]} (${yr}년차)`;}
 /* 화면 표시: "석사과정" 위, "2년차" 아래 작게 (괄호 없이) */
 function roleHTML(r){const t=LANG==="ko"?roleKo(r):String(r||""),m=t.match(/^(.*?)\s*\(([^)]*)\)\s*$/);
+  if(m&&LANG!=="ko")return `<span class="r1">${esc(m[1])}</span>`;   /* 영어는 연차 표기 안 함 */
   return m?`<span class="r1">${esc(m[1])}</span><span class="r2">${esc(m[2])}</span>`:`<span class="r1">${esc(t)}</span>`;}
 const roleGroup=deg=>deg==="bs"?"Undergraduate Research Assistants":deg==="alum"?"Alumni":"Graduate Research Assistants";
 const ADM = {
