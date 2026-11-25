@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="only light">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>hibe lab | Chung-Ang University</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -22,13 +22,9 @@ body{margin:0}
   --body:"Roboto","Noto Sans KR",Arial,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --mono:"Roboto Mono",ui-monospace,Menlo,Consolas,monospace;
   --nav-bg:rgba(246,248,247,.9);
+  --tile:#e1ebe7;
+  color-scheme:only light;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0e1513; --surface:#151f1c; --ink:#e6eeeb; --muted:#97a8a3; --line:#25332f;
-  --teal:#4cc3a7; --teal-soft:#16302a; --sun:#f3b24a; --nav-bg:rgba(14,21,19,.9); color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0e1513; --surface:#151f1c; --ink:#e6eeeb; --muted:#97a8a3; --line:#25332f;
-  --teal:#4cc3a7; --teal-soft:#16302a; --sun:#f3b24a; --nav-bg:rgba(14,21,19,.9); color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--nav-bg)}
@@ -53,9 +49,6 @@ header .wrap{display:flex;align-items:center;gap:16px;padding-block:9px;flex-wra
 .brand small{display:block;font-family:var(--body);font-weight:500;font-size:11px;color:var(--muted);letter-spacing:.02em}
 .brand img{display:block;height:32px;width:auto}
 .logo-d{display:none!important}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .logo-l{display:none!important}:root:not([data-theme="light"]) .logo-d{display:block!important}}
-:root[data-theme="dark"] .logo-l{display:none!important}
-:root[data-theme="dark"] .logo-d{display:block!important}
 nav{margin-left:auto;display:flex;gap:2px;flex-wrap:wrap}
 nav a{font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px}
 nav a:hover{color:var(--teal)}
@@ -103,8 +96,6 @@ p{max-width:68ch}
 .hero{padding-block:24px 8px}
 .hero h1{font-size:clamp(24px,3.4vw,38px);font-weight:500;margin:0 0 10px;line-height:1.2;color:var(--h1a);background:linear-gradient(180deg,var(--h1a) 0%,var(--h1b) 55%,var(--h1c) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 :root{--h1a:#0b7162;--h1b:#349381;--h1c:#89b6ab;--card-gray:#949495}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--h1a:#4cc3a7;--h1b:#6fb9a8;--h1c:#a3c6bd;--card-gray:#a3a3a4}}
-:root[data-theme="dark"]{--h1a:#4cc3a7;--h1b:#6fb9a8;--h1c:#a3c6bd;--card-gray:#a3a3a4}
 .hero h1 .nw{white-space:nowrap}
 .hero .ko{font-size:clamp(13px,1.9vw,16px);color:var(--card-gray);margin:0 0 12px;font-weight:500}
 .hero .tag{font-family:var(--display);font-weight:700;font-size:20px;color:var(--teal);margin:0 0 8px}
@@ -170,8 +161,6 @@ p{max-width:68ch}
 .edu-logo{width:136px;height:83px;display:flex;align-items:center;justify-content:center}
 .edu-logo img{width:83px;height:83px;object-fit:contain;display:block}
 .edu-logo img[alt="Yonsei University"]{width:77px;height:77px}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .edu-logo img{background:#fff;padding:6px;border-radius:6px}}
-:root[data-theme="dark"] .edu-logo img{background:#fff;padding:6px;border-radius:6px}
 .edu-logo .ph{width:100%;height:100%;border:1px dashed var(--line);border-radius:6px;display:grid;place-content:center;text-align:center;font-size:10.5px;line-height:1.2;color:var(--muted);padding:0 4px}
 @media (max-width:480px){.edu-tl li{grid-template-columns:52px 1fr}.edu-tl .edu-logo{grid-column:2;justify-content:flex-start}}
 
@@ -355,7 +344,7 @@ p{max-width:68ch}
 .post .del{justify-self:start;font:inherit;font-size:12px;background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
 .ig{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 @media (max-width:1000px){.ig{grid-template-columns:repeat(3,1fr)}}
-.ig-tile{position:relative;aspect-ratio:1;border:0;padding:0;margin:0;overflow:hidden;border-radius:10px;cursor:pointer;background:#f4f5f6;font:inherit;color:inherit;display:block}
+.ig-tile{position:relative;aspect-ratio:1;border:0;padding:0;margin:0;overflow:hidden;border-radius:10px;cursor:pointer;background:var(--tile);font:inherit;color:inherit;display:block}
 .ig-tile img{width:100%;height:100%;object-fit:contain;padding:2px;box-sizing:border-box;display:block;transition:transform .25s}
 .ig-tile .cnt{position:absolute;right:8px;top:8px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;border-radius:999px;padding:2px 8px}
 .ig-noimg{display:grid;place-items:center;height:100%;padding:12px;font-size:13px}
@@ -376,7 +365,7 @@ p{max-width:68ch}
 .aw-body h3{margin:0;font-size:15.5px;font-weight:500;line-height:1.45}
 .aw-body p{margin:0;font-size:13.5px;color:var(--muted);white-space:pre-line;line-height:1.6}
 @media (max-width:560px){.award{grid-template-columns:88px 1fr;gap:12px}}
-.igs{position:relative;background:#f1f2f3}
+.igs{position:relative;background:var(--tile)}
 .igs-track{display:flex;width:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}.igs-track::-webkit-scrollbar{display:none}
 .igs-s{flex:0 0 100%;scroll-snap-align:center;height:clamp(240px,58vh,540px);display:flex;align-items:center;justify-content:center;overflow:hidden}
 .igs-s img{max-width:100%;max-height:100%;object-fit:contain;display:block;cursor:zoom-in}
@@ -447,6 +436,7 @@ form.adm-head input{flex:1;min-width:220px}
 .adm-foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:sticky;bottom:0;background:var(--surface);padding:10px 0}
 .adm-toast{position:fixed;left:50%;bottom:72px;transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 18px;font-size:14px;box-shadow:0 4px 16px rgba(0,0,0,.2)}
 .adm-bar{position:fixed;right:16px;bottom:16px;z-index:50;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.adm-inline{display:flex;gap:8px;margin-top:20px}.adm-inline .danger{color:#b3261e;border-color:#b3261e}
 .adm-bar a{color:inherit;font-weight:600}.adm-bar button{font:inherit;background:none;border:1px solid currentColor;color:inherit;border-radius:999px;padding:2px 10px;cursor:pointer}
 @media (max-width:600px){.adm-bar span{display:none}.adm-list li{flex-wrap:wrap}.adm-act{width:100%;justify-content:flex-end}}
 .news{padding-block:4px 20px}.news h2{font-size:17px;margin:0 0 6px}
@@ -482,7 +472,7 @@ form.adm-head input{flex:1;min-width:220px}
 @media (max-width:760px){.nfeed{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:560px){.nfeed{grid-template-columns:repeat(2,minmax(0,1fr))}.ncard .nbody{padding:28px 8px 8px;gap:2px}.ncard .nt{font-size:12px;line-height:1.35;height:4.05em}.ncard .nmeta{font-size:10px}.nimg.txt span{font-size:13px;padding:12px}.ncard .nimg.txt span{padding-top:14%}}
 @media (max-width:340px){.ncard .nt{-webkit-line-clamp:2;height:2.7em}}
-.ncard{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;background:var(--surface);border-radius:5px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:transform .15s}
+.ncard{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;background:var(--surface);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:transform .15s}
 .ncard:hover{transform:translateY(-2px)}.ncard:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
 .nimg{aspect-ratio:1/1;background:#f4f5f6;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .nimg img{width:100%;height:100%;object-fit:contain;padding:6px;box-sizing:border-box}
@@ -910,16 +900,17 @@ function openPub(k){const [cat,y,a,t,v,doi,sum,corr]=SITE.pubs[k],cover=pubCover
 
 function openProject(i){const t=SITE.projects[i];
       const pimgs=[SITE.projectImgs?.[i],...(SITE.projectMore?.[i]||[])].filter(Boolean);
-      openModal(`${pimgs.length?galHTML(pimgs):`<div class="img">${T("Project image (to be replaced)","과제 이미지 (원본으로 교체 예정)")}</div>`}<div class="modal-body"><h3 id="mTitle">${esc(t)}</h3>${(f=>`<dl><dt>${T("Funded by","지원 기관")}</dt><dd>${f?esc(pFunder(f))+(f.total&&f.total!==f.amount?`<div class="amt">${T("Total project","과제 전체")} <b>${esc(krw(f.total))}</b>${usd(f.total)}</div>`:"")+(f.amount?`<div class="amt">${f.total&&f.total!==f.amount?T("hibe lab portion","hibe lab 배정"):T("Amount","연구비")} <b>${esc(krw(f.amount))}</b>${usd(f.amount)}</div>`:"")+(f.amountNote?`<small class="amt-note">${esc(LANG==="ko"&&f.amountNoteKo?f.amountNoteKo:f.amountNote)}</small>`:""):todo()}</dd>${f?.role?`<dt>${T("Role","역할")}</dt><dd>${f.role==="PI"?T("Principal Investigator (PI)","연구책임자 (PI)"):T("Co-Principal Investigator (Co-PI)","공동연구책임자 (Co-PI)")}</dd>`:""}<dt>${T("Period","기간")}</dt><dd>${f?esc(ym(f.period))+(isDone(f)?` · ${T("Completed","종료")}`:` · ${T("Ongoing","진행 중")}`):todo()}</dd>${f?.no?`<dt>${T("Project No.","과제 번호")}</dt><dd>${esc(f.no)}</dd>`:""}<dt>${T("Description","과제 설명")}</dt><dd class="pdesc">${f?.desc?esc(f.desc):todo()}</dd></dl>`)(SITE.projectInfo?.[i])}</div>`);$mc._full=pimgs;}
+      openModal(`${pimgs.length?galHTML(pimgs):`<div class="img">${T("Project image (to be replaced)","과제 이미지 (원본으로 교체 예정)")}</div>`}<div class="modal-body"><h3 id="mTitle">${esc(t)}</h3>${(f=>`<dl><dt>${T("Funded by","지원 기관")}</dt><dd>${f?esc(pFunder(f))+(f.total&&f.total!==f.amount?`<div class="amt">${T("Total project","과제 전체")} <b>${esc(krw(f.total))}</b>${usd(f.total)}</div>`:"")+(f.amount?`<div class="amt">${f.total&&f.total!==f.amount?T("hibe lab portion","hibe lab 배정"):T("Amount","연구비")} <b>${esc(krw(f.amount))}</b>${usd(f.amount)}</div>`:"")+(f.amountNote?`<small class="amt-note">${esc(LANG==="ko"&&f.amountNoteKo?f.amountNoteKo:f.amountNote)}</small>`:""):todo()}</dd>${f?.role?`<dt>${T("Role","역할")}</dt><dd>${f.role==="PI"?T("Principal Investigator (PI)","연구책임자 (PI)"):T("Co-Principal Investigator (Co-PI)","공동연구책임자 (Co-PI)")}</dd>`:""}<dt>${T("Period","기간")}</dt><dd>${f?esc(ym(f.period))+(isDone(f)?` · ${T("Completed","종료")}`:` · ${T("Ongoing","진행 중")}`):todo()}</dd>${f?.no?`<dt>${T("Project No.","과제 번호")}</dt><dd>${esc(f.no)}</dd>`:""}<dt>${T("Description","과제 설명")}</dt><dd class="pdesc">${f?.desc?esc(f.desc):todo()}</dd></dl>`)(SITE.projectInfo?.[i])}</div>`);$mc._full=pimgs;admModalTools("projects",i);}
 const actCat=c=>c==="conf"?T("Scientific Conference Attendances","학술대회 참석"):T("Outreach & Extra Activities","아웃리치 및 기타 활동");
-function openAward(k){const a=AWARDS[k];if(!a)return;openModal(`${galHTML(a.full?.length?a.full:a.imgs)}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${a.date.replaceAll("-",". ")}</span><h3 id="mTitle">${esc(a.title)}</h3>${a.text?`<div class="ptext">${esc(a.text)}</div>`:""}</div>`);$mc._full=a.full||a.imgs;}
+function openAward(k){const a=AWARDS[k];if(!a)return;openModal(`${galHTML(a.full?.length?a.full:a.imgs)}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${a.date.replaceAll("-",". ")}</span><h3 id="mTitle">${esc(a.title)}</h3>${a.text?`<div class="ptext">${esc(a.text)}</div>`:""}</div>`);$mc._full=a.full||a.imgs;admModalTools("awards",k);}
 function openActivity(id){const p=OLD_POSTS.find(x=>x.id===id);if(!p)return;
-  openModal(`${galHTML(p.full?.length?p.full:p.imgs)}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${p.date?p.date.replaceAll("-",". ")+" · ":""}${esc(actCat(p.cat))}</span><h3 id="mTitle">${esc(p.title)}</h3>${p.text?`<div class="ptext">${esc(p.text)}</div>`:""}</div>`);$mc._full=p.full||p.imgs;}
+  openModal(`${galHTML(p.full?.length?p.full:p.imgs)}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${p.date?p.date.replaceAll("-",". ")+" · ":""}${esc(actCat(p.cat))}</span><h3 id="mTitle">${esc(p.title)}</h3>${p.text?`<div class="ptext">${esc(p.text)}</div>`:""}</div>`);$mc._full=p.full||p.imgs;admModalTools("posts",OLD_POSTS.indexOf(p));}
 function route(){
   let id = location.hash.slice(1);
   if(!views[id]) id = "home";
   if(!$modal.hidden) closeModal();
   $main.innerHTML = views[id]();
+  admBar();
   $nav.querySelectorAll("a").forEach(a=>{ if(a.dataset.id===id||(a.dataset.id==="pi"&&id==="members")) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   $nav.classList.remove("open"); document.getElementById("menuBtn").setAttribute("aria-expanded","false");
   if(id==="publications"){
@@ -1079,7 +1070,7 @@ const GH_BRANCH = "main";
 const GH_AUTH = "https://hibe-admin.hyde1207.workers.dev";   // 로그인 중계 Worker 주소 (예: https://hibe-admin.아이디.workers.dev). 비어 있으면 관리자 기능이 꺼져 있음
 var GH_TOKEN = null, ADMIN = null, ADMTAB = "posts", ADM_NEW = null, ADM_AUTO = {files:[],out:null};
 /* 학생 연구원이 편집할 수 있는 메뉴 (Worker의 STUDENT_PATHS와 맞춰야 함) */
-const STUDENT_KEYS = ["posts","awards","pubs"];
+const STUDENT_KEYS = ["posts","awards","projects","pubs"];
 const admKeys = () => ADMIN?.student ? STUDENT_KEYS : ADM_KEYS;
 const CONTENT_SHA = {};
 
@@ -1166,8 +1157,18 @@ function admLogout(){GH_TOKEN=null;ADMIN=null;try{sessionStorage.removeItem("hib
 function admBar(){let b=document.getElementById("admBar");
   if(!ADMIN?.ok){b?.remove();return;}
   if(!b){b=document.createElement("div");b.id="admBar";b.className="adm-bar";document.body.appendChild(b);}
-  b.innerHTML=`<a href="#admin">관리 화면</a><span>${esc(ADMIN.name)}</span><button type="button" id="admOut">로그아웃</button>`;
-  b.querySelector("#admOut").onclick=admLogout;}
+  const pk=ADM_PAGE[location.hash.slice(1)];
+  b.innerHTML=`${pk&&admCan(pk)?`<button type="button" id="admPageAdd">+ ${ADM[pk].label[1]} 추가</button>`:""}<a href="#admin">관리 화면</a><span>${esc(ADMIN.name)}</span><button type="button" id="admOut">로그아웃</button>`;
+  b.querySelector("#admOut").onclick=admLogout;b.querySelector("#admPageAdd")?.addEventListener("click",()=>admEdit(pk,-1));}
+/* 각 페이지에서 바로 편집: 아래 막대의 '+ 추가', 게시물 창의 '편집'·'삭제' */
+const ADM_PAGE={awards:"awards",activities:"posts",projects:"projects"};
+function admCan(k){return !!(ADMIN?.ok&&admKeys().includes(k));}
+function admModalTools(k,i){if(!admCan(k)||!(i>=0))return;const body=$mc.querySelector(".modal-body");if(!body)return;
+  const d=document.createElement("div");d.className="adm-inline";
+  d.innerHTML=`<button class="btn-post" type="button" data-a="edit">편집</button><button class="btn-ghost danger" type="button" data-a="del">삭제</button>`;
+  d.onclick=async e=>{const x=e.target.closest("button");if(!x)return;if(x.dataset.a==="edit")return admEdit(k,i);
+    const arr=ADM[k].get();if(!confirm(`"${ADM[k].title(arr[i])}" 을(를) 삭제할까요?`))return;arr.splice(i,1);x.disabled=true;if(await admSave(k,arr))closeModal();else x.disabled=false;};
+  body.appendChild(d);}
 
 views.admin=()=>`<section class="page wrap adm">${head("","Admin")}<div id="admRoot"></div></section>`;
 function admRender(){
@@ -1206,7 +1207,7 @@ async function admSave(key,arr){
   if(r.status===409||r.status===422){const old=CONTENT_SHA[key];await ghContentLoad();
     if(CONTENT_SHA[key]!==old){alert("그사이 다른 관리자가 같은 메뉴를 고쳤습니다. 최신 내용을 불러왔으니 다시 한 번 수정해 주세요.");admRender();return false;}r=await put();}
   if(!r.ok){alert("저장하지 못했습니다: "+((await r.json().catch(()=>({}))).message||r.status));return false;}
-  CONTENT_SHA[key]=(await r.json()).content.sha;S.set(arr);admRender();admToast("저장했습니다. 1~2분 뒤 홈페이지에 반영됩니다.");return true;}
+  CONTENT_SHA[key]=(await r.json()).content.sha;S.set(arr);admRender();if(location.hash!=="#admin"){const y=scrollY;route();window.scrollTo(0,y);}admToast("저장했습니다. 1~2분 뒤 홈페이지에 반영됩니다.");return true;}
 function admToast(t){const d=document.createElement("div");d.className="adm-toast";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),4000);}
 
 /* PDF 첫 페이지 → 이미지 (브라우저 안에서 pdf.js로 그림, PDF는 어디에도 올리지 않음) */
@@ -1349,13 +1350,13 @@ async function admAdmins(){
     admAdmins();};
   admStudents(body);
 }
-/* 학생 연구원: 저장소 권한 없이, 활동·수상·논문만 편집 (명단은 content/roles.json) */
+/* 학생 연구원: 저장소 권한 없이, 활동·수상·연구과제·논문만 편집 (명단은 content/roles.json) */
 async function admStudents(body){
   const sec=document.createElement("div");sec.className="adm-students";body.appendChild(sec);
   const roles=await rolesLoad(),list=roles.data.students;
-  sec.innerHTML=`<h3>학생 연구원 <small>활동·수상·논문만 추가·수정·삭제</small></h3>
+  sec.innerHTML=`<h3>학생 연구원 <small>활동·수상·연구과제·논문만 추가·수정·삭제</small></h3>
     <form class="adm-head" id="admStuForm"><input id="admStuId" placeholder="GitHub 아이디" required autocomplete="off"><input id="admStuName" placeholder="이름 (선택)" autocomplete="off"><button class="btn-post">학생 추가</button></form>
-    <p class="adm-note">학생은 저장소 초대가 필요 없습니다. 여기에 GitHub 아이디를 넣으면 바로 'GitHub로 로그인'으로 들어와 활동·수상·논문 메뉴만 편집할 수 있습니다. 위의 관리자는 모든 메뉴를 편집합니다.</p>
+    <p class="adm-note">학생은 저장소 초대가 필요 없습니다. 여기에 GitHub 아이디를 넣으면 바로 'GitHub로 로그인'으로 들어와 활동·수상·연구과제·논문 메뉴만 편집할 수 있습니다. 위의 관리자는 모든 메뉴를 편집합니다.</p>
     <ul class="adm-list">${list.length?list.map((x,j)=>`<li data-j="${j}"><div class="adm-th"><img src="https://github.com/${encodeURIComponent(x.login)}.png?size=96" alt=""></div><div class="adm-tx"><b>${esc(x.login)}</b><small>${esc(x.name||"학생 연구원")}</small></div><div class="adm-act"><button type="button" class="danger" data-s="rm">삭제</button></div></li>`).join(""):`<li><div class="adm-tx"><small>아직 없습니다.</small></div></li>`}</ul>`;
   const save=async(next,what)=>{const r=await ghApi(`/repos/${GH_REPO}/contents/content/roles.json`,{method:"PUT",body:JSON.stringify({message:`관리 화면: 학생 연구원 ${what} (${ADMIN.login})`,branch:GH_BRANCH,content:b64(JSON.stringify({students:next},null,1)+"\n"),...(roles.sha?{sha:roles.sha}:{})})});
     if(!r.ok)alert("저장하지 못했습니다: "+((await r.json().catch(()=>({}))).message||r.status));sec.remove();admStudents(body);};
