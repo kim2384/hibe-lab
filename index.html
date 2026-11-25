@@ -5,6 +5,9 @@
 <meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>hibe lab | Chung-Ang University</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap">
 <style>
@@ -1073,7 +1076,7 @@ fetch("data/citations.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then
    관리자 = 이 저장소에 쓰기 권한(Write 이상)이 있는 GitHub 계정. 설정 방법은 ADMIN_SETUP.md. */
 const GH_REPO = "kim2384/hibe-lab";
 const GH_BRANCH = "main";
-const GH_AUTH = "";   // 로그인 중계 Worker 주소 (예: https://hibe-admin.아이디.workers.dev). 비어 있으면 관리자 기능이 꺼져 있음
+const GH_AUTH = "https://hibe-admin.hyde1207.workers.dev";   // 로그인 중계 Worker 주소 (예: https://hibe-admin.아이디.workers.dev). 비어 있으면 관리자 기능이 꺼져 있음
 var GH_TOKEN = null, ADMIN = null, ADMTAB = "posts", ADM_NEW = null, ADM_AUTO = {files:[],out:null};
 /* 학생 연구원이 편집할 수 있는 메뉴 (Worker의 STUDENT_PATHS와 맞춰야 함) */
 const STUDENT_KEYS = ["posts","awards","pubs"];

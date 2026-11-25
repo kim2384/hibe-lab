@@ -18,13 +18,13 @@
 1. https://dash.cloudflare.com 에서 가입합니다. 연구실 공용 이메일로 만들면 담당 학생이 바뀌어도 계정이 남습니다.
 2. **Workers & Pages > Create > Create Worker**, 이름을 `hibe-admin` 으로 하고 **Deploy**.
 3. **Edit code** 를 눌러 기존 코드를 지우고 이 저장소의 `worker/worker.js` 내용을 통째로 붙여넣은 뒤 **Deploy**.
-4. Worker 주소를 적어 둡니다 (예: `https://hibe-admin.아이디.workers.dev`).
+4. Worker 주소를 적어 둡니다 (예: `https://hibe-admin.hyde1207.workers.dev`).
 
 ## 3. GitHub OAuth App 만들기
 1. https://github.com/settings/developers > **OAuth Apps > New OAuth App**
    - Application name: `hibe lab admin`
    - Homepage URL: 1번의 홈페이지 주소
-   - Authorization callback URL: `https://hibe-admin.아이디.workers.dev/callback` (2번 주소 + `/callback`)
+   - Authorization callback URL: `https://hibe-admin.hyde1207.workers.dev/callback` (2번 주소 + `/callback`)
 2. 만든 뒤 **Client ID** 를 복사하고, **Generate a new client secret** 으로 비밀 키를 만들어 복사합니다.
 
 ## 4. Worker에 값 넣기
@@ -53,7 +53,7 @@ Cloudflare의 Worker 화면 **Settings > Variables and Secrets > Add** 에서:
 `index.html` 에서 아래 줄에 2번의 Worker 주소를 넣습니다. 공개돼도 괜찮은 값이라 클로드에게 알려 주셔도 됩니다.
 
 ```js
-const GH_AUTH = "https://hibe-admin.아이디.workers.dev";
+const GH_AUTH = "https://hibe-admin.hyde1207.workers.dev";
 ```
 
 ## 6. 첫 로그인과 관리자 추가
