@@ -1,0 +1,43 @@
+name: Sync USD/KRW exchange rate
+
+on:
+  schedule:
+    - cron: "10 18 * * *"   # every day 03:10 KST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch rate (ECB via frankfurter.app, fallback open.er-api.com)
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, datetime
+          def get(u):
+              with urllib.request.urlopen(u, timeout=20) as r:
+                  return json.load(r)
+          rate = date = src = None
+          try:
+              d = get("https://api.frankfurter.app/latest?from=USD&to=KRW")
+              rate, date, src = d["rates"]["KRW"], d["date"], "ECB (frankfurter.app)"
+          except Exception as e:
+              print("frankfurter failed:", e)
+              d = get("https://open.er-api.com/v6/latest/USD")
+              rate, src = d["rates"]["KRW"], "open.er-api.com"
+              date = datetime.datetime.utcfromtimestamp(d["time_last_update_unix"]).strftime("%Y-%m-%d")
+          rate = round(float(rate), 2)
+          assert 500 < rate < 5000, rate
+          json.dump({"usd_krw": rate, "date": date, "source": src}, open("data/fx.json", "w"), indent=1)
+          print(rate, date, src)
+          PY
+      - name: Commit if changed
+        run: |
+          git config user.name "fx-sync"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/fx.json
+          git diff --cached --quiet || git commit -m "Update USD/KRW rate"
+          git push
