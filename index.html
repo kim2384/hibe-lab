@@ -436,6 +436,7 @@ form.adm-head input{flex:1;min-width:220px}
 .adm-foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:sticky;bottom:0;background:var(--surface);padding:10px 0}
 .adm-toast{position:fixed;left:50%;bottom:72px;transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 18px;font-size:14px;box-shadow:0 4px 16px rgba(0,0,0,.2)}
 .adm-bar{position:fixed;right:16px;bottom:16px;z-index:50;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--bg);border-radius:999px;padding:8px 14px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.adm-inline{display:flex;gap:8px;margin-top:20px}.adm-inline .danger{color:#b3261e;border-color:#b3261e}
 .adm-bar a{color:inherit;font-weight:600}.adm-bar button{font:inherit;background:none;border:1px solid currentColor;color:inherit;border-radius:999px;padding:2px 10px;cursor:pointer}
 @media (max-width:600px){.adm-bar span{display:none}.adm-list li{flex-wrap:wrap}.adm-act{width:100%;justify-content:flex-end}}
 .news{padding-block:4px 20px}.news h2{font-size:17px;margin:0 0 6px}
@@ -899,16 +900,17 @@ function openPub(k){const [cat,y,a,t,v,doi,sum,corr]=SITE.pubs[k],cover=pubCover
 
 function openProject(i){const t=SITE.projects[i];
       const pimgs=[SITE.projectImgs?.[i],...(SITE.projectMore?.[i]||[])].filter(Boolean);
-      openModal(`${pimgs.length?galHTML(pimgs):`<div class="img">${T("Project image (to be replaced)","과제 이미지 (원본으로 교체 예정)")}</div>`}<div class="modal-body"><h3 id="mTitle">${esc(t)}</h3>${(f=>`<dl><dt>${T("Funded by","지원 기관")}</dt><dd>${f?esc(pFunder(f))+(f.total&&f.total!==f.amount?`<div class="amt">${T("Total project","과제 전체")} <b>${esc(krw(f.total))}</b>${usd(f.total)}</div>`:"")+(f.amount?`<div class="amt">${f.total&&f.total!==f.amount?T("hibe lab portion","hibe lab 배정"):T("Amount","연구비")} <b>${esc(krw(f.amount))}</b>${usd(f.amount)}</div>`:"")+(f.amountNote?`<small class="amt-note">${esc(LANG==="ko"&&f.amountNoteKo?f.amountNoteKo:f.amountNote)}</small>`:""):todo()}</dd>${f?.role?`<dt>${T("Role","역할")}</dt><dd>${f.role==="PI"?T("Principal Investigator (PI)","연구책임자 (PI)"):T("Co-Principal Investigator (Co-PI)","공동연구책임자 (Co-PI)")}</dd>`:""}<dt>${T("Period","기간")}</dt><dd>${f?esc(ym(f.period))+(isDone(f)?` · ${T("Completed","종료")}`:` · ${T("Ongoing","진행 중")}`):todo()}</dd>${f?.no?`<dt>${T("Project No.","과제 번호")}</dt><dd>${esc(f.no)}</dd>`:""}<dt>${T("Description","과제 설명")}</dt><dd class="pdesc">${f?.desc?esc(f.desc):todo()}</dd></dl>`)(SITE.projectInfo?.[i])}</div>`);$mc._full=pimgs;}
+      openModal(`${pimgs.length?galHTML(pimgs):`<div class="img">${T("Project image (to be replaced)","과제 이미지 (원본으로 교체 예정)")}</div>`}<div class="modal-body"><h3 id="mTitle">${esc(t)}</h3>${(f=>`<dl><dt>${T("Funded by","지원 기관")}</dt><dd>${f?esc(pFunder(f))+(f.total&&f.total!==f.amount?`<div class="amt">${T("Total project","과제 전체")} <b>${esc(krw(f.total))}</b>${usd(f.total)}</div>`:"")+(f.amount?`<div class="amt">${f.total&&f.total!==f.amount?T("hibe lab portion","hibe lab 배정"):T("Amount","연구비")} <b>${esc(krw(f.amount))}</b>${usd(f.amount)}</div>`:"")+(f.amountNote?`<small class="amt-note">${esc(LANG==="ko"&&f.amountNoteKo?f.amountNoteKo:f.amountNote)}</small>`:""):todo()}</dd>${f?.role?`<dt>${T("Role","역할")}</dt><dd>${f.role==="PI"?T("Principal Investigator (PI)","연구책임자 (PI)"):T("Co-Principal Investigator (Co-PI)","공동연구책임자 (Co-PI)")}</dd>`:""}<dt>${T("Period","기간")}</dt><dd>${f?esc(ym(f.period))+(isDone(f)?` · ${T("Completed","종료")}`:` · ${T("Ongoing","진행 중")}`):todo()}</dd>${f?.no?`<dt>${T("Project No.","과제 번호")}</dt><dd>${esc(f.no)}</dd>`:""}<dt>${T("Description","과제 설명")}</dt><dd class="pdesc">${f?.desc?esc(f.desc):todo()}</dd></dl>`)(SITE.projectInfo?.[i])}</div>`);$mc._full=pimgs;admModalTools("projects",i);}
 const actCat=c=>c==="conf"?T("Scientific Conference Attendances","학술대회 참석"):T("Outreach & Extra Activities","아웃리치 및 기타 활동");
-function openAward(k){const a=AWARDS[k];if(!a)return;openModal(`${galHTML(a.full?.length?a.full:a.imgs)}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${a.date.replaceAll("-",". ")}</span><h3 id="mTitle">${esc(a.title)}</h3>${a.text?`<div class="ptext">${esc(a.text)}</div>`:""}</div>`);$mc._full=a.full||a.imgs;}
+function openAward(k){const a=AWARDS[k];if(!a)return;openModal(`${galHTML(a.full?.length?a.full:a.imgs)}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${a.date.replaceAll("-",". ")}</span><h3 id="mTitle">${esc(a.title)}</h3>${a.text?`<div class="ptext">${esc(a.text)}</div>`:""}</div>`);$mc._full=a.full||a.imgs;admModalTools("awards",k);}
 function openActivity(id){const p=OLD_POSTS.find(x=>x.id===id);if(!p)return;
-  openModal(`${galHTML(p.full?.length?p.full:p.imgs)}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${p.date?p.date.replaceAll("-",". ")+" · ":""}${esc(actCat(p.cat))}</span><h3 id="mTitle">${esc(p.title)}</h3>${p.text?`<div class="ptext">${esc(p.text)}</div>`:""}</div>`);$mc._full=p.full||p.imgs;}
+  openModal(`${galHTML(p.full?.length?p.full:p.imgs)}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${p.date?p.date.replaceAll("-",". ")+" · ":""}${esc(actCat(p.cat))}</span><h3 id="mTitle">${esc(p.title)}</h3>${p.text?`<div class="ptext">${esc(p.text)}</div>`:""}</div>`);$mc._full=p.full||p.imgs;admModalTools("posts",OLD_POSTS.indexOf(p));}
 function route(){
   let id = location.hash.slice(1);
   if(!views[id]) id = "home";
   if(!$modal.hidden) closeModal();
   $main.innerHTML = views[id]();
+  admBar();
   $nav.querySelectorAll("a").forEach(a=>{ if(a.dataset.id===id||(a.dataset.id==="pi"&&id==="members")) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   $nav.classList.remove("open"); document.getElementById("menuBtn").setAttribute("aria-expanded","false");
   if(id==="publications"){
@@ -1155,8 +1157,18 @@ function admLogout(){GH_TOKEN=null;ADMIN=null;try{sessionStorage.removeItem("hib
 function admBar(){let b=document.getElementById("admBar");
   if(!ADMIN?.ok){b?.remove();return;}
   if(!b){b=document.createElement("div");b.id="admBar";b.className="adm-bar";document.body.appendChild(b);}
-  b.innerHTML=`<a href="#admin">관리 화면</a><span>${esc(ADMIN.name)}</span><button type="button" id="admOut">로그아웃</button>`;
-  b.querySelector("#admOut").onclick=admLogout;}
+  const pk=ADM_PAGE[location.hash.slice(1)];
+  b.innerHTML=`${pk&&admCan(pk)?`<button type="button" id="admPageAdd">+ ${ADM[pk].label[1]} 추가</button>`:""}<a href="#admin">관리 화면</a><span>${esc(ADMIN.name)}</span><button type="button" id="admOut">로그아웃</button>`;
+  b.querySelector("#admOut").onclick=admLogout;b.querySelector("#admPageAdd")?.addEventListener("click",()=>admEdit(pk,-1));}
+/* 각 페이지에서 바로 편집: 아래 막대의 '+ 추가', 게시물 창의 '편집'·'삭제' */
+const ADM_PAGE={awards:"awards",activities:"posts",projects:"projects"};
+function admCan(k){return !!(ADMIN?.ok&&admKeys().includes(k));}
+function admModalTools(k,i){if(!admCan(k)||!(i>=0))return;const body=$mc.querySelector(".modal-body");if(!body)return;
+  const d=document.createElement("div");d.className="adm-inline";
+  d.innerHTML=`<button class="btn-post" type="button" data-a="edit">편집</button><button class="btn-ghost danger" type="button" data-a="del">삭제</button>`;
+  d.onclick=async e=>{const x=e.target.closest("button");if(!x)return;if(x.dataset.a==="edit")return admEdit(k,i);
+    const arr=ADM[k].get();if(!confirm(`"${ADM[k].title(arr[i])}" 을(를) 삭제할까요?`))return;arr.splice(i,1);x.disabled=true;if(await admSave(k,arr))closeModal();else x.disabled=false;};
+  body.appendChild(d);}
 
 views.admin=()=>`<section class="page wrap adm">${head("","Admin")}<div id="admRoot"></div></section>`;
 function admRender(){
@@ -1195,7 +1207,7 @@ async function admSave(key,arr){
   if(r.status===409||r.status===422){const old=CONTENT_SHA[key];await ghContentLoad();
     if(CONTENT_SHA[key]!==old){alert("그사이 다른 관리자가 같은 메뉴를 고쳤습니다. 최신 내용을 불러왔으니 다시 한 번 수정해 주세요.");admRender();return false;}r=await put();}
   if(!r.ok){alert("저장하지 못했습니다: "+((await r.json().catch(()=>({}))).message||r.status));return false;}
-  CONTENT_SHA[key]=(await r.json()).content.sha;S.set(arr);admRender();admToast("저장했습니다. 1~2분 뒤 홈페이지에 반영됩니다.");return true;}
+  CONTENT_SHA[key]=(await r.json()).content.sha;S.set(arr);admRender();if(location.hash!=="#admin"){const y=scrollY;route();window.scrollTo(0,y);}admToast("저장했습니다. 1~2분 뒤 홈페이지에 반영됩니다.");return true;}
 function admToast(t){const d=document.createElement("div");d.className="adm-toast";d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),4000);}
 
 /* PDF 첫 페이지 → 이미지 (브라우저 안에서 pdf.js로 그림, PDF는 어디에도 올리지 않음) */
