@@ -181,7 +181,7 @@ p{max-width:68ch}
 .member ul.m-ints{list-style:none;margin:12px 0 0;padding:0;font-size:12.5px;line-height:1.4;color:var(--muted);display:grid;gap:3px}.member ul.m-ints li{margin:0;padding:0}
 .member .m-links{margin-top:auto;padding-top:14px}
 .m-links{display:flex;gap:8px;justify-content:center;margin-top:12px;font-size:12.5px}.m-links a{display:inline-flex;align-items:center;gap:5px;color:var(--teal);font-weight:500;text-decoration:none;padding:4px 10px;border-radius:999px;background:var(--teal-soft);transition:background .15s,color .15s}.m-links a:hover{background:var(--teal);color:#fff}
-.role .r1,.role .r2{display:block}.role .r2{font-size:.86em;opacity:.75;margin-top:1px}
+.role .r1,.role .r2{display:inline-block;white-space:nowrap}.role .r2{font-size:.86em;opacity:.75;margin-left:6px;white-space:nowrap}
 .m-detail{display:grid;grid-template-columns:140px 1fr;gap:24px;align-items:start}
 .m-detail .avatar{width:140px;height:168px}
 .m-detail h3{margin:0}
@@ -1119,6 +1119,7 @@ function roleKo(r){if(KO.roles[r])return KO.roles[r];const {deg,yr}=roleParse(r)
   return deg==="alum"?"졸업생":deg==="bs"?`학부연구생 (${yr}학년)`:`${DEG.find(x=>x[0]===deg)[1]} (${yr}년차)`;}
 /* 화면 표시: "석사과정" 위, "2년차" 아래 작게 (괄호 없이) */
 function roleHTML(r){const t=LANG==="ko"?roleKo(r):String(r||""),m=t.match(/^(.*?)\s*\(([^)]*)\)\s*$/);
+  if(m&&LANG!=="ko")return `<span class="r1">${esc(m[1])}</span>`;   /* 영어는 연차 표기 안 함 */
   return m?`<span class="r1">${esc(m[1])}</span><span class="r2">${esc(m[2])}</span>`:`<span class="r1">${esc(t)}</span>`;}
 const roleGroup=deg=>deg==="bs"?"Undergraduate Research Assistants":deg==="alum"?"Alumni":"Graduate Research Assistants";
 const ADM = {
