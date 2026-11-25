@@ -177,6 +177,7 @@ p{max-width:68ch}
 .member:hover,.member:focus-visible{box-shadow:0 6px 18px rgba(0,0,0,.08);transform:translateY(-2px)}
 .member .avatar{width:100%;max-width:150px;height:auto;aspect-ratio:5/6;font-size:28px;margin-bottom:10px}
 .member .role{margin:0}
+.role .r1,.role .r2{display:block}.role .r2{font-size:.86em;opacity:.75;margin-top:1px}
 .m-detail{display:grid;grid-template-columns:140px 1fr;gap:24px;align-items:start}
 .m-detail .avatar{width:140px;height:168px}
 .m-detail h3{margin:0}
@@ -715,6 +716,8 @@ document.querySelector(".lang").addEventListener("click", e=>{const b=e.target.c
 const peopleHead = cur => `<h1 class="page-title">People</h1><div class="tabs" role="tablist">${[["pi","P.I.","지도교수"],["members","Members","연구원"]].map(([k,l,kl])=>`<a role="tab" href="#${k}" aria-selected="${k===cur}">${l}</a>`).join("")}</div>`;
 const head = (eyebrow, title) => `<h1 class="page-title">${title}</h1>`;
 
+const DEG=[["int","석박사통합과정","Integrated M.S./Ph.D. Researcher"],["phd","박사과정","Ph.D. Researcher"],["ms","석사과정","Master's Researcher"],["bs","학사과정","Undergrad. Researcher"],["alum","졸업생","Alumni"]];
+const UG_YR=["Freshman","Sophomore","Junior","Senior"];
 const views = {
   home(){
     const a = SITE.about;
@@ -760,7 +763,7 @@ const views = {
     return `<section class="page wrap">${peopleHead("members")}
       ${groups.map(g=>{const ms=SITE.members.filter(m=>m.group===g);return `<h2 class="group-title">${LANG==="ko"?KO.groups[g]||g:g}<span class="n">${ms.length}</span></h2>
       <div class="members">${ms.map(m=>`<article class="member" data-m="${SITE.members.indexOf(m)}" tabindex="0" role="button" aria-label="${esc(m.name)}"><div class="avatar" aria-hidden="true">${m.photo?`<img src="${m.photo}" alt="" loading="lazy">`:initials(m.name)}</div>
-        <h4>${m.name}</h4><div class="role">${LANG==="ko"?roleKo(m.role):m.role}</div></article>`).join("")}</div>`}).join("")}
+        <h4>${m.name}</h4><div class="role">${roleHTML(m.role)}</div></article>`).join("")}</div>`}).join("")}
     </section>`;
   },
   projects(){
@@ -988,7 +991,7 @@ function route(){
   if(id==="members"){
     const openM=k=>{const m=SITE.members[k];
       openModal(`<div class="modal-body m-detail"><div class="avatar">${m.photo?`<img src="${m.photo}" alt="">`:initials(m.name)}</div><div>
-        <h3 id="mTitle">${m.name}</h3><div class="role">${LANG==="ko"?roleKo(m.role):m.role}</div>
+        <h3 id="mTitle">${m.name}</h3><div class="role">${roleHTML(m.role)}</div>
         <div class="ri">${T("Research Interests","연구 주제")}</div><ul>${m.interests.map(i=>`<li>${esc(i)}</li>`).join("")}</ul>
         <div class="links"><a href="mailto:${m.email}">${m.email}</a>${m.cv?`<a href="${esc(m.cv)}" data-cv="${esc(m.name)}">CV</a>`:""}</div></div></div>`);};
     const sec=$main.querySelector("section.page");
@@ -1100,8 +1103,6 @@ const CONTENT_SHA = {};
 
 /* 편집할 구역: 화면의 데이터와 저장 형식을 서로 바꿔 줌 */
 /* 구성원 학위과정: 고르면 영문 표기·국문 표기·대학원/학부 구분이 자동으로 정해짐 */
-const DEG=[["int","석박사통합과정","Integrated M.S./Ph.D. Researcher"],["phd","박사과정","Ph.D. Researcher"],["ms","석사과정","Master's Researcher"],["bs","학사과정","Undergrad. Researcher"],["alum","졸업생","Alumni"]];
-const UG_YR=["Freshman","Sophomore","Junior","Senior"];
 function roleParse(r){r=String(r||"");let deg=/integrated/i.test(r)?"int":/ph\.?d/i.test(r)?"phd":/master/i.test(r)?"ms":/undergrad/i.test(r)?"bs":/alum/i.test(r)?"alum":"ms";
   let yr=+(r.match(/(\d)(st|nd|rd|th)\s*year/i)||[])[1]||0;const u=UG_YR.findIndex(w=>new RegExp(w,"i").test(r));if(u>=0)yr=u+1;return {deg,yr:String(yr||1)};}
 function roleMake(deg,yr){const d=DEG.find(x=>x[0]===deg)||DEG[2];if(deg==="alum")return "Alumni";
@@ -1109,6 +1110,9 @@ function roleMake(deg,yr){const d=DEG.find(x=>x[0]===deg)||DEG[2];if(deg==="alum
   return `${d[2]} (${yr}${yr===1?"st":yr===2?"nd":yr===3?"rd":"th"} year)`;}
 function roleKo(r){if(KO.roles[r])return KO.roles[r];const {deg,yr}=roleParse(r);if(!/researcher|alum/i.test(r))return r;
   return deg==="alum"?"졸업생":deg==="bs"?`학부연구생 (${yr}학년)`:`${DEG.find(x=>x[0]===deg)[1]} (${yr}년차)`;}
+/* 화면 표시: "석사과정" 위, "2년차" 아래 작게 (괄호 없이) */
+function roleHTML(r){const t=LANG==="ko"?roleKo(r):String(r||""),m=t.match(/^(.*?)\s*\(([^)]*)\)\s*$/);
+  return m?`<span class="r1">${esc(m[1])}</span><span class="r2">${esc(m[2])}</span>`:`<span class="r1">${esc(t)}</span>`;}
 const roleGroup=deg=>deg==="bs"?"Undergraduate Research Assistants":deg==="alum"?"Alumni":"Graduate Research Assistants";
 const ADM = {
   posts: {label:["Activities","활동"], get:()=>OLD_POSTS.map(p=>({...p})), set:a=>OLD_POSTS.splice(0,OLD_POSTS.length,...a),
