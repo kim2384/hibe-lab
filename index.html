@@ -1024,7 +1024,7 @@ fetch("data/citations.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then
    관리자 = 이 저장소에 쓰기 권한(Write 이상)이 있는 GitHub 계정. 설정 방법은 ADMIN_SETUP.md. */
 const GH_REPO = "kim2384/hibe-lab";
 const GH_BRANCH = "main";
-const GH_AUTH = "";   // 로그인 중계 Worker 주소 (예: https://hibe-admin.아이디.workers.dev). 비어 있으면 관리자 기능이 꺼져 있음
+const GH_AUTH = "https://hibe-admin.hyde1207.workers.dev";   // 로그인 중계 Worker 주소 (예: https://hibe-admin.아이디.workers.dev). 비어 있으면 관리자 기능이 꺼져 있음
 let GH_TOKEN = null, ADMIN = null, ADMTAB = "posts", ADM_NEW = null;
 const CONTENT_SHA = {};
 
