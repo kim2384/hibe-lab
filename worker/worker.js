@@ -145,8 +145,11 @@ export default {
 
     // 1-2. GitHub에서 돌아옴: 코드를 토큰으로 바꿔 홈페이지 창에 전달
     if (url.pathname === "/callback") {
-      const [state, enc] = cookie(req, "hibe_oauth").split(".");
-      const origin = decodeURIComponent(enc || "");
+      // 쿠키 값 = state + "." + 주소. 주소 안에도 "."이 있으므로 첫 번째 "."에서만 나눔
+      const raw = cookie(req, "hibe_oauth");
+      const cut = raw.indexOf(".");
+      const state = cut > 0 ? raw.slice(0, cut) : "";
+      const origin = cut > 0 ? decodeURIComponent(raw.slice(cut + 1)) : "";
       if (!state || state !== url.searchParams.get("state") || !origins(env).includes(origin)) return html("로그인 확인에 실패했습니다. 창을 닫고 다시 시도해 주세요.");
       const r = await fetch("https://github.com/login/oauth/access_token", {
         method: "POST",
