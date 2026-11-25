@@ -564,7 +564,7 @@ const SITE = {
     office: ["Bldg. 208 - Rm. 402","School of Architecture and Building Science","Chung-Ang University (CAU), Seoul, Korea"],
     email: "myk127@cau.ac.kr",
     scholar: "https://scholar.google.com/citations?user=cXEf9b4AAAAJ&hl=en",
-    cv: "https://drive.google.com/file/d/1ZwfDaf-4WmKGDFDLAWfc5sbeiMmASV9H/view?usp=drive_link",
+    cv: "",
     photo: "images/pi.webp",
     /* logo: 학교 공식 로고(엠블럼+교명 가로형 전체) 이미지 경로. 비어 있으면 자리표시가 보입니다. */
     education: [
@@ -753,7 +753,7 @@ const views = {
       <div class="pi-head"><div class="photo${p.photo?" has":""}">${p.photo?`<img src="${p.photo}" alt="${p.name}">`:"MK"}</div><div>
         <h2 class="pi-name">${p.name}</h2><p class="pi-role">${ko("pi.role",p.role)}</p>
         <p>${ko("pi.office",p.office).join("<br>")}</p>
-        <div class="contact"><span>${p.email}</span><a href="${p.scholar}" target="_blank" rel="noopener">Google Scholar</a><a href="${esc(p.cv)}" data-cv="${esc(p.name||"P.I.")}">CV</a></div>
+        <div class="contact"><span>${p.email}</span><a href="${p.scholar}" target="_blank" rel="noopener">Google Scholar</a>${p.cv&&!/google\.com/.test(p.cv)?`<a href="${esc(p.cv)}" data-cv="${esc(p.name||"P.I.")}">CV</a>`:""}</div>
       </div></div>
       <div class="cv-grid">
         <div><h3>${T("Research Interests","연구 분야")}</h3><ul class="plain">${ko("pi.interests",p.interests).map(i=>`<li>${i}</li>`).join("")}</ul></div>
@@ -1148,6 +1148,8 @@ const ADM = {
     fields:[["last","성 (영문, 예: Hong)","text",1],["first","이름 (영문, 예: Gildong)","text",1],
       ["deg","학위과정 (고르면 대학원·학부 연구원으로 자동 분류)","select",DEG.map(([k,ko])=>[k,ko])],["yr","학년 (대학원은 N년차, 학사는 N학년)","select",[1,2,3,4,5,6].map(n=>[String(n),String(n)])],["interests","연구 주제 (최대 5개, 칸을 누르면 다른 구성원이 쓴 주제를 고를 수 있습니다)","pick5"],
       ["email","이메일","email"],["cv","CV (PDF 파일 올리기)","pdf"],["photo","증명사진 (올리면 배경 지우기·크기 맞추기·하단 모서리 둥글게가 자동으로 됩니다)","image"]]},
+  pi: {label:["P.I.","P.I."], single:true, get:()=>[{name:SITE.pi.name,cv:SITE.pi.cv||""}], set:a=>{if(a[0])SITE.pi.cv=a[0].cv||"";},
+    title:p=>p.name, sub:p=>p.cv?"CV 있음":"CV 없음", fields:[["cv","CV (PDF 파일 올리기)","pdf"]]},
   pubs: {label:["Publications","논문"], get:()=>SITE.pubs.map(([cat,year,authors,title,venue,doi,summary,corr,added,cover])=>({cat,year,authors,title,venue,doi:doi||"",summary:summary||"",corr:corr||"",added:added||"",cover:cover||""})),
     set:a=>{SITE.pubs=a.map(p=>[p.cat,+p.year,p.authors,p.title,p.venue,p.doi||"",p.summary||"",p.corr||"",p.added||"",p.cover||""]);},
     sort:(a,b)=>b.year-a.year, title:p=>p.title, sub:p=>`${p.year} · ${(SITE.pubCats.find(c=>c[0]===p.cat)||[,""])[1]}`,
@@ -1238,11 +1240,11 @@ function admRender(){
   if(!admKeys().includes(ADMTAB))ADMTAB=admKeys()[0];
   const S=ADM[ADMTAB],items=S.get(),order=items.map((_,i)=>i);if(S.sort)order.sort((a,b)=>S.sort(items[a],items[b]));
   const body=root.querySelector("#admBody");
-  body.innerHTML=`<div class="adm-head"><span>${items.length}개</span><button class="btn-post" id="admAdd" type="button">+ 새로 추가</button></div>
+  body.innerHTML=`<div class="adm-head"><span>${items.length}개</span>${S.single?"":`<button class="btn-post" id="admAdd" type="button">+ 새로 추가</button>`}</div>
     <ul class="adm-list">${order.map(i=>{const it=items[i],th=S.thumb?.(it);return `<li data-i="${i}">${S.thumb?`<div class="adm-th">${th?`<img src="${esc(th)}" alt="" loading="lazy">`:""}</div>`:""}
       <div class="adm-tx"><b>${esc(S.title(it)||"(제목 없음)")}</b><small>${esc(S.sub(it))}</small></div>
-      <div class="adm-act">${S.ordered?`<button type="button" data-a="up" aria-label="위로">↑</button><button type="button" data-a="down" aria-label="아래로">↓</button>`:""}<button type="button" data-a="edit">편집</button><button type="button" data-a="del" class="danger">삭제</button></div></li>`;}).join("")}</ul>`;
-  body.querySelector("#admAdd").onclick=()=>admEdit(ADMTAB,-1);
+      <div class="adm-act">${S.ordered?`<button type="button" data-a="up" aria-label="위로">↑</button><button type="button" data-a="down" aria-label="아래로">↓</button>`:""}<button type="button" data-a="edit">편집</button>${S.single?"":`<button type="button" data-a="del" class="danger">삭제</button>`}</div></li>`;}).join("")}</ul>`;
+  if(!S.single)body.querySelector("#admAdd").onclick=()=>admEdit(ADMTAB,-1);
   body.querySelector(".adm-list").onclick=async e=>{const b=e.target.closest("button[data-a]");if(!b)return;const i=+b.closest("li").dataset.i,a=b.dataset.a,arr=S.get();
     if(a==="edit")return admEdit(ADMTAB,i);
     if(a==="del"){if(!confirm(`"${S.title(arr[i])}" 을(를) 삭제할까요?`))return;arr.splice(i,1);}
