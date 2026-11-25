@@ -837,8 +837,9 @@ function newsItems(){
   SITE.projects.forEach((t,i)=>{const f=SITE.projectInfo?.[i]||{},m=String(f.period||"").match(/^(\d{4})\.(\d{2})/);if(!m)return;
     const r=f.role?` as ${f.role}`:"",rk=f.role?`(${f.role}) `:"";
     out.push({d:`${m[1]}-${m[2]}`,c:["New project","과제 수주"],t:L(`Launched a new project${r}: ${t}${f.funder?`, funded by ${f.funder}`:""}`,`신규 과제 ${rk}수주: ${t}${f.funder?` (${pFunder(f)})`:""}`),img:SITE.projectImgs?.[i],fit:"contain",go:["projects",i]});});
-  SITE.pubs.forEach((r,k)=>{const j=r[0]==="sci"||r[0]==="kci",v=pubVenue(r);
-    out.push({d:r[8]||String(r[1]),c:j?["New paper","논문 게재"]:["Presentation","학술 발표"],t:j?L(`Published in ${v}: “${r[3]}”`,`${v} 논문 게재: “${r[3]}”`):L(`Presented “${r[3]}” at ${v}`,`${v} 발표: “${r[3]}”`),venue:v,img:pubCover(r),fit:"top",go:["publications",k]});});
+  /* 학회 발표는 Activities와 겹치므로 대문에 올리지 않음 (저널 논문만) */
+  SITE.pubs.forEach((r,k)=>{if(r[0]!=="sci"&&r[0]!=="kci")return;const v=pubVenue(r);
+    out.push({d:r[8]||String(r[1]),c:["New paper","논문 게재"],t:L(`Published in ${v}: “${r[3]}”`,`${v} 논문 게재: “${r[3]}”`),venue:v,img:pubCover(r),fit:"top",go:["publications",k]});});
   return out.sort((a,b)=>pad(b.d).localeCompare(pad(a.d)));
 }
 const newsDate=d=>d.length===4?d:d.replaceAll("-",". ");
