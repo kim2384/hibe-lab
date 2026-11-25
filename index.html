@@ -251,6 +251,9 @@ p{max-width:68ch}
 .slide .more{font-size:13px;color:var(--teal)}
 .modal{position:fixed;inset:0;z-index:20;background:rgba(10,20,17,.55);display:grid;place-items:center;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 .modal[hidden]{display:none}
+.adm-pick{display:grid;gap:6px}
+.cv-view{display:flex;flex-direction:column;height:min(86vh,1100px)}.cv-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 96px 12px 20px;flex-wrap:wrap}
+.cv-bar span{display:flex;gap:8px}.cv-bar .btn-ghost{font-size:13px;padding:5px 12px;text-decoration:none}.cv-view iframe{flex:1;width:100%;border:0;background:#fff}
 .modal-box{background:var(--surface);color:var(--ink);border-radius:14px;width:min(640px,100%);max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
 @media (min-width:768px){.modal-box{width:min(1000px,92vw);max-width:96vw;max-height:min(92vh,1100px);min-width:420px;min-height:260px;resize:both}
   .modal-body{padding:28px 40px 36px}.modal-body h3{font-size:26px}.modal-body dl{grid-template-columns:120px 1fr;font-size:16px}.modal-body .pdesc,.modal-body .ptext,.modal-body .sum{font-size:16.5px}
@@ -667,7 +670,7 @@ const KO = {
     grad: [["47555","건물에너지분석"],["58184","건물빛환경세미나"],["51811","첨단건축설비세미나"]]
   },
   projects: {"funders": {"Seoul Metropolitan Government": "서울특별시", "Ministry of Land, Infrastructure and Transport": "국토교통부", "National Research Foundation of Korea": "한국연구재단", "Korea Agency for Infrastructure Technology Advancement": "국토교통과학기술진흥원"}, "amounts": {"KRW 44.20 Million": "4,420만 원", "KRW 120 Million": "1억 2천만 원", "KRW 80 Million": "8천만 원", "KRW 8,000 Million": "80억 원", "KRW 500 Million": "5억 원", "KRW 141.10 Million": "1억 4,110만 원", "KRW 2,302.00 Million": "23억 200만 원", "KRW 92.84 Million": "9,284만 원", "KRW 212.62 Million": "2억 1,262만 원"}},
-  groups: {"Graduate Research Assistants":"대학원 연구원","Undergraduate Research Assistants":"학부 연구원"},
+  groups: {"Graduate Research Assistants":"대학원 연구원","Undergraduate Research Assistants":"학부 연구원","Alumni":"졸업생"},
   roles: {"Master's Researcher (2nd year)":"석사과정 (2년차)","Master's Researcher (1st year)":"석사과정 (1년차)","Undergrad. Researcher (Senior)":"학부연구생 (4학년)"},
   pubCats: {sci:"국제 저널 (SCI-E)",kci:"국내 저널 (KCI)",intconf:"국제 학술대회 발표",domconf:"국내 학술대회 발표"},
   join: {
@@ -739,7 +742,7 @@ const views = {
       <div class="pi-head"><div class="photo${p.photo?" has":""}">${p.photo?`<img src="${p.photo}" alt="${p.name}">`:"MK"}</div><div>
         <h2 class="pi-name">${p.name}</h2><p class="pi-role">${ko("pi.role",p.role)}</p>
         <p>${ko("pi.office",p.office).join("<br>")}</p>
-        <div class="contact"><span>${p.email}</span><a href="${p.scholar}" target="_blank" rel="noopener">Google Scholar</a><a href="${p.cv}" target="_blank" rel="noopener">CV</a></div>
+        <div class="contact"><span>${p.email}</span><a href="${p.scholar}" target="_blank" rel="noopener">Google Scholar</a><a href="${esc(p.cv)}" data-cv="${esc(p.name||"P.I.")}">CV</a></div>
       </div></div>
       <div class="cv-grid">
         <div><h3>${T("Research Interests","연구 분야")}</h3><ul class="plain">${ko("pi.interests",p.interests).map(i=>`<li>${i}</li>`).join("")}</ul></div>
@@ -757,7 +760,7 @@ const views = {
     return `<section class="page wrap">${peopleHead("members")}
       ${groups.map(g=>{const ms=SITE.members.filter(m=>m.group===g);return `<h2 class="group-title">${LANG==="ko"?KO.groups[g]||g:g}<span class="n">${ms.length}</span></h2>
       <div class="members">${ms.map(m=>`<article class="member" data-m="${SITE.members.indexOf(m)}" tabindex="0" role="button" aria-label="${esc(m.name)}"><div class="avatar" aria-hidden="true">${m.photo?`<img src="${m.photo}" alt="" loading="lazy">`:initials(m.name)}</div>
-        <h4>${m.name}</h4><div class="role">${LANG==="ko"?KO.roles[m.role]||m.role:m.role}</div></article>`).join("")}</div>`}).join("")}
+        <h4>${m.name}</h4><div class="role">${LANG==="ko"?roleKo(m.role):m.role}</div></article>`).join("")}</div>`}).join("")}
     </section>`;
   },
   projects(){
@@ -886,7 +889,16 @@ $mc.addEventListener("scroll",e=>{const t=e.target;if(!t.classList||!t.classList
   w.querySelectorAll(".igs-dots i").forEach((d,j)=>d.classList.toggle("on",j===i));const c=w.querySelector(".igs-c");if(c)c.textContent=`${i+1} / ${n}`;
   const pv=w.querySelector(".igs-p"),nx=w.querySelector(".igs-n");if(pv)pv.hidden=i===0;if(nx)nx.hidden=i===n-1;},true);
 const todo=()=>`<span class="todo">${T("Not on the current site yet. It will show here once added in the admin tool.","원본 사이트에 없는 정보입니다. 관리툴에서 입력하면 표시됩니다.")}</span>`;
-function openModal(html){$mc.innerHTML=html;const bx=$modal.querySelector(".modal-box");bx.classList.remove("max");bx.style.width=bx.style.height="";bx.scrollTop=0;document.getElementById("mMax").textContent="⤢";$modal.hidden=false;document.getElementById("mClose").focus();}
+/* CV 뷰어: 올린 PDF(또는 예전 구글 드라이브 링크)를 창 안에서 보기 — 확대·축소·인쇄는 PDF 뷰어 도구막대 */
+function cvSrc(u){const d=String(u).match(/drive\.google\.com\/file\/d\/([^/?#]+)/);if(d)return `https://drive.google.com/file/d/${d[1]}/preview`;
+  const g=String(u).match(/docs\.google\.com\/(document|presentation|spreadsheets)\/d\/([^/?#]+)/);if(g)return `https://docs.google.com/${g[1]}/d/${g[2]}/preview`;return u;}
+function openCV(url,name){const local=!/^https?:/i.test(url)||url.startsWith(location.origin),src=cvSrc(url);
+  openModal(`<div class="cv-view"><div class="cv-bar"><b id="mTitle">${esc(name)} · CV</b><span>${local?`<button type="button" class="btn-ghost" id="cvPrint">${T("Print","인쇄")}</button>`:""}<a class="btn-ghost" href="${esc(local?src:url)}" target="_blank" rel="noopener"${local?" download":""}>${T(local?"Download":"Open in new tab",local?"내려받기":"새 창에서 열기")}</a></span></div>
+    <iframe src="${esc(src)}${local?"#view=FitH":""}" title="CV" allow="fullscreen"></iframe></div>`);
+  $modal.querySelector(".modal-box").classList.add("max","cv-box");document.getElementById("mMax").textContent="⤡";
+  document.getElementById("cvPrint")?.addEventListener("click",()=>{try{$mc.querySelector("iframe").contentWindow.print();}catch(e){window.open(src,"_blank");}});}
+document.addEventListener("click",e=>{const a=e.target.closest("a[data-cv]");if(!a||e.ctrlKey||e.metaKey)return;e.preventDefault();openCV(a.getAttribute("href"),a.dataset.cv);});
+function openModal(html){$modal.querySelector(".modal-box")?.classList.remove("cv-box");$mc.innerHTML=html;const bx=$modal.querySelector(".modal-box");bx.classList.remove("max");bx.style.width=bx.style.height="";bx.scrollTop=0;document.getElementById("mMax").textContent="⤢";$modal.hidden=false;document.getElementById("mClose").focus();}
 document.getElementById("mMax").onclick=()=>{const bx=$modal.querySelector(".modal-box"),on=bx.classList.toggle("max");document.getElementById("mMax").textContent=on?"⤡":"⤢";};
 function closeModal(){$modal.hidden=true;}
 document.getElementById("mClose").onclick=closeModal;
@@ -965,9 +977,9 @@ function route(){
   if(id==="members"){
     const openM=k=>{const m=SITE.members[k];
       openModal(`<div class="modal-body m-detail"><div class="avatar">${m.photo?`<img src="${m.photo}" alt="">`:initials(m.name)}</div><div>
-        <h3 id="mTitle">${m.name}</h3><div class="role">${LANG==="ko"?KO.roles[m.role]||m.role:m.role}</div>
+        <h3 id="mTitle">${m.name}</h3><div class="role">${LANG==="ko"?roleKo(m.role):m.role}</div>
         <div class="ri">${T("Research Interests","연구 주제")}</div><ul>${m.interests.map(i=>`<li>${esc(i)}</li>`).join("")}</ul>
-        <div class="links"><a href="mailto:${m.email}">${m.email}</a><a href="${m.cv}" target="_blank" rel="noopener">CV</a></div></div></div>`);};
+        <div class="links"><a href="mailto:${m.email}">${m.email}</a>${m.cv?`<a href="${esc(m.cv)}" data-cv="${esc(m.name)}">CV</a>`:""}</div></div></div>`);};
     const sec=$main.querySelector("section.page");
     sec.addEventListener("click",e=>{const c=e.target.closest(".member");if(c)openM(+c.dataset.m);});
     sec.addEventListener("keydown",e=>{const c=e.target.closest(".member");if(c&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openM(+c.dataset.m);}});
@@ -1076,6 +1088,17 @@ const admKeys = () => ADMIN?.student ? STUDENT_KEYS : ADM_KEYS;
 const CONTENT_SHA = {};
 
 /* 편집할 구역: 화면의 데이터와 저장 형식을 서로 바꿔 줌 */
+/* 구성원 학위과정: 고르면 영문 표기·국문 표기·대학원/학부 구분이 자동으로 정해짐 */
+const DEG=[["int","석박사통합과정","Integrated M.S./Ph.D. Researcher"],["phd","박사과정","Ph.D. Researcher"],["ms","석사과정","Master's Researcher"],["bs","학사과정","Undergrad. Researcher"],["alum","졸업생","Alumni"]];
+const UG_YR=["Freshman","Sophomore","Junior","Senior"];
+function roleParse(r){r=String(r||"");let deg=/integrated/i.test(r)?"int":/ph\.?d/i.test(r)?"phd":/master/i.test(r)?"ms":/undergrad/i.test(r)?"bs":/alum/i.test(r)?"alum":"ms";
+  let yr=+(r.match(/(\d)(st|nd|rd|th)\s*year/i)||[])[1]||0;const u=UG_YR.findIndex(w=>new RegExp(w,"i").test(r));if(u>=0)yr=u+1;return {deg,yr:String(yr||1)};}
+function roleMake(deg,yr){const d=DEG.find(x=>x[0]===deg)||DEG[2];if(deg==="alum")return "Alumni";
+  if(deg==="bs")return `Undergrad. Researcher (${UG_YR[Math.min(4,Math.max(1,yr))-1]})`;
+  return `${d[2]} (${yr}${yr===1?"st":yr===2?"nd":yr===3?"rd":"th"} year)`;}
+function roleKo(r){if(KO.roles[r])return KO.roles[r];const {deg,yr}=roleParse(r);if(!/researcher|alum/i.test(r))return r;
+  return deg==="alum"?"졸업생":deg==="bs"?`학부연구생 (${yr}학년)`:`${DEG.find(x=>x[0]===deg)[1]} (${yr}년차)`;}
+const roleGroup=deg=>deg==="bs"?"Undergraduate Research Assistants":deg==="alum"?"Alumni":"Graduate Research Assistants";
 const ADM = {
   posts: {label:["Activities","활동"], get:()=>OLD_POSTS.map(p=>({...p})), set:a=>OLD_POSTS.splice(0,OLD_POSTS.length,...a),
     sort:(a,b)=>(b.date||"").localeCompare(a.date||""), title:p=>p.title, sub:p=>`${p.date||""} · ${p.cat==="conf"?T("Conference","학술대회"):T("Outreach","아웃리치")}`, thumb:p=>p.imgs?.[0],
@@ -1095,10 +1118,12 @@ const ADM = {
       ["img","대표 이미지 (카로셀)","image"],["more","팝업에 추가로 보일 그림","images"]]},
   members: {label:["Members","구성원"], ordered:true, get:()=>SITE.members.map(m=>({...m,interests:[...(m.interests||[])]})), set:a=>{SITE.members=a;},
     title:m=>m.name, sub:m=>`${m.group} · ${m.role}`, thumb:m=>m.photo,
-    blank:()=>({group:"Graduate Research Assistants",name:"",role:"",interests:[],email:"",cv:"",photo:""}),
-    fields:[["group","구분","select",[["Graduate Research Assistants","대학원 연구원"],["Undergraduate Research Assistants","학부 연구원"],["Alumni","졸업생"]]],
-      ["name","이름 (예: Hong, Gildong)","text",1],["role","학위과정·학년 (예: Master's Researcher (1st year))","text"],["interests","연구 주제 (한 줄에 하나)","lines"],
-      ["email","이메일","email"],["cv","CV 링크","url"],["photo","사진 (배경 없는 PNG 권장)","image"]]},
+    blank:()=>({group:"Graduate Research Assistants",name:"",role:"Master's Researcher (1st year)",interests:[],email:"",cv:"",photo:""}),
+    prep:m=>{Object.assign(m,roleParse(m.role));const [l,...r]=String(m.name||"").split(",");m.last=(l||"").trim();m.first=r.join(",").trim();},
+    fin:m=>{m.name=[m.last,m.first].filter(Boolean).join(", ");delete m.last;delete m.first;m.role=roleMake(m.deg,+m.yr);m.group=roleGroup(m.deg);delete m.deg;delete m.yr;},
+    fields:[["last","성 (영문, 예: Hong)","text",1],["first","이름 (영문, 예: Gildong)","text",1],
+      ["deg","학위과정 (고르면 대학원·학부 연구원으로 자동 분류)","select",DEG.map(([k,ko])=>[k,ko])],["yr","학년 (대학원은 N년차, 학사는 N학년)","select",[1,2,3,4,5,6].map(n=>[String(n),String(n)])],["interests","연구 주제 (최대 5개, 칸을 누르면 다른 구성원이 쓴 주제를 고를 수 있습니다)","pick5"],
+      ["email","이메일","email"],["cv","CV (PDF 파일 올리기)","pdf"],["photo","사진 (배경 없는 PNG 권장)","image"]]},
   pubs: {label:["Publications","논문"], get:()=>SITE.pubs.map(([cat,year,authors,title,venue,doi,summary,corr,added,cover])=>({cat,year,authors,title,venue,doi:doi||"",summary:summary||"",corr:corr||"",added:added||"",cover:cover||""})),
     set:a=>{SITE.pubs=a.map(p=>[p.cat,+p.year,p.authors,p.title,p.venue,p.doi||"",p.summary||"",p.corr||"",p.added||"",p.cover||""]);},
     sort:(a,b)=>b.year-a.year, title:p=>p.title, sub:p=>`${p.year} · ${(SITE.pubCats.find(c=>c[0]===p.cat)||[,""])[1]}`,
@@ -1234,11 +1259,14 @@ document.addEventListener("error",e=>{const im=e.target;if(im.tagName==="IMG"){c
 
 function admEdit(key,i,pre){
   const S=ADM[key],arr=S.get(),it=structuredClone(i<0?S.blank():arr[i]);
-  if(pre?.fields)Object.assign(it,pre.fields);
+  if(pre?.fields)Object.assign(it,pre.fields);S.prep?.(it);
   const imgList=(name,urls)=>`<div class="adm-imgs" data-f="${name}">${urls.map((u,j)=>`<figure data-j="${j}"><img src="${esc(u)}" alt=""><span><button type="button" data-m="l" aria-label="앞으로">←</button><button type="button" data-m="r" aria-label="뒤로">→</button><button type="button" data-m="x" aria-label="빼기">✕</button></span></figure>`).join("")}</div>`;
   const fld=([k,label,type,opt])=>{const v=it[k];
     if(type==="pdfpage")return `<div class="adm-f adm-plan"><label>${label}<input type="file" id="admPdf" accept="application/pdf"></label><small>PDF 파일은 저장되지 않고, 첫 페이지 그림만 저장됩니다. 공개 PDF가 있는 논문은 저장 후 자동으로도 만들어집니다.</small><p class="adm-msg" id="admPdfMsg"></p></div>`;
     if(type==="plan")return i>=0?"":`<div class="adm-f adm-plan"><label>${label}<input type="file" id="admPlan" accept="application/pdf,.txt,.md,text/plain"></label><small>PDF를 올리면 과제명·기간·기관·연구비·역할·설명을 채워 넣습니다. 채워진 내용은 꼭 확인해 주세요.</small><p class="adm-msg" id="admPlanMsg"></p></div>`;
+    if(type==="pick5"){const all=[...new Set(SITE.members.flatMap(m=>m.interests||[]).map(x=>x.trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+      return `<div class="adm-f"><span>${label}</span><datalist id="dl-${k}">${all.map(x=>`<option value="${esc(x)}">`).join("")}</datalist><div class="adm-pick">${[0,1,2,3,4].map(n=>`<input name="${k}" list="dl-${k}" value="${esc((v||[])[n]||"")}" placeholder="${n+1}번째 주제" autocomplete="off">`).join("")}</div></div>`;}
+    if(type==="pdf")return `<div class="adm-f"><span>${label}</span><div class="adm-pdf" data-f="${k}">${v?`<a href="${esc(v)}" data-cv="${esc(it.name||"")}">현재 CV 보기</a> <button type="button" class="btn-ghost" data-pdfx="${k}">빼기</button>`:"<small>올린 파일 없음</small>"}</div><input type="file" accept="application/pdf" data-pdf="${k}"></div>`;
     if(type==="select"){const o=typeof opt==="function"?opt():opt;return `<label class="adm-f">${label}<select name="${k}">${o.map(([ov,ol])=>`<option value="${esc(ov)}"${ov===v?" selected":""}>${esc(ol)}</option>`).join("")}</select></label>`;}
     if(type==="textarea")return `<label class="adm-f">${label}<textarea name="${k}" rows="6">${esc(v||"")}</textarea></label>`;
     if(type==="lines")return `<label class="adm-f">${label}<textarea name="${k}" rows="4">${esc((v||[]).join("\n"))}</textarea></label>`;
@@ -1260,6 +1288,15 @@ function admEdit(key,i,pre){
         else if(one){it[up]=await admUpload(file,key==="members"?800:1600,key);redraw(up);}
         else{(it[up]=it[up]||[]).push(await admUpload(file,2048,key));redraw(up);}}msg("");return true;}
     catch(err){msg("사진을 올리지 못했습니다: "+(err.message||err));return false;}};
+  const pdfBox=k=>{const v=it[k];f.querySelector(`.adm-pdf[data-f="${k}"]`).innerHTML=v?`<a href="${esc(v)}" data-cv="${esc(it.name||"")}">현재 CV 보기</a> <button type="button" class="btn-ghost" data-pdfx="${k}">빼기</button>`:"<small>올린 파일 없음</small>";};
+  f.addEventListener("click",e=>{const x=e.target.closest("button[data-pdfx]");if(x){it[x.dataset.pdfx]="";pdfBox(x.dataset.pdfx);}});
+  f.addEventListener("change",async e=>{const inp=e.target.closest("input[data-pdf]");if(!inp||!inp.files.length)return;const file=inp.files[0],k=inp.dataset.pdf;
+    if(file.size>25e6){msg("PDF가 너무 큽니다 (25MB 이하).");inp.value="";return;}inp.disabled=true;msg("PDF 올리는 중…");
+    try{const data=await new Promise(ok=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(",")[1]);fr.readAsDataURL(file);});
+      const path=`images/uploads/cv/${Date.now()}-${(file.name.replace(/\.pdf$/i,"").replace(/[^A-Za-z0-9_-]+/g,"-").slice(0,40)||"cv")}.pdf`;
+      const r=await ghPut(path,{message:`관리 화면: CV 올림 (${ADMIN.login})`,content:data});if(!r.ok)throw new Error((await r.json().catch(()=>({}))).message||r.status);
+      ADM_PREVIEW[path]=URL.createObjectURL(file);it[k]=path;pdfBox(k);msg("올렸습니다. 저장을 눌러 주세요.");}
+    catch(err){msg("PDF를 올리지 못했습니다: "+(err.message||err));}inp.value="";inp.disabled=false;});
   f.addEventListener("change",async e=>{const inp=e.target.closest("input[data-up]");if(!inp||!inp.files.length)return;inp.disabled=true;
     await addImgs(inp.dataset.up,inp.dataset.one,[...inp.files]);inp.value="";inp.disabled=false;});
   /* 자동 작성에서 넘어온 파일: 사진은 알맞은 칸에 올리고, 논문 PDF는 첫 페이지를 표지로 */
@@ -1285,8 +1322,8 @@ function admEdit(key,i,pre){
     catch(err){pm("자동 작성에 실패했습니다: "+(err.message||err));}};
   f.querySelector("#admCancel").onclick=closeModal;
   f.onsubmit=async e=>{e.preventDefault();
-    S.fields.forEach(([k,,type])=>{const el=f.elements[k];if(!el||["gallery","images","image","plan","pdfpage"].includes(type))return;
-      it[k]=type==="lines"?el.value.split("\n").map(s=>s.trim()).filter(Boolean):type==="number"?+el.value:el.value.trim();});
+    S.fields.forEach(([k,,type])=>{const el=f.elements[k];if(!el||["gallery","images","image","plan","pdfpage","pdf"].includes(type))return;
+      it[k]=type==="pick5"?[...f.querySelectorAll(`input[name="${k}"]`)].map(x=>x.value.trim()).filter(Boolean):type==="lines"?el.value.split("\n").map(s=>s.trim()).filter(Boolean):type==="number"?+el.value:el.value.trim();});S.fin?.(it);
     if(i<0){it.added=new Date().toISOString().slice(0,10);arr.unshift(it);}else arr[i]=it;msg("저장 중…");if(await admSave(key,arr))closeModal();};
 }
 /* 자동 작성: 파일을 올리면 어느 메뉴에 무엇을 쓸지 초안을 만들어 줌 (Worker /draft → Claude) */
