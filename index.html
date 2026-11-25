@@ -1378,7 +1378,7 @@ async function admAdmins(){
       <div class="adm-act">${c.login===ADMIN.login?"<small>나</small>":ADMIN.owner&&!c.permissions.admin?`<button type="button" class="danger" data-a="rm">삭제</button>`:""}</div></li>`).join("")}
     ${inv.map(v=>`<li data-inv="${v.id}"><div class="adm-th"></div><div class="adm-tx"><b>${esc(v.invitee?.login||"")}</b><small>초대 수락 대기 중</small></div><div class="adm-act"><button type="button" class="danger" data-a="cancel">초대 취소</button></div></li>`).join("")}</ul>`;
   const f=body.querySelector("#admAddForm");
-  if(f)f.onsubmit=async e=>{e.preventDefault();const u=body.querySelector("#admNew").value.trim().replace(/^@/,"");
+  if(f)f.onsubmit=async e=>{e.preventDefault();const u=body.querySelector("#admNew").value.trim().replace(/^@/,"");if(u.includes("@"))return alert("이메일이 아니라 GitHub 아이디를 넣어 주세요. 아이디는 github.com 오른쪽 위 프로필을 누르면 보입니다.\n\n학생 연구원(게시물만 편집)이라면 아래쪽 학생 연구원 칸에 넣어 주세요.");
     const r=await ghApi(`/repos/${GH_REPO}/collaborators/${encodeURIComponent(u)}`,{method:"PUT",body:JSON.stringify({permission:"push"})});
     if(!r.ok)alert(r.status===404?"그런 GitHub 아이디가 없습니다.":"초대하지 못했습니다: "+((await r.json().catch(()=>({}))).message||r.status));admAdmins();};
   body.querySelector(".adm-list").onclick=async e=>{const b=e.target.closest("[data-a]");if(!b)return;const li=b.closest("li");
@@ -1398,7 +1398,7 @@ async function admStudents(body){
     <ul class="adm-list">${list.length?list.map((x,j)=>`<li data-j="${j}"><div class="adm-th"><img src="https://github.com/${encodeURIComponent(x.login)}.png?size=96" alt=""></div><div class="adm-tx"><b>${esc(x.login)}</b><small>${esc(x.name||"학생 연구원")}</small></div><div class="adm-act"><button type="button" class="danger" data-s="rm">삭제</button></div></li>`).join(""):`<li><div class="adm-tx"><small>아직 없습니다.</small></div></li>`}</ul>`;
   const save=async(next,what)=>{const r=await ghApi(`/repos/${GH_REPO}/contents/content/roles.json`,{method:"PUT",body:JSON.stringify({message:`관리 화면: 학생 연구원 ${what} (${ADMIN.login})`,branch:GH_BRANCH,content:b64(JSON.stringify({students:next},null,1)+"\n"),...(roles.sha?{sha:roles.sha}:{})})});
     if(!r.ok)alert("저장하지 못했습니다: "+((await r.json().catch(()=>({}))).message||r.status));sec.remove();admStudents(body);};
-  sec.querySelector("#admStuForm").onsubmit=async e=>{e.preventDefault();const u=sec.querySelector("#admStuId").value.trim().replace(/^@/,""),n=sec.querySelector("#admStuName").value.trim();
+  sec.querySelector("#admStuForm").onsubmit=async e=>{e.preventDefault();const u=sec.querySelector("#admStuId").value.trim().replace(/^@/,""),n=sec.querySelector("#admStuName").value.trim();if(u.includes("@"))return alert("이메일이 아니라 GitHub 아이디를 넣어 주세요. 아이디는 github.com 오른쪽 위 프로필을 누르면 보입니다.");
     const chk=await ghApi(`/users/${encodeURIComponent(u)}`);if(!chk.ok)return alert("그런 GitHub 아이디가 없습니다.");const login=(await chk.json()).login;
     if(list.some(x=>x.login.toLowerCase()===login.toLowerCase()))return alert("이미 명단에 있습니다.");await save([...list,{login,name:n}],"추가");};
   sec.querySelector(".adm-list").onclick=async e=>{const b=e.target.closest("[data-s]");if(!b)return;const j=+b.closest("li").dataset.j;
