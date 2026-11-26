@@ -97,6 +97,7 @@ p{max-width:68ch}
 .hero h1{font-size:clamp(22px,3.15vw,35px);font-weight:500;margin:0 0 3px;line-height:1.2;color:var(--h1a);background:linear-gradient(180deg,var(--h1a) 0%,var(--h1b) 55%,var(--h1c) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 :root{--h1a:#0b7162;--h1b:#349381;--h1c:#89b6ab;--card-gray:#949495}
 .hero h1 .nw{white-space:nowrap}
+@media (max-width:560px){.hero h1,.hero .ko{white-space:nowrap}.hero h1 br{display:none}}
 .hero .ko{font-size:clamp(13px,1.9vw,16px);color:var(--card-gray);margin:0 0 12px;font-weight:500;line-height:1.3}
 .hero .tag{font-family:var(--display);font-weight:700;font-size:20px;color:var(--teal);margin:0 0 8px}
 .lumscale{margin-top:36px;max-width:720px}
@@ -739,7 +740,7 @@ const views = {
     const a = SITE.about;
     return `<div class="hero"><div class="wrap">
       ${LANG==="ko" ? `<h1>${a.ko}</h1><p class="ko">Hyper-Intelligent Built Environment Laboratory at <span class="nw">Chung-Ang University</span></p>`
-        : `<h1>Hyper-Intelligent Built Environment Laboratory<br>at <span class="nw">Chung-Ang University</span></h1><p class="ko">${a.ko}</p>`}
+        : `<h1>Hyper-Intelligent Built Environment Laboratory <br>at <span class="nw">Chung-Ang University</span></h1><p class="ko">${a.ko}</p>`}
     </div></div>
     <section class="wrap news"><div class="nfeed" id="newsFeed"></div><div class="sentinel" id="newsSentinel"></div><div class="feed-end" id="newsEnd" hidden></div></section>`;
   },
@@ -955,11 +956,18 @@ const actCat=c=>c==="conf"?T("Scientific Conference Attendances","학술대회 �
 function openAward(k){const a=AWARDS[k];if(!a)return;openModal(`${galHTML(a.full?.length?a.full:a.imgs)}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${a.date.replaceAll("-",". ")}</span><h3 id="mTitle">${esc(a.title)}</h3>${a.text?`<div class="ptext">${esc(a.text)}</div>`:""}</div>`);$mc._full=a.full||a.imgs;admModalTools("awards",k);}
 function openActivity(id){const p=OLD_POSTS.find(x=>x.id===id);if(!p)return;
   openModal(`${galHTML(p.full?.length?p.full:p.imgs)}<div class="modal-body"><span class="meta" style="font-size:13px;color:var(--muted)">${p.date?p.date.replaceAll("-",". ")+" · ":""}${esc(actCat(p.cat))}</span><h3 id="mTitle">${esc(p.title)}</h3>${p.text?`<div class="ptext">${esc(p.text)}</div>`:""}</div>`);$mc._full=p.full||p.imgs;admModalTools("posts",OLD_POSTS.indexOf(p));}
+/* 스마트폰: 홈 타이틀·부제를 각각 한 줄에 맞춤 (화면 폭에 맞춰 글씨 크기를 줄임) */
+function heroFit(){document.querySelectorAll(".hero h1,.hero .ko").forEach(el=>{el.style.fontSize="";
+  if(innerWidth>560)return;const w=el.clientWidth,sw=el.scrollWidth;if(w&&sw>w){const f=parseFloat(getComputedStyle(el).fontSize);el.style.fontSize=Math.floor(f*w/sw*10)/10+"px";}});
+  /* 부제가 제목보다 커 보이지 않게 */const h=document.querySelector(".hero h1"),k=document.querySelector(".hero .ko");
+  if(h&&k&&innerWidth<=560){const hf=parseFloat(getComputedStyle(h).fontSize);if(parseFloat(getComputedStyle(k).fontSize)>hf)k.style.fontSize=hf+"px";}}
+addEventListener("resize",heroFit);document.fonts?.ready.then(heroFit);
 function route(){
   let id = location.hash.slice(1);
   if(!views[id]) id = "home";
   if(!$modal.hidden) closeModal();
   $main.innerHTML = views[id]();
+  heroFit();
   admBar();
   $nav.querySelectorAll("a").forEach(a=>{ if(a.dataset.id===id||(a.dataset.id==="pi"&&id==="members")) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   $nav.classList.remove("open"); document.getElementById("menuBtn").setAttribute("aria-expanded","false");
