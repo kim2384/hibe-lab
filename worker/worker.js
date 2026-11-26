@@ -235,7 +235,7 @@ export default {
       if (!env.ANTHROPIC_API_KEY) return json({ error: "자동 작성이 설정되지 않았습니다 (Worker의 ANTHROPIC_API_KEY)." }, 501, h);
       const me = await who(req, env);
       if (!me) return json({ error: "관리자만 사용할 수 있습니다." }, 403, h);
-      const { files = [], note = "", today = "" } = await req.json().catch(() => ({}));
+      const { files = [], note = "", today = "", section = "", pubcat = "" } = await req.json().catch(() => ({}));
       const content = [];
       files.slice(0, 12).forEach((f, i) => {
         content.push({ type: "text", text: `File ${i}: ${String(f.name || "").slice(0, 120)}` });
@@ -245,7 +245,9 @@ export default {
       });
       if (!content.length && !note) return json({ error: "파일이나 메모를 넣어 주세요." }, 400, h);
       const allowed = me.role === "student" ? ["posts", "awards", "pubs", "projects"] : ["posts", "awards", "pubs", "projects", "members"];
-      content.push({ type: "text", text: DRAFT_PROMPT(String(today).slice(0, 10), String(note).slice(0, 2000), allowed) });
+      const force = allowed.includes(section) ? section : "";
+      const pc = ["sci", "kci", "intconf", "domconf"].includes(pubcat) ? pubcat : "";
+      content.push({ type: "text", text: DRAFT_PROMPT(String(today).slice(0, 10), String(note).slice(0, 2000), force ? [force] : allowed) + (force ? `\nThe admin chose the ${force} menu: put every entry there.` : "") + (force === "pubs" && pc ? `\nEvery entry is pubcat ${pc}.` : "") });
       const r = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "anthropic-beta": "server-side-fallback-2026-07-01", "content-type": "application/json" },
@@ -266,7 +268,7 @@ export default {
       try {
         const out = JSON.parse(block.text);
         const items = (Array.isArray(out.items) ? out.items : [out]).slice(0, 30);
-        items.forEach((it) => { if (!allowed.includes(it.section)) it.section = allowed[0]; });
+        items.forEach((it) => { if (force) it.section = force; if (!allowed.includes(it.section)) it.section = allowed[0]; if (force === "pubs" && pc && it.fields) it.fields.pubcat = pc; });
         return json({ items }, 200, h);
       } catch { return json({ error: "자동 작성 결과를 읽지 못했습니다." }, 502, h); }
     }
