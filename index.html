@@ -442,6 +442,7 @@ form.adm-head input{flex:1;min-width:220px}
 .adm-drop.on{background:rgba(52,147,129,.15)}.adm-drop input{display:none}
 .adm-auto textarea{font:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical}
 .adm-auto-to{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:10px 0 2px}.adm-auto-to>span{font-size:13px;color:var(--muted)}.adm-auto-to .seg button{font-size:13px;padding:5px 11px}.adm-sub{color:var(--muted);font-size:15px;margin:0 -2px}.adm-rev{display:grid;gap:6px;margin-top:4px;padding:10px 12px;border-radius:8px;background:var(--teal-soft)}.adm-rev label small{color:var(--muted)}.adm-rev textarea{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;resize:vertical;background:var(--surface)}
+.adm-ai{margin:4px 0 12px}.adm-form .adm-aich{background:#fff8dc;transition:background 1s}
 .adm-newcat-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;width:100%}.adm-newcat-row input{flex:1 1 140px;min-width:0;font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--line);border-radius:6px}.adm-newcat-row .btn-post{font-size:13px;padding:5px 12px}
 #admAutoAc,#admAutoPc{background:var(--teal-soft);border-radius:999px;padding:3px;display:flex;flex-wrap:wrap;gap:3px}#admAutoAc button,#admAutoPc button{font-size:12px;padding:3px 10px;border-color:transparent;background:transparent}#admAutoAc button[aria-pressed="true"],#admAutoPc button[aria-pressed="true"]{background:var(--surface);color:var(--teal);border-color:var(--teal);font-weight:600}
 .adm-dup{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:4px;padding:6px 8px;border-radius:6px;background:#fff6e0;font-size:12.5px;color:#7a5200}.adm-dup select{font:inherit;font-size:12.5px;padding:2px 6px}
@@ -1382,7 +1383,9 @@ function admEdit(key,i,pre){
     if(type==="images")return `<div class="adm-f"><span>${label}</span>${imgList(k,v||[])}<input type="file" accept="image/*" multiple data-up="${k}"></div>`;
     if(type==="image")return `<div class="adm-f"><span>${label}</span>${imgList(k,v?[v]:[])}<input type="file" accept="image/*" data-up="${k}" data-one="1"></div>`;
     return `<label class="adm-f">${label}<input name="${k}" type="${type}" value="${esc(v??"")}"${opt?" required":""}></label>`;};
-  openModal(`<form class="modal-body adm-form" id="admForm"><h3 id="mTitle">${S.label[1]} ${i<0?"새로 추가":"편집"}</h3>${S.fields.map(fld).join("")}
+  openModal(`<form class="modal-body adm-form" id="admForm"><h3 id="mTitle">${S.label[1]} ${i<0?"새로 추가":"편집"}</h3>${key!=="pi"&&GH_AUTH?`<div class="adm-rev adm-ai"><label for="admAiIns"><b>AI로 고치기</b> <small>어떻게 고칠지 적으면 Claude가 아래 칸을 고쳐 줍니다. 확인한 뒤 저장을 눌러야 반영됩니다.</small></label>
+      <textarea id="admAiIns" rows="2" placeholder="예) 내용을 세 줄로 줄여 줘 · News 문구를 더 자연스럽게 · 영문 제목 오타 고쳐 줘"></textarea>
+      <div class="adm-auto-act"><button type="button" class="btn-post" id="admAiGo">고치기</button><span class="adm-msg" id="admAiMsg"></span></div></div>`:""}${S.fields.map(fld).join("")}
     <div class="adm-foot"><button class="btn-post" type="submit">저장</button><button class="btn-ghost" type="button" id="admCancel">취소</button><span class="adm-msg" id="admFormMsg"></span></div></form>`);
   const f=document.getElementById("admForm"),msg=t=>{f.querySelector("#admFormMsg").textContent=t;};
   const amtShow=el=>{const o=f.querySelector(`.adm-amt[data-for="${el.name}"]`);if(!o)return;const n=amtNorm(el.value);
@@ -1432,6 +1435,26 @@ function admEdit(key,i,pre){
       ["title","role","period","funder","amount","no","desc"].forEach(k=>{const el=f.elements[k];if(el&&data[k]!==undefined&&data[k]!=="")el.value=data[k];});
       pm(`채웠습니다${data.title_ko?` (국문 과제명: ${data.title_ko})`:""}. 내용을 확인한 뒤 대표 이미지를 넣고 저장해 주세요.`);}
     catch(err){pm("자동 작성에 실패했습니다: "+(err.message||err));}};
+  /* AI로 고치기: 지금 칸 내용 + 지시문 → Worker /revise → 바뀐 칸만 채움 (저장은 직접) */
+  const aiGo=f.querySelector("#admAiGo");
+  if(aiGo)aiGo.onclick=async()=>{const am=t=>{f.querySelector("#admAiMsg").textContent=t;},ins=f.querySelector("#admAiIns").value.trim();if(!ins)return am("어떻게 고칠지 적어 주세요.");
+    const TX=["text","textarea","date","number","money","email","select","lines","pick5"],item={},labels={};
+    S.fields.forEach(([k,label,type,opt])=>{if(!TX.includes(type))return;
+      if(type==="pick5")item[k]=[...f.querySelectorAll(`input[name="${k}"]`)].map(x=>x.value.trim()).filter(Boolean).join("\n");
+      else{const el=f.elements[k];if(!el)return;item[k]=String(el.value??"");}
+      let l=String(label);if(type==="select"){const o=(typeof opt==="function"?opt():opt).filter(([v])=>v!=="__new");l+=` [select; options: ${o.map(([v,t])=>`${v}=${t}`).join("; ")}]`;}
+      if(type==="pick5"||type==="lines")l+=" [one per line]";labels[k]=l;});
+    aiGo.disabled=true;aiGo.textContent="고치는 중…";am("");
+    try{const r=await fetch(`${GH_AUTH}/revise`,{method:"POST",headers:{Authorization:`Bearer ${GH_TOKEN}`,"Content-Type":"application/json"},body:JSON.stringify({section:key,item,labels,instruction:ins,today:new Date().toISOString().slice(0,10)})});
+      if(r.status===404)throw new Error("Worker를 새 버전으로 다시 배포해야 쓸 수 있습니다");
+      const d=await r.json().catch(()=>({}));if(!r.ok||d.error)throw new Error(d.error||r.status);
+      const ch=Object.entries(d.fields||{});
+      ch.forEach(([k,v])=>{const t=(S.fields.find(x=>x[0]===k)||[])[2];
+        if(t==="pick5"){const L=String(v).split("\n").map(x=>x.trim()).filter(Boolean);f.querySelectorAll(`input[name="${k}"]`).forEach((x,n)=>{x.value=L[n]||"";});}
+        else{const el=f.elements[k];if(!el)return;if(t==="select"&&![...el.options].some(o=>o.value===v))return;el.value=v;el.dispatchEvent(new Event("input",{bubbles:true}));el.classList.add("adm-aich");}});
+      am(ch.length?`${ch.length}칸을 고쳤습니다${d.reason?": "+d.reason:""}. 확인한 뒤 저장을 눌러 주세요.`:(d.reason||"바꿀 내용이 없었습니다."));}
+    catch(err){am("고치지 못했습니다: "+(err.message||err));}
+    aiGo.disabled=false;aiGo.textContent="고치기";};
   /* 활동 분류: '+ 새 분류 만들기'를 고르면 이름 칸이 열림 */
   const catSel=key==="posts"&&f.elements.cat;
   if(catSel)catSel.addEventListener("change",()=>{let box=f.querySelector(".adm-newcat");
