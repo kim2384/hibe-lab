@@ -113,6 +113,13 @@ const cors = (env, req) => {
     ? { "Access-Control-Allow-Origin": o, "Access-Control-Allow-Headers": "authorization, content-type", "Access-Control-Allow-Methods": "POST, OPTIONS", Vary: "Origin" }
     : {};
 };
+let STATS_READY = false;
+async function statsInit(env) {
+  if (STATS_READY) return;
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS hits (day TEXT NOT NULL, vid TEXT NOT NULL, page TEXT, ref TEXT, country TEXT, mobile INTEGER)").run();
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS hits_day ON hits (day)").run();
+  STATS_READY = true;
+}
 const json = (body, status, h) => new Response(JSON.stringify(body), { status, headers: { ...h, "Content-Type": "application/json" } });
 const html = (body, extra = {}) => new Response(`<!doctype html><meta charset="utf-8"><title>hibe lab</title><body style="font-family:sans-serif;padding:24px">${body}`, { headers: { "Content-Type": "text/html; charset=utf-8", ...extra } });
 const cookie = (req, k) => (req.headers.get("Cookie") || "").split(/;\s*/).map((c) => c.split("=")).find(([n]) => n === k)?.[1] || "";
@@ -227,6 +234,100 @@ export default {
       return json(await r.json().catch(() => ({})), r.status, h);
     }
 
+    // 6. 방문자 기록: 사이트가 페이지를 열 때마다 보냄 (IP는 저장하지 않고, 날짜별로 바뀌는 익명 ID와 나라만 저장)
+    if (url.pathname === "/hit") {
+      if (req.method !== "POST" || !env.DB) return new Response(null, { status: 204 });
+      const o = (req.headers.get("Origin") || "").replace(/\/$/, "");
+      if (!origins(env).includes(o)) return new Response(null, { status: 204 });
+      const ua = req.headers.get("User-Agent") || "";
+      if (!ua || /bot|crawl|spider|slurp|preview|headless|lighthouse|monitor|curl|wget|python|httpclient/i.test(ua)) return new Response(null, { status: 204 });
+      const b = await req.json().catch(() => ({}));
+      const day = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10); // 한국 날짜
+      const ip = req.headers.get("CF-Connecting-IP") || "";
+      const dg = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${day}|${ip}|${ua}|${env.GITHUB_CLIENT_SECRET || "hibe"}`));
+      const vid = [...new Uint8Array(dg)].slice(0, 8).map((x) => x.toString(16).padStart(2, "0")).join("");
+      let ref = "";
+      try { const h = new URL(String(b.r || "")).hostname; if (h && !/github\.io$/.test(h)) ref = h.replace(/^www\./, "").slice(0, 80); } catch {}
+      const page = String(b.p || "home").replace(/[^a-z0-9_-]/gi, "").slice(0, 30) || "home";
+      const country = String(req.cf?.country || "").slice(0, 2);
+      const mobile = /Mobi|Android|iPhone|iPad/i.test(ua) ? 1 : 0;
+      try {
+        await statsInit(env);
+        await env.DB.prepare("INSERT INTO hits (day, vid, page, ref, country, mobile) VALUES (?, ?, ?, ?, ?, ?)").bind(day, vid, page, ref, country, mobile).run();
+        if (Math.random() < 0.01) await env.DB.prepare("DELETE FROM hits WHERE day < ?").bind(new Date(Date.now() - 400 * 864e5).toISOString().slice(0, 10)).run();
+      } catch {}
+      return new Response(null, { status: 204, headers: { "Access-Control-Allow-Origin": o } });
+    }
+
+    // 7. 방문자 통계: 관리자만 (학생 연구원 제외)
+    if (url.pathname === "/stats") {
+      const h = cors(env, req);
+      if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: h });
+      const me = await who(req, env);
+      if (!me || me.role !== "admin") return json({ error: "관리자만 볼 수 있습니다." }, 403, h);
+      if (!env.DB) return json({ error: "nodb" }, 501, h);
+      await statsInit(env);
+      const days = Math.min(365, Math.max(7, parseInt(url.searchParams.get("days") || "30", 10) || 30));
+      const from = new Date(Date.now() + 9 * 3600e3 - (days - 1) * 864e5).toISOString().slice(0, 10);
+      const q = (sql) => env.DB.prepare(sql).bind(from).all().then((r) => r.results || []);
+      const [daily, pages, countries, refs, dev] = await Promise.all([
+        q("SELECT day, COUNT(*) AS views, COUNT(DISTINCT vid) AS visitors, COUNT(DISTINCT CASE WHEN country = 'KR' THEN vid END) AS kr FROM hits WHERE day >= ? GROUP BY day ORDER BY day"),
+        q("SELECT page, COUNT(*) AS views FROM hits WHERE day >= ? GROUP BY page ORDER BY views DESC LIMIT 10"),
+        q("SELECT country, COUNT(DISTINCT day || vid) AS visitors FROM hits WHERE day >= ? GROUP BY country ORDER BY visitors DESC LIMIT 10"),
+        q("SELECT ref, COUNT(DISTINCT day || vid) AS visitors FROM hits WHERE day >= ? AND ref != '' GROUP BY ref ORDER BY visitors DESC LIMIT 8"),
+        q("SELECT mobile, COUNT(DISTINCT day || vid) AS visitors FROM hits WHERE day >= ? GROUP BY mobile"),
+      ]);
+      return json({ from, days, daily, pages, countries, refs, dev }, 200, h);
+    }
+
+    // 5. 이미 올린 항목 고치기: 편집 창의 지금 내용과 지시문을 받아, 바꿀 칸만 돌려줌 (저장은 관리자가 확인 후)
+    if (url.pathname === "/revise") {
+      const h = cors(env, req);
+      if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: h });
+      if (req.method !== "POST") return json({ error: "POST only" }, 405, h);
+      if (!env.ANTHROPIC_API_KEY) return json({ error: "자동 작성이 설정되지 않았습니다 (Worker의 ANTHROPIC_API_KEY)." }, 501, h);
+      const me = await who(req, env);
+      if (!me) return json({ error: "관리자만 사용할 수 있습니다." }, 403, h);
+      const { section = "", item = {}, labels = {}, instruction = "", today = "" } = await req.json().catch(() => ({}));
+      const allowed = me.role === "student" ? ["posts", "awards", "pubs", "projects"] : ["posts", "awards", "pubs", "projects", "members"];
+      if (!allowed.includes(section)) return json({ error: "이 메뉴는 고칠 수 없습니다." }, 403, h);
+      const ins = String(instruction).trim().slice(0, 3000);
+      if (!ins) return json({ error: "어떻게 고칠지 적어 주세요." }, 400, h);
+      const keys = Object.keys(item).filter((k) => /^[A-Za-z0-9_]{1,40}$/.test(k) && typeof item[k] === "string").slice(0, 40);
+      if (!keys.length) return json({ error: "고칠 내용이 없습니다." }, 400, h);
+      const entry = keys.map((k) => `${k} (${String(labels[k] || k).slice(0, 200)}): ${JSON.stringify(String(item[k]).slice(0, 20000))}`).join("\n");
+      const schema = {
+        type: "object", additionalProperties: false, required: ["reason", "fields"],
+        properties: {
+          reason: { type: "string", description: "One short Korean sentence: what you changed, or why nothing could be changed" },
+          fields: { type: "array", description: "Only the fields you change, each with its complete new value", items: { type: "object", additionalProperties: false, required: ["key", "value"], properties: { key: { type: "string", enum: keys }, value: { type: "string" } } } },
+        },
+      };
+      const prompt = `You edit one existing entry of the hibe lab website (Prof. Michael (Youngsu) Kim, 김영수, Chung-Ang University, Seoul), in the ${section} menu. Today is ${String(today).slice(0, 10)}.
+Current entry, one field per line as key (label): value:
+${entry}
+
+The admin's request: ${ins}
+
+Apply the request. Return in "fields" only the fields you change, each with its full new value; leave everything else out. Keep each field's language: labels that say 국문 or keys ending in Ko are Korean, 영문 fields are English. For a select field, use one of the option values listed in its label. Do not invent facts that are not in the entry or the request. Names of lab members in English sentences use 'Given Family' order.`;
+      const r = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "anthropic-beta": "server-side-fallback-2026-07-01", "content-type": "application/json" },
+        body: JSON.stringify({ model: "claude-opus-5-5", max_tokens: 16000, fallbacks: "default", output_config: { effort: "medium", format: { type: "json_schema", schema } }, messages: [{ role: "user", content: prompt }] }),
+      });
+      if (r.status === 429) return json({ error: "잠시 후 다시 시도해 주세요 (요청이 많음)." }, 429, h);
+      if (!r.ok) return json({ error: `자동 작성 서비스 오류 (${r.status})` }, 502, h);
+      const res = await r.json();
+      if (res.stop_reason === "refusal") return json({ error: "이 요청으로는 고치지 못했습니다." }, 422, h);
+      const block = (res.content || []).find((b) => b.type === "text");
+      try {
+        const out = JSON.parse(block.text);
+        const fields = {};
+        (out.fields || []).forEach((f) => { if (keys.includes(f.key)) fields[f.key] = String(f.value); });
+        return json({ fields, reason: String(out.reason || "") }, 200, h);
+      } catch { return json({ error: "고친 결과를 읽지 못했습니다." }, 502, h); }
+    }
+
     // 4. 자동 작성: 첨부 파일을 읽고 어느 메뉴에 무엇을 쓸지 제안
     if (url.pathname === "/draft") {
       const h = cors(env, req);
@@ -235,7 +336,7 @@ export default {
       if (!env.ANTHROPIC_API_KEY) return json({ error: "자동 작성이 설정되지 않았습니다 (Worker의 ANTHROPIC_API_KEY)." }, 501, h);
       const me = await who(req, env);
       if (!me) return json({ error: "관리자만 사용할 수 있습니다." }, 403, h);
-      const { files = [], note = "", today = "", section = "", pubcat = "" } = await req.json().catch(() => ({}));
+      const { files = [], note = "", today = "", section = "", pubcat = "", drafts = null } = await req.json().catch(() => ({}));
       const content = [];
       files.slice(0, 12).forEach((f, i) => {
         content.push({ type: "text", text: `File ${i}: ${String(f.name || "").slice(0, 120)}` });
@@ -247,7 +348,9 @@ export default {
       const allowed = me.role === "student" ? ["posts", "awards", "pubs", "projects"] : ["posts", "awards", "pubs", "projects", "members"];
       const force = allowed.includes(section) ? section : "";
       const pc = ["sci", "kci", "intconf", "domconf"].includes(pubcat) ? pubcat : "";
-      content.push({ type: "text", text: DRAFT_PROMPT(String(today).slice(0, 10), String(note).slice(0, 2000), force ? [force] : allowed) + (force ? `\nThe admin chose the ${force} menu: put every entry there.` : "") + (force === "pubs" && pc ? `\nEvery entry is pubcat ${pc}.` : "") });
+      // 만들어진 초안 고치기: 지금 초안을 함께 보내면, 메모의 '수정 요청'대로 고친 전체 목록을 돌려줌
+      if (Array.isArray(drafts) && drafts.length) content.push({ type: "text", text: `These are the current drafts the admin is reviewing (JSON). Revise them according to the admin's 수정 요청 in the note below and return the complete revised list in "items": keep every entry and field the request does not touch exactly as it is, keep the same order, and add, split, merge or drop entries only if the request asks for it. The attached files are the original material, for checking facts.\n${JSON.stringify(drafts.slice(0, 30)).slice(0, 60000)}` });
+      content.push({ type: "text", text: DRAFT_PROMPT(String(today).slice(0, 10), String(note).slice(0, 4000), force ? [force] : allowed) + (force ? `\nThe admin chose the ${force} menu: put every entry there.` : "") + (force === "pubs" && pc ? `\nEvery entry is pubcat ${pc}.` : "") });
       const r = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "anthropic-beta": "server-side-fallback-2026-07-01", "content-type": "application/json" },
