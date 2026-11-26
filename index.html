@@ -31,6 +31,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 a{color:var(--teal)}
 a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
 .wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media (max-width:560px){.wrap{padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}}
 
 
 
@@ -741,7 +742,7 @@ const views = {
     const a = SITE.about;
     return `<div class="hero"><div class="wrap">
       ${LANG==="ko" ? `<h1>${a.ko}</h1>`
-        : `<h1>Hyper-Intelligent Built Environment Laboratory <br>at <span class="nw">Chung-Ang University</span></h1>`}
+        : `<h1>Hyper-Intelligent Built Environment Lab <br>at <span class="nw">Chung-Ang University</span></h1>`}
     </div></div>
     <section class="wrap news"><div class="nfeed" id="newsFeed"></div><div class="sentinel" id="newsSentinel"></div><div class="feed-end" id="newsEnd" hidden></div></section>`;
   },
