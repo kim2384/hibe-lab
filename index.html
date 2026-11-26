@@ -436,6 +436,7 @@ form.adm-head input{flex:1;min-width:220px}
 .adm-drop{display:block;border:1.5px dashed var(--teal);border-radius:10px;padding:18px;text-align:center;font-size:14px;color:var(--muted);cursor:pointer;background:rgba(52,147,129,.05)}
 .adm-drop.on{background:rgba(52,147,129,.15)}.adm-drop input{display:none}
 .adm-auto textarea{font:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical}
+.adm-drafts{list-style:none;margin:10px 0;padding:0;display:grid;gap:8px}.adm-drafts li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}.adm-drafts li.done{opacity:.55}.adm-dtx{flex:1;min-width:0;display:grid;gap:3px}.adm-dtx select{justify-self:start;font:inherit;font-size:13px;padding:2px 6px}.adm-dtx b{font-weight:500;line-height:1.35}.adm-dtx small{color:var(--muted);font-size:12.5px;line-height:1.45}.adm-dtx em{font-style:normal;font-size:12px;color:var(--teal)}.adm-dchk{padding-top:4px}
 .adm-auto-act{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .adm-auto-out{border-top:1px solid var(--line);padding-top:12px;display:grid;gap:8px}.adm-auto-out p{margin:0}.adm-auto-out>p:first-child{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.adm .adm-auto-out select{font:inherit;padding:4px 8px;width:auto;display:inline-block}.adm-auto-out .btn-post{justify-self:start}
 .adm-auto-t{font-weight:500}
@@ -1398,9 +1399,12 @@ function admAutoHTML(){const A=ADM_AUTO,o=A.out;
     <label class="adm-drop" id="admDrop"><input type="file" id="admAutoIn" multiple accept="image/*,application/pdf,.txt,.md,text/plain"><span>${A.files.length?A.files.map(x=>esc(x.name)).join(", "):"여기에 파일을 끌어 놓거나 눌러서 고르세요 (여러 개 가능)"}</span></label>
     <textarea id="admAutoNote" rows="2" placeholder="메모 (선택): 예) 강경민 학생, ALC2026 최우수 학생논문상, 8월 21일 나고야">${esc(A.note||"")}</textarea>
     <div class="adm-auto-act"><button type="button" class="btn-post" id="admAutoGo"${A.busy?" disabled":""}>${A.busy?"읽는 중… (1분 정도)":"초안 만들기"}</button>${A.files.length?`<button type="button" class="btn-ghost" id="admAutoClear">파일 비우기</button>`:""}<span class="adm-msg" id="admAutoMsg">${esc(A.msg||"")}</span></div>
-    ${o?`<div class="adm-auto-out"><p><b>제안:</b> <select id="admAutoSec">${admKeys().map(k=>`<option value="${k}"${k===o.section?" selected":""}>${ADM[k].label[1]} (${ADM[k].label[0]})</option>`).join("")}</select> 메뉴에 새 게시물</p>
-      <p class="adm-note">${esc(o.reason||"")}</p>${o.fields?.title?`<p class="adm-auto-t">${esc(o.fields.title)}</p>`:""}
-      <button type="button" class="btn-post" id="admAutoOpen">초안 열어서 확인하기</button></div>`:""}</div>`;}
+    ${o?.length?`<div class="adm-auto-out"><p><b>초안 ${o.length}건</b> <small>각 건의 메뉴를 확인하고, 하나씩 열어 고치거나 고른 것을 한꺼번에 저장하세요.</small></p>
+      <ol class="adm-drafts">${o.map((d,n)=>`<li data-n="${n}" class="${d.done?"done":""}"><label class="adm-dchk"><input type="checkbox" data-chk="${n}"${d.done?" disabled":d.skip?"":" checked"}></label>
+        <div class="adm-dtx"><select data-sec="${n}"${d.done?" disabled":""}>${admKeys().filter(k=>k!=="pi").map(k=>`<option value="${k}"${k===d.section?" selected":""}>${ADM[k].label[1]}</option>`).join("")}</select>
+        <b>${esc(d.fields?.title||d.fields?.name||"(제목 없음)")}</b>${d.reason?`<small>${esc(d.reason)}</small>`:""}${d.done?`<em>${esc(d.done)}</em>`:""}</div>
+        ${d.done?"":`<button type="button" class="btn-ghost" data-open="${n}">열어서 고치기</button>`}</li>`).join("")}</ol>
+      ${o.some(d=>!d.done)?`<div class="adm-auto-act"><button type="button" class="btn-post" id="admAutoAll">고른 ${o.filter(d=>!d.done&&!d.skip).length}건 한꺼번에 저장</button><small class="adm-note">한꺼번에 저장할 때는 사진·PDF를 붙이지 않습니다. 사진이 필요한 건은 '열어서 고치기'로 올려 주세요.</small></div>`:""}</div>`:""}</div>`;}
 function admAutoFields(sec,F){const g=k=>String(F?.[k]||"").trim(),pick=(o)=>Object.fromEntries(Object.entries(o).filter(([,v])=>v!==""&&v!=null&&!(Array.isArray(v)&&!v.length)));
   if(sec==="posts")return pick({date:g("date"),cat:g("cat")||"conf",title:g("title"),text:g("text"),news:g("news"),newsKo:g("newsKo")});
   if(sec==="awards")return pick({date:g("date"),title:g("title"),text:g("text"),news:g("news"),newsKo:g("newsKo")});
@@ -1425,13 +1429,25 @@ function admAutoBind(root){const A=ADM_AUTO,box=root.querySelector("#admAuto");i
         else files.push({name:f.name,text:await f.text()});}
       if(size>24e6)throw new Error("파일이 너무 큽니다 (합계 24MB 이하로 줄여 주세요).");
       const r=await fetch(`${GH_AUTH}/draft`,{method:"POST",headers:{Authorization:`Bearer ${GH_TOKEN}`,"Content-Type":"application/json"},body:JSON.stringify({files,note:A.note||"",today:new Date().toISOString().slice(0,10)})});
-      const d=await r.json().catch(()=>({}));if(!r.ok||d.error)throw new Error(d.error||r.status);A.out=d;}
+      const d=await r.json().catch(()=>({}));if(!r.ok||d.error)throw new Error(d.error||r.status);A.out=(Array.isArray(d.items)?d.items:[d]).filter(x=>x&&x.section);if(!A.out.length)throw new Error("자료에서 올릴 내용을 찾지 못했습니다");}
     catch(err){A.msg="초안을 만들지 못했습니다: "+(err.message||err);}
     A.busy=false;if(document.getElementById("admAuto"))admRender();};
-  const open=box.querySelector("#admAutoOpen");
-  if(open)open.onclick=()=>{const sec=box.querySelector("#admAutoSec").value,o=A.out;
-    const use=new Set((o.images||[]).filter(x=>x.use).map(x=>x.index)),files=A.files.filter((f,i)=>!(o.images||[]).length||use.has(i)||f.type==="application/pdf");
-    ADMTAB=sec;admRender();admEdit(sec,-1,{fields:admAutoFields(sec,o.fields),files});A.files=[];A.out=null;A.note="";};
+  const list=box.querySelector(".adm-drafts");if(!list)return;const O=A.out;
+  const left=()=>{if(O.every(d=>d.done)){A.files=[];A.note="";}};
+  list.onchange=e=>{const c=e.target.closest("[data-chk]"),q=e.target.closest("[data-sec]");
+    if(c){O[+c.dataset.chk].skip=!c.checked;admRender();}if(q)O[+q.dataset.sec].section=q.value;};
+  list.onclick=e=>{const b=e.target.closest("[data-open]");if(!b)return;const d=O[+b.dataset.open],sec=d.section;
+    const use=new Set((d.images||[]).filter(x=>x.use).map(x=>x.index)),files=A.files.filter((f,i)=>use.has(i)||(O.length===1&&(!(d.images||[]).length||f.type==="application/pdf")));
+    d.done="편집 창에서 열었음";left();ADMTAB=sec;admRender();admEdit(sec,-1,{fields:admAutoFields(sec,d.fields),files});};
+  const all=box.querySelector("#admAutoAll");
+  if(all)all.onclick=async()=>{const todo=O.filter(d=>!d.done&&!d.skip);if(!todo.length){A.msg="저장할 초안을 골라 주세요.";return admRender();}
+    all.disabled=true;all.textContent="저장 중…";const by={};todo.forEach(d=>(by[d.section]||(by[d.section]=[])).push(d));
+    for(const [sec,ds] of Object.entries(by)){const S=ADM[sec],arr=S.get(),key=x=>String(x.title||x.name||"").trim().toLowerCase(),have=new Set(arr.map(key)),add=[];
+      for(const d of ds){const it={...S.blank(),...admAutoFields(sec,d.fields)};S.prep?.(it);S.fin?.(it);it.added=new Date().toISOString().slice(0,10);
+        if(key(it)&&have.has(key(it))){d.done="이미 있는 항목이라 건너뜀";continue;}have.add(key(it));add.push([d,it]);}
+      if(!add.length)continue;
+      if(await admSave(sec,[...add.map(([,it])=>it).reverse(),...arr]))add.forEach(([d])=>{d.done=`${S.label[1]}에 저장함`;});}
+    left();admRender();};
 }
 async function admAdmins(){
   const body=document.getElementById("admBody");body.innerHTML=`<p>불러오는 중…</p>`;

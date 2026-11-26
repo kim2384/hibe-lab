@@ -39,7 +39,7 @@ Fill in the fields for the hibe lab website (Prof. Michael (Youngsu) Kim, 김영
 // 학생 연구원이 저장할 수 있는 파일: 활동·수상·연구과제·논문 내용과 그 사진
 const STUDENT_PATHS = /^(content\/(posts|awards|projects|pubs)\.json|images\/uploads\/(posts|awards|projects|pubs|papers)\/(full\/)?[A-Za-z0-9._-]+\.(webp|png|jpe?g))$/;
 
-const DRAFT_SCHEMA = {
+const DRAFT_ITEM = {
   type: "object",
   additionalProperties: false,
   required: ["section", "reason", "fields", "images"],
@@ -85,16 +85,24 @@ const DRAFT_SCHEMA = {
     },
   },
 };
+// 한 묶음 자료에 여러 건(예: 학회 프로그램에 실린 논문 여러 편)이 있으면 건마다 초안 하나씩
+const DRAFT_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["items"],
+  properties: { items: { type: "array", description: "One entry per distinct website item found in the material, in document order", items: DRAFT_ITEM } },
+};
 const DRAFT_PROMPT = (today, note, allowed) => `You help the admins of the hibe lab website (Prof. Michael (Youngsu) Kim, 김영수, Chung-Ang University, Seoul) turn raw material into a website entry.
-Today is ${today}. The attached files are one batch about a single item: award certificates, event photos, a paper PDF, a funded project's research plan (연구개발계획서), a member's CV or photo, etc.
+Today is ${today}. The attached files are one batch of material: award certificates, event photos, a paper PDF, a funded project's research plan (연구개발계획서), a member's CV or photo, a conference program, etc.
+The batch may hold several separate website items (for example a conference program listing several papers by lab members, or certificates for different awards). Return one entry in "items" for each distinct item, in document order, and never merge separate papers or awards into one entry. If the batch is about a single item (e.g. several photos of one event), return exactly one entry. Include only items that involve the hibe lab or Prof. Kim; skip other people's papers in a program. At most 30 entries.
 Menus you may choose from: ${allowed.join(", ")}.
 - posts (Activities): conference attendance, seminars, outreach, lab events, usually with photos.
 - awards (Awards): an award, prize or certificate given to lab members.
 - pubs (Publications): a journal paper or conference paper/presentation.
 - projects (Projects): a newly funded research project.
 - members (Members): a new lab member.
-Choose the single best menu, then fill only the fields that menu uses and leave all other fields as empty strings.
-Use only what the material or the admin's note says. Leave a field empty rather than guessing; say in "reason" what is missing.
+For each entry choose the best menu, then fill only the fields that menu uses and leave all other fields as empty strings.
+Use only what the material or the admin's note says. Leave a field empty rather than guessing; say in each entry's "reason" (one Korean sentence) what is missing.
 Names of lab members in English sentences use 'Given Family' order (e.g. Kyungmin Kang).
 ${note ? `Admin's note: ${note}` : ""}`;
 
@@ -236,14 +244,14 @@ export default {
         else if (f.text) content.push({ type: "document", source: { type: "text", media_type: "text/plain", data: String(f.text).slice(0, 200000) }, title: f.name });
       });
       if (!content.length && !note) return json({ error: "파일이나 메모를 넣어 주세요." }, 400, h);
-      const allowed = me.role === "student" ? ["posts", "awards", "pubs"] : ["posts", "awards", "pubs", "projects", "members"];
+      const allowed = me.role === "student" ? ["posts", "awards", "pubs", "projects"] : ["posts", "awards", "pubs", "projects", "members"];
       content.push({ type: "text", text: DRAFT_PROMPT(String(today).slice(0, 10), String(note).slice(0, 2000), allowed) });
       const r = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "anthropic-beta": "server-side-fallback-2026-07-01", "content-type": "application/json" },
         body: JSON.stringify({
           model: "claude-opus-5-5",
-          max_tokens: 16000,
+          max_tokens: 32000,
           fallbacks: "default",
           output_config: { effort: "medium", format: { type: "json_schema", schema: DRAFT_SCHEMA } },
           messages: [{ role: "user", content }],
@@ -257,8 +265,9 @@ export default {
       const block = (res.content || []).find((b) => b.type === "text");
       try {
         const out = JSON.parse(block.text);
-        if (!allowed.includes(out.section)) out.section = allowed[0];
-        return json(out, 200, h);
+        const items = (Array.isArray(out.items) ? out.items : [out]).slice(0, 30);
+        items.forEach((it) => { if (!allowed.includes(it.section)) it.section = allowed[0]; });
+        return json({ items }, 200, h);
       } catch { return json({ error: "자동 작성 결과를 읽지 못했습니다." }, 502, h); }
     }
 
