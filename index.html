@@ -1410,10 +1410,13 @@ function admAutoHTML(){const A=ADM_AUTO,o=A.out;
     <div class="adm-auto-act"><button type="button" class="btn-post" id="admAutoGo"${A.busy?" disabled":""}>${A.busy?"읽는 중… (1분 정도)":"초안 만들기"}</button>${A.files.length?`<button type="button" class="btn-ghost" id="admAutoClear">파일 비우기</button>`:""}<span class="adm-msg" id="admAutoMsg">${esc(A.msg||"")}</span></div>
     ${o?.length?`<div class="adm-auto-out"><p><b>초안 ${o.length}건</b> <small>각 건의 메뉴를 확인하고, 하나씩 열어 고치거나 고른 것을 한꺼번에 저장하세요.</small></p>
       <ol class="adm-drafts">${o.map((d,n)=>`<li data-n="${n}" class="${d.done?"done":""}"><label class="adm-dchk"><input type="checkbox" data-chk="${n}"${d.done?" disabled":d.skip?"":" checked"}></label>
-        <div class="adm-dtx"><select data-sec="${n}"${d.done?" disabled":""}>${admKeys().filter(k=>k!=="pi").map(k=>`<option value="${k}"${k===d.section?" selected":""}>${ADM[k].label[1]}</option>`).join("")}</select>
+        <div class="adm-dtx"><select data-sec="${n}"${d.done?" disabled":""}>${admSecOpts().map(([v,l])=>`<option value="${v}"${v===admSecVal(d)?" selected":""}>${l}</option>`).join("")}</select>
         <b>${esc(d.fields?.title||d.fields?.name||"(제목 없음)")}</b>${d.reason?`<small>${esc(d.reason)}</small>`:""}${d.done?`<em>${esc(d.done)}</em>`:""}</div>
         ${d.done?"":`<button type="button" class="btn-ghost" data-open="${n}">열어서 고치기</button>`}</li>`).join("")}</ol>
       ${o.some(d=>!d.done)?`<div class="adm-auto-act"><button type="button" class="btn-post" id="admAutoAll">고른 ${o.filter(d=>!d.done&&!d.skip).length}건 한꺼번에 저장</button><small class="adm-note">한꺼번에 저장할 때는 사진·PDF를 붙이지 않습니다. 사진이 필요한 건은 '열어서 고치기'로 올려 주세요.</small></div>`:""}</div>`:""}</div>`;}
+/* 초안 메뉴 선택: 논문은 국제 저널·국내 저널·국제 학술대회·국내 학술대회까지 나눠서 */
+const admSecOpts=()=>admKeys().filter(k=>k!=="pi").flatMap(k=>k==="pubs"?SITE.pubCats.map(([c,,kr])=>["pubs:"+c,kr]):[[k,ADM[k].label[1]]]);
+const admSecVal=d=>d.section==="pubs"?"pubs:"+(SITE.pubCats.some(c=>c[0]===d.fields?.pubcat)?d.fields.pubcat:"sci"):d.section;
 function admAutoFields(sec,F){const g=k=>String(F?.[k]||"").trim(),pick=(o)=>Object.fromEntries(Object.entries(o).filter(([,v])=>v!==""&&v!=null&&!(Array.isArray(v)&&!v.length)));
   if(sec==="posts")return pick({date:g("date"),cat:g("cat")||"conf",title:g("title"),text:g("text"),news:g("news"),newsKo:g("newsKo")});
   if(sec==="awards")return pick({date:g("date"),title:g("title"),text:g("text"),news:g("news"),newsKo:g("newsKo")});
@@ -1446,7 +1449,7 @@ function admAutoBind(root){const A=ADM_AUTO,box=root.querySelector("#admAuto");i
   const list=box.querySelector(".adm-drafts");if(!list)return;const O=A.out;
   const left=()=>{if(O.every(d=>d.done)){A.files=[];A.note="";}};
   list.onchange=e=>{const c=e.target.closest("[data-chk]"),q=e.target.closest("[data-sec]");
-    if(c){O[+c.dataset.chk].skip=!c.checked;admRender();}if(q)O[+q.dataset.sec].section=q.value;};
+    if(c){O[+c.dataset.chk].skip=!c.checked;admRender();}if(q){const d=O[+q.dataset.sec],[sec,pc]=q.value.split(":");d.section=sec;if(pc){d.fields=d.fields||{};d.fields.pubcat=pc;}}};
   list.onclick=e=>{const b=e.target.closest("[data-open]");if(!b)return;const d=O[+b.dataset.open],sec=d.section;
     const use=new Set((d.images||[]).filter(x=>x.use).map(x=>x.index)),files=A.files.filter((f,i)=>use.has(i)||(O.length===1&&(!(d.images||[]).length||f.type==="application/pdf")));
     d.done="편집 창에서 열었음";left();ADMTAB=sec;admRender();admEdit(sec,-1,{fields:admAutoFields(sec,d.fields),files});};
