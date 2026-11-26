@@ -85,6 +85,8 @@ html{overflow-y:scroll;scrollbar-gutter:stable}
   .dd-menu::before{display:none}
   .dd-menu a{margin:0;flex:1}
 }
+/* 스마트폰 메뉴: 폭이 되면 3열, 아주 좁으면 2열 */
+@media (max-width:820px) and (min-width:340px){nav.open{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}nav.open a{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
 
 main{min-height:60vh}
 section.page{padding-block:24px 72px}
