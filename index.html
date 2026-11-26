@@ -1164,7 +1164,7 @@ const ADM = {
       ["email","이메일","email"],["cv","CV (PDF 파일 올리기)","pdf"],["photo","증명사진 (올리면 배경 지우기·크기 맞추기·하단 모서리 둥글게가 자동으로 됩니다)","image"]]},
   pi: {label:["P.I.","P.I."], single:true, get:()=>[{name:SITE.pi.name,cv:SITE.pi.cv||""}], set:a=>{if(a[0])SITE.pi.cv=a[0].cv||"";},
     title:p=>p.name, sub:p=>p.cv?"CV 있음":"CV 없음", fields:[["cv","CV (PDF 파일 올리기)","pdf"]]},
-  pubs: {label:["Publications","논문"], get:()=>SITE.pubs.map(([cat,year,authors,title,venue,doi,summary,corr,added,cover])=>({cat,year,authors,title,venue,doi:doi||"",summary:summary||"",corr:corr||"",added:added||"",cover:cover||""})),
+  pubs: {label:["Publications","논문 & 학술발표"], get:()=>SITE.pubs.map(([cat,year,authors,title,venue,doi,summary,corr,added,cover])=>({cat,year,authors,title,venue,doi:doi||"",summary:summary||"",corr:corr||"",added:added||"",cover:cover||""})),
     set:a=>{SITE.pubs=a.map(p=>[p.cat,+p.year,p.authors,p.title,p.venue,p.doi||"",p.summary||"",p.corr||"",p.added||"",p.cover||""]);},
     sort:(a,b)=>b.year-a.year, title:p=>p.title, sub:p=>`${p.year} · ${(SITE.pubCats.find(c=>c[0]===p.cat)||[,""])[1]}`,
     blank:()=>({cat:"sci",year:new Date().getFullYear(),authors:"",title:"",venue:"",doi:"",summary:"",corr:"",cover:""}),
