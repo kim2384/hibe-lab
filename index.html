@@ -437,6 +437,7 @@ form.adm-head input{flex:1;min-width:220px}
 .adm-drop.on{background:rgba(52,147,129,.15)}.adm-drop input{display:none}
 .adm-auto textarea{font:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical}
 .adm-auto-to{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:10px 0 2px}.adm-auto-to>span{font-size:13px;color:var(--muted)}.adm-auto-to .seg button{font-size:13px;padding:5px 11px}
+.adm-dup{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:4px;padding:6px 8px;border-radius:6px;background:#fff6e0;font-size:12.5px;color:#7a5200}.adm-dup select{font:inherit;font-size:12.5px;padding:2px 6px}
 .adm-drafts{list-style:none;margin:10px 0;padding:0;display:grid;gap:8px}.adm-drafts li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}.adm-drafts li.done{opacity:.55}.adm-dtx{flex:1;min-width:0;display:grid;gap:3px}.adm-dtx select{justify-self:start;font:inherit;font-size:13px;padding:2px 6px}.adm-dtx b{font-weight:500;line-height:1.35}.adm-dtx small{color:var(--muted);font-size:12.5px;line-height:1.45}.adm-dtx em{font-style:normal;font-size:12px;color:var(--teal)}.adm-dchk{padding-top:4px}
 .adm-auto-act{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .adm-auto-out{border-top:1px solid var(--line);padding-top:12px;display:grid;gap:8px}.adm-auto-out p{margin:0}.adm-auto-out>p:first-child{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.adm .adm-auto-out select{font:inherit;padding:4px 8px;width:auto;display:inline-block}.adm-auto-out .btn-post{justify-self:start}
@@ -1411,9 +1412,16 @@ function admAutoHTML(){const A=ADM_AUTO,o=A.out;
     ${o?.length?`<div class="adm-auto-out"><p><b>초안 ${o.length}건</b> <small>각 건의 메뉴를 확인하고, 하나씩 열어 고치거나 고른 것을 한꺼번에 저장하세요.</small></p>
       <ol class="adm-drafts">${o.map((d,n)=>`<li data-n="${n}" class="${d.done?"done":""}"><label class="adm-dchk"><input type="checkbox" data-chk="${n}"${d.done?" disabled":d.skip?"":" checked"}></label>
         <div class="adm-dtx"><select data-sec="${n}"${d.done?" disabled":""}>${admSecOpts().map(([v,l])=>`<option value="${v}"${v===admSecVal(d)?" selected":""}>${l}</option>`).join("")}</select>
-        <b>${esc(d.fields?.title||d.fields?.name||"(제목 없음)")}</b>${d.reason?`<small>${esc(d.reason)}</small>`:""}${d.done?`<em>${esc(d.done)}</em>`:""}</div>
+        <b>${esc(d.fields?.title||d.fields?.name||"(제목 없음)")}</b>${d.reason?`<small>${esc(d.reason)}</small>`:""}${(()=>{if(d.done)return "";const di=admDupIdx(d.section,d);if(di<0)return "";const ex=ADM[d.section].get()[di];
+          return `<div class="adm-dup"><span>⚠ 이미 올라간 항목과 겹쳐요: "${esc(ex.title||ex.name)}"</span><select data-dup="${n}">${[["skip","건너뛰기"],["upd","기존 항목을 이 내용으로 업데이트"],["new","그래도 따로 새로 추가"]].map(([v,l])=>`<option value="${v}"${(d.dup||"skip")===v?" selected":""}>${l}</option>`).join("")}</select></div>`;})()}${d.done?`<em>${esc(d.done)}</em>`:""}</div>
         ${d.done?"":`<button type="button" class="btn-ghost" data-open="${n}">열어서 고치기</button>`}</li>`).join("")}</ol>
       ${o.some(d=>!d.done)?`<div class="adm-auto-act"><button type="button" class="btn-post" id="admAutoAll">고른 ${o.filter(d=>!d.done&&!d.skip).length}건 한꺼번에 저장</button><small class="adm-note">한꺼번에 저장할 때는 사진·PDF를 붙이지 않습니다. 사진이 필요한 건은 '열어서 고치기'로 올려 주세요.</small></div>`:""}</div>`:""}</div>`;}
+/* 중복 찾기: 같은 메뉴에 제목(구성원은 이름)이 같거나 거의 같은 항목 */
+const admNorm=t=>String(t||"").toLowerCase().replace(/[^0-9a-z\uac00-\ud7a3]+/g," ").trim();
+function admDupIdx(sec,d){const S=ADM[sec];if(!S)return -1;const t=admNorm(d.fields?.title||d.fields?.name);if(t.length<4)return -1;const w=new Set(t.split(" "));
+  return S.get().findIndex(x=>{const u=admNorm(x.title||x.name);if(!u)return false;if(u===t)return true;
+    if(Math.min(u.length,t.length)>20&&(u.includes(t)||t.includes(u)))return true;
+    const v=new Set(u.split(" "));let c=0;w.forEach(k=>{if(v.has(k))c++;});return c/(w.size+v.size-c)>=0.85;});}
 /* 초안 메뉴 선택: 논문은 국제 저널·국내 저널·국제 학술대회·국내 학술대회까지 나눠서 */
 const admSecOpts=()=>admKeys().filter(k=>k!=="pi").flatMap(k=>k==="pubs"?SITE.pubCats.map(([c,,kr])=>["pubs:"+c,kr]):[[k,ADM[k].label[1]]]);
 const admSecVal=d=>d.section==="pubs"?"pubs:"+(SITE.pubCats.some(c=>c[0]===d.fields?.pubcat)?d.fields.pubcat:"sci"):d.section;
@@ -1449,18 +1457,21 @@ function admAutoBind(root){const A=ADM_AUTO,box=root.querySelector("#admAuto");i
   const list=box.querySelector(".adm-drafts");if(!list)return;const O=A.out;
   const left=()=>{if(O.every(d=>d.done)){A.files=[];A.note="";}};
   list.onchange=e=>{const c=e.target.closest("[data-chk]"),q=e.target.closest("[data-sec]");
-    if(c){O[+c.dataset.chk].skip=!c.checked;admRender();}if(q){const d=O[+q.dataset.sec],[sec,pc]=q.value.split(":");d.section=sec;if(pc){d.fields=d.fields||{};d.fields.pubcat=pc;}}};
+    if(c){O[+c.dataset.chk].skip=!c.checked;admRender();}if(q){const d=O[+q.dataset.sec],[sec,pc]=q.value.split(":");d.section=sec;if(pc){d.fields=d.fields||{};d.fields.pubcat=pc;}admRender();}
+    const u=e.target.closest("[data-dup]");if(u)O[+u.dataset.dup].dup=u.value;};
   list.onclick=e=>{const b=e.target.closest("[data-open]");if(!b)return;const d=O[+b.dataset.open],sec=d.section;
     const use=new Set((d.images||[]).filter(x=>x.use).map(x=>x.index)),files=A.files.filter((f,i)=>use.has(i)||(O.length===1&&(!(d.images||[]).length||f.type==="application/pdf")));
-    d.done="편집 창에서 열었음";left();ADMTAB=sec;admRender();admEdit(sec,-1,{fields:admAutoFields(sec,d.fields),files});};
+    const di=d.dup==="new"?-1:admDupIdx(sec,d);d.done=di>=0?"기존 항목을 편집 창에서 열었음":"편집 창에서 열었음";left();ADMTAB=sec;admRender();admEdit(sec,di,{fields:admAutoFields(sec,d.fields),files});};
   const all=box.querySelector("#admAutoAll");
   if(all)all.onclick=async()=>{const todo=O.filter(d=>!d.done&&!d.skip);if(!todo.length){A.msg="저장할 초안을 골라 주세요.";return admRender();}
     all.disabled=true;all.textContent="저장 중…";const by={};todo.forEach(d=>(by[d.section]||(by[d.section]=[])).push(d));
-    for(const [sec,ds] of Object.entries(by)){const S=ADM[sec],arr=S.get(),key=x=>String(x.title||x.name||"").trim().toLowerCase(),have=new Set(arr.map(key)),add=[];
-      for(const d of ds){const it={...S.blank(),...admAutoFields(sec,d.fields)};S.prep?.(it);S.fin?.(it);it.added=new Date().toISOString().slice(0,10);
-        if(key(it)&&have.has(key(it))){d.done="이미 있는 항목이라 건너뜀";continue;}have.add(key(it));add.push([d,it]);}
-      if(!add.length)continue;
-      if(await admSave(sec,[...add.map(([,it])=>it).reverse(),...arr]))add.forEach(([d])=>{d.done=`${S.label[1]}에 저장함`;});}
+    for(const [sec,ds] of Object.entries(by)){const S=ADM[sec],arr=S.get(),add=[],upd=[];
+      for(const d of ds){const di=admDupIdx(sec,d),mode=di<0?"new":(d.dup||"skip");
+        if(mode==="skip"){d.done="이미 있는 항목이라 건너뜀";continue;}
+        if(mode==="upd"){const it={...arr[di],...admAutoFields(sec,d.fields)};S.prep?.(it);S.fin?.(it);arr[di]=it;upd.push(d);continue;}
+        const it={...S.blank(),...admAutoFields(sec,d.fields)};S.prep?.(it);S.fin?.(it);it.added=new Date().toISOString().slice(0,10);add.push([d,it]);}
+      if(!add.length&&!upd.length)continue;
+      if(await admSave(sec,[...add.map(([,it])=>it).reverse(),...arr])){add.forEach(([d])=>{d.done=`${S.label[1]}에 저장함`;});upd.forEach(d=>{d.done="기존 항목을 업데이트함";});}}
     left();admRender();};
 }
 async function admAdmins(){
