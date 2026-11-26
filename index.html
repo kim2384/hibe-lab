@@ -441,7 +441,8 @@ form.adm-head input{flex:1;min-width:220px}
 .adm-drop{display:block;border:1.5px dashed var(--teal);border-radius:10px;padding:18px;text-align:center;font-size:14px;color:var(--muted);cursor:pointer;background:rgba(52,147,129,.05)}
 .adm-drop.on{background:rgba(52,147,129,.15)}.adm-drop input{display:none}
 .adm-auto textarea{font:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical}
-.adm-auto-to{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:10px 0 2px}.adm-auto-to>span{font-size:13px;color:var(--muted)}.adm-auto-to .seg button{font-size:13px;padding:5px 11px}.adm-sub{color:var(--muted);font-size:15px;margin:0 -2px}.adm-newcat-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;width:100%}.adm-newcat-row input{flex:1 1 140px;min-width:0;font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--line);border-radius:6px}.adm-newcat-row .btn-post{font-size:13px;padding:5px 12px}
+.adm-auto-to{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:10px 0 2px}.adm-auto-to>span{font-size:13px;color:var(--muted)}.adm-auto-to .seg button{font-size:13px;padding:5px 11px}.adm-sub{color:var(--muted);font-size:15px;margin:0 -2px}.adm-rev{display:grid;gap:6px;margin-top:4px;padding:10px 12px;border-radius:8px;background:var(--teal-soft)}.adm-rev label small{color:var(--muted)}.adm-rev textarea{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;resize:vertical;background:var(--surface)}
+.adm-newcat-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;width:100%}.adm-newcat-row input{flex:1 1 140px;min-width:0;font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--line);border-radius:6px}.adm-newcat-row .btn-post{font-size:13px;padding:5px 12px}
 #admAutoAc,#admAutoPc{background:var(--teal-soft);border-radius:999px;padding:3px;display:flex;flex-wrap:wrap;gap:3px}#admAutoAc button,#admAutoPc button{font-size:12px;padding:3px 10px;border-color:transparent;background:transparent}#admAutoAc button[aria-pressed="true"],#admAutoPc button[aria-pressed="true"]{background:var(--surface);color:var(--teal);border-color:var(--teal);font-weight:600}
 .adm-dup{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:4px;padding:6px 8px;border-radius:6px;background:#fff6e0;font-size:12.5px;color:#7a5200}.adm-dup select{font:inherit;font-size:12.5px;padding:2px 6px}
 .adm-drafts{list-style:none;margin:10px 0;padding:0;display:grid;gap:8px}.adm-drafts li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}.adm-drafts li.done{opacity:.55}.adm-dtx{flex:1;min-width:0;display:grid;gap:3px}.adm-dtx select{justify-self:start;font:inherit;font-size:13px;padding:2px 6px}.adm-dtx b{font-weight:500;line-height:1.35}.adm-dtx small{color:var(--muted);font-size:12.5px;line-height:1.45}.adm-dtx em{font-style:normal;font-size:12px;color:var(--teal)}.adm-dchk{padding-top:4px}
@@ -1462,6 +1463,9 @@ function admAutoHTML(){const A=ADM_AUTO,o=A.out;
         <b>${esc(d.fields?.title||d.fields?.name||"(제목 없음)")}</b>${d.reason?`<small>${esc(d.reason)}</small>`:""}${(()=>{if(d.done)return "";const di=admDupIdx(d.section,d);if(di<0)return "";const ex=ADM[d.section].get()[di];
           return `<div class="adm-dup"><span>⚠ 이미 올라간 항목과 겹쳐요: "${esc(ex.title||ex.name)}"</span><select data-dup="${n}">${[["skip","건너뛰기"],["upd","기존 항목을 이 내용으로 업데이트"],["new","그래도 따로 새로 추가"]].map(([v,l])=>`<option value="${v}"${(d.dup||"skip")===v?" selected":""}>${l}</option>`).join("")}</select></div>`;})()}${d.done?`<em>${esc(d.done)}</em>`:""}</div>
         ${d.done?"":`<button type="button" class="btn-ghost" data-open="${n}">열어서 고치기</button>`}</li>`).join("")}</ol>
+      ${o.some(d=>!d.done)?`<div class="adm-rev"><label for="admRev"><b>초안 고치기</b> <small>고른 초안을 어떻게 고칠지 적으면 Claude가 다시 써 줍니다.</small></label>
+        <textarea id="admRev" rows="2" placeholder="예) 제목을 영어로 바꿔 줘 · 날짜는 2026-11-20 · 2번은 수상으로 옮겨 줘 · 설명을 두 줄로 줄여 줘">${esc(A.rev||"")}</textarea>
+        <div class="adm-auto-act"><button type="button" class="btn-post" id="admRevGo"${A.rbusy||A.busy?" disabled":""}>${A.rbusy?"고치는 중… (1분 정도)":`고른 ${o.filter(d=>!d.done&&!d.skip).length}건 고치기`}</button></div></div>`:""}
       ${o.some(d=>!d.done)?`<div class="adm-auto-act"><button type="button" class="btn-post" id="admAutoAll">고른 ${o.filter(d=>!d.done&&!d.skip).length}건 한꺼번에 저장</button><small class="adm-note">한꺼번에 저장할 때는 사진·PDF를 붙이지 않습니다. 사진이 필요한 건은 '열어서 고치기'로 올려 주세요.</small></div>`:""}</div>`:""}</div>`;}
 /* 중복 찾기: 같은 메뉴에 제목(구성원은 이름)이 같거나 거의 같은 항목 */
 const admNorm=t=>String(t||"").toLowerCase().replace(/[^0-9a-z\uac00-\ud7a3]+/g," ").trim();
@@ -1480,6 +1484,13 @@ function admAutoFields(sec,F){const g=k=>String(F?.[k]||"").trim(),pick=(o)=>Obj
   if(sec==="members")return pick({name:g("name"),group:g("group")||"Graduate Research Assistants",role:g("mrole"),interests:g("interests").split("\n").map(x=>x.trim()).filter(Boolean)});
   return {};}
 const fileB64=f=>new Promise((ok,no)=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(",")[1]);fr.onerror=()=>no(new Error("파일을 읽지 못했습니다"));fr.readAsDataURL(f);});
+async function admAutoFiles(A){let size=0;const files=[];
+  for(const f of A.files){if(/^image\//.test(f.type)){const b=await admShrink(f,1568);size+=b.size;files.push({name:f.name,mime:b.type,data:await fileB64(b)});}
+    else if(f.type==="application/pdf"||/\.pdf$/i.test(f.name)){size+=f.size;files.push({name:f.name,mime:"application/pdf",data:await fileB64(f)});}
+    else files.push({name:f.name,text:await f.text()});}
+  if(size>24e6)throw new Error("파일이 너무 큽니다 (합계 24MB 이하로 줄여 주세요).");return files;}
+/* 초안 결과에 고른 메뉴·분류를 덮어씀 */
+const admAutoForce=(A,x)=>{if(A.to)x.section=A.to;if(A.pc&&x.fields)x.fields.pubcat=A.pc;if(A.ac&&x.section==="posts"){x.fields=x.fields||{};x.fields.cat=A.ac;}};
 function admAutoBind(root){const A=ADM_AUTO,box=root.querySelector("#admAuto");if(!box)return;
   const take=fl=>{A.files=[...A.files,...[...fl].filter(x=>/^image\/|application\/pdf|^text\//.test(x.type)||/\.(pdf|txt|md)$/i.test(x.name))].slice(0,12);A.out=null;A.msg="";admRender();};
   box.querySelector("#admAutoIn").onchange=e=>take(e.target.files);
@@ -1495,16 +1506,26 @@ function admAutoBind(root){const A=ADM_AUTO,box=root.querySelector("#admAuto");i
   const clr=box.querySelector("#admAutoClear");if(clr)clr.onclick=()=>{A.files=[];A.out=null;A.msg="";admRender();};
   box.querySelector("#admAutoGo").onclick=async()=>{if(!A.files.length&&!(A.note||"").trim()){A.msg="파일이나 메모를 넣어 주세요.";return admRender();}
     A.busy=true;A.msg="";A.out=null;admRender();
-    try{let size=0;const files=[];
-      for(const f of A.files){if(/^image\//.test(f.type)){const b=await admShrink(f,1568);size+=b.size;files.push({name:f.name,mime:b.type,data:await fileB64(b)});}
-        else if(f.type==="application/pdf"||/\.pdf$/i.test(f.name)){size+=f.size;files.push({name:f.name,mime:"application/pdf",data:await fileB64(f)});}
-        else files.push({name:f.name,text:await f.text()});}
-      if(size>24e6)throw new Error("파일이 너무 큽니다 (합계 24MB 이하로 줄여 주세요).");
+    try{const files=await admAutoFiles(A);
       const r=await fetch(`${GH_AUTH}/draft`,{method:"POST",headers:{Authorization:`Bearer ${GH_TOKEN}`,"Content-Type":"application/json"},body:JSON.stringify({files,note:A.note||"",today:new Date().toISOString().slice(0,10),section:A.to||"",pubcat:A.pc||""})});
-      const d=await r.json().catch(()=>({}));if(!r.ok||d.error)throw new Error(d.error||r.status);A.out=(Array.isArray(d.items)?d.items:[d]).filter(x=>x&&x.section);A.out.forEach(x=>{if(A.to)x.section=A.to;if(A.pc&&x.fields)x.fields.pubcat=A.pc;if(A.ac&&x.section==="posts"){x.fields=x.fields||{};x.fields.cat=A.ac;}});if(!A.out.length)throw new Error("자료에서 올릴 내용을 찾지 못했습니다");}
+      const d=await r.json().catch(()=>({}));if(!r.ok||d.error)throw new Error(d.error||r.status);A.out=(Array.isArray(d.items)?d.items:[d]).filter(x=>x&&x.section);A.out.forEach(x=>admAutoForce(A,x));if(!A.out.length)throw new Error("자료에서 올릴 내용을 찾지 못했습니다");}
     catch(err){A.msg="초안을 만들지 못했습니다: "+(err.message||err);}
     A.busy=false;if(document.getElementById("admAuto"))admRender();};
   const list=box.querySelector(".adm-drafts");if(!list)return;const O=A.out;
+  const rev=box.querySelector("#admRev");if(rev)rev.oninput=e=>{A.rev=e.target.value;};
+  const rvGo=box.querySelector("#admRevGo");
+  if(rvGo)rvGo.onclick=async()=>{const ins=(A.rev||"").trim(),idx=O.map((d,i)=>i).filter(i=>!O[i].done&&!O[i].skip);
+    if(!ins){A.msg="어떻게 고칠지 적어 주세요.";return admRender();}if(!idx.length){A.msg="고칠 초안을 골라 주세요.";return admRender();}
+    A.rbusy=true;A.msg="";admRender();
+    try{const files=await admAutoFiles(A),drafts=idx.map(i=>({section:O[i].section,reason:O[i].reason||"",fields:O[i].fields||{},images:O[i].images||[]}));
+      const r=await fetch(`${GH_AUTH}/draft`,{method:"POST",headers:{Authorization:`Bearer ${GH_TOKEN}`,"Content-Type":"application/json"},
+        body:JSON.stringify({files,note:(A.note?A.note+"\n\n":"")+"수정 요청: "+ins,today:new Date().toISOString().slice(0,10),section:A.to||"",pubcat:A.pc||"",drafts})});
+      const d=await r.json().catch(()=>({}));if(!r.ok||d.error)throw new Error(d.error||r.status);
+      const items=(Array.isArray(d.items)?d.items:[d]).filter(x=>x&&x.section);if(!items.length)throw new Error("고친 초안이 비어 있습니다");items.forEach(x=>admAutoForce(A,x));
+      const set=new Set(idx);A.out=items.length===idx.length?O.map((x,i)=>set.has(i)?items[idx.indexOf(i)]:x):[...O.filter((x,i)=>i<idx[0]&&!set.has(i)),...items,...O.filter((x,i)=>i>idx[0]&&!set.has(i))];
+      A.rev="";A.msg=`요청대로 초안을 고쳤습니다 (${items.length}건). 내용을 확인해 주세요.`;}
+    catch(err){A.msg="초안을 고치지 못했습니다: "+(err.message||err);}
+    A.rbusy=false;if(document.getElementById("admAuto"))admRender();};
   const left=()=>{if(O.every(d=>d.done)){A.files=[];A.note="";}};
   list.onchange=e=>{const c=e.target.closest("[data-chk]"),q=e.target.closest("[data-sec]");
     if(c){O[+c.dataset.chk].skip=!c.checked;admRender();}if(q){const d=O[+q.dataset.sec],[sec,pc]=q.value.split(":");d.section=sec;if(pc){d.fields=d.fields||{};d.fields[sec==="posts"?"cat":"pubcat"]=pc;}admRender();}

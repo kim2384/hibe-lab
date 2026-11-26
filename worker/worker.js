@@ -235,7 +235,7 @@ export default {
       if (!env.ANTHROPIC_API_KEY) return json({ error: "자동 작성이 설정되지 않았습니다 (Worker의 ANTHROPIC_API_KEY)." }, 501, h);
       const me = await who(req, env);
       if (!me) return json({ error: "관리자만 사용할 수 있습니다." }, 403, h);
-      const { files = [], note = "", today = "", section = "", pubcat = "" } = await req.json().catch(() => ({}));
+      const { files = [], note = "", today = "", section = "", pubcat = "", drafts = null } = await req.json().catch(() => ({}));
       const content = [];
       files.slice(0, 12).forEach((f, i) => {
         content.push({ type: "text", text: `File ${i}: ${String(f.name || "").slice(0, 120)}` });
@@ -247,7 +247,9 @@ export default {
       const allowed = me.role === "student" ? ["posts", "awards", "pubs", "projects"] : ["posts", "awards", "pubs", "projects", "members"];
       const force = allowed.includes(section) ? section : "";
       const pc = ["sci", "kci", "intconf", "domconf"].includes(pubcat) ? pubcat : "";
-      content.push({ type: "text", text: DRAFT_PROMPT(String(today).slice(0, 10), String(note).slice(0, 2000), force ? [force] : allowed) + (force ? `\nThe admin chose the ${force} menu: put every entry there.` : "") + (force === "pubs" && pc ? `\nEvery entry is pubcat ${pc}.` : "") });
+      // 만들어진 초안 고치기: 지금 초안을 함께 보내면, 메모의 '수정 요청'대로 고친 전체 목록을 돌려줌
+      if (Array.isArray(drafts) && drafts.length) content.push({ type: "text", text: `These are the current drafts the admin is reviewing (JSON). Revise them according to the admin's 수정 요청 in the note below and return the complete revised list in "items": keep every entry and field the request does not touch exactly as it is, keep the same order, and add, split, merge or drop entries only if the request asks for it. The attached files are the original material, for checking facts.\n${JSON.stringify(drafts.slice(0, 30)).slice(0, 60000)}` });
+      content.push({ type: "text", text: DRAFT_PROMPT(String(today).slice(0, 10), String(note).slice(0, 4000), force ? [force] : allowed) + (force ? `\nThe admin chose the ${force} menu: put every entry there.` : "") + (force === "pubs" && pc ? `\nEvery entry is pubcat ${pc}.` : "") });
       const r = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "anthropic-beta": "server-side-fallback-2026-07-01", "content-type": "application/json" },
