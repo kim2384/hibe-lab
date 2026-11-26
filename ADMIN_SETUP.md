@@ -63,6 +63,18 @@ const GH_AUTH = "https://hibe-admin.hyde1207.workers.dev";
    - 학생 연구원: 아래쪽 '학생 추가'에 GitHub 아이디를 넣습니다. 수락 절차 없이 바로 로그인할 수 있습니다.
 3. GitHub 계정은 github.com에서 무료로 만들 수 있습니다.
 
+## 7. 방문자 통계 켜기 (Cloudflare D1, 무료)
+
+관리 화면 맨 위 '방문자 통계'는 Cloudflare D1 데이터베이스에 방문 기록을 쌓습니다. 한 번만 설정하면 됩니다.
+
+1. Cloudflare 대시보드 왼쪽 메뉴 **Storage & Databases → D1 SQL Database → Create database**. 이름은 `hibe-stats`, 위치는 자동으로 두고 만듭니다.
+2. **Workers & Pages → hibe-admin → Settings → Bindings → Add → D1 database**. Variable name에 `DB`(대문자)를 넣고, 방금 만든 `hibe-stats`를 고른 뒤 저장합니다.
+3. 새 `worker/worker.js` 내용을 붙여 넣고 **Deploy** 합니다. 표는 첫 방문 때 자동으로 만들어집니다.
+
+- 기록하는 것: 날짜, 본 페이지, 들어온 사이트, 나라(접속 IP로 Cloudflare가 판단), 스마트폰/PC 여부. **IP 주소 자체는 저장하지 않고**, 하루마다 바뀌는 익명 ID로만 같은 날 같은 사람을 구별합니다.
+- 관리자로 로그인한 상태의 방문과 검색엔진 봇은 세지 않습니다. 400일이 지난 기록은 자동으로 지워집니다.
+- 학생 연구원 계정에는 통계가 보이지 않습니다.
+
 ## 참고
 - 로그인 정보는 그 브라우저 탭에만 보관되고, 탭을 닫으면 사라집니다.
 - GitHub 승인 범위는 `public_repo` (공개 저장소 쓰기)입니다. 관리자 기능은 이 저장소 하나에만 씁니다.

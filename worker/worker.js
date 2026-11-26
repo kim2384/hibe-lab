@@ -113,6 +113,13 @@ const cors = (env, req) => {
     ? { "Access-Control-Allow-Origin": o, "Access-Control-Allow-Headers": "authorization, content-type", "Access-Control-Allow-Methods": "POST, OPTIONS", Vary: "Origin" }
     : {};
 };
+let STATS_READY = false;
+async function statsInit(env) {
+  if (STATS_READY) return;
+  await env.DB.prepare("CREATE TABLE IF NOT EXISTS hits (day TEXT NOT NULL, vid TEXT NOT NULL, page TEXT, ref TEXT, country TEXT, mobile INTEGER)").run();
+  await env.DB.prepare("CREATE INDEX IF NOT EXISTS hits_day ON hits (day)").run();
+  STATS_READY = true;
+}
 const json = (body, status, h) => new Response(JSON.stringify(body), { status, headers: { ...h, "Content-Type": "application/json" } });
 const html = (body, extra = {}) => new Response(`<!doctype html><meta charset="utf-8"><title>hibe lab</title><body style="font-family:sans-serif;padding:24px">${body}`, { headers: { "Content-Type": "text/html; charset=utf-8", ...extra } });
 const cookie = (req, k) => (req.headers.get("Cookie") || "").split(/;\s*/).map((c) => c.split("=")).find(([n]) => n === k)?.[1] || "";
@@ -225,6 +232,52 @@ export default {
         body: JSON.stringify({ message: `${String(message).slice(0, 200)} [${me.login}]`, content, branch: "main", ...(sha ? { sha } : {}) }),
       });
       return json(await r.json().catch(() => ({})), r.status, h);
+    }
+
+    // 6. 방문자 기록: 사이트가 페이지를 열 때마다 보냄 (IP는 저장하지 않고, 날짜별로 바뀌는 익명 ID와 나라만 저장)
+    if (url.pathname === "/hit") {
+      if (req.method !== "POST" || !env.DB) return new Response(null, { status: 204 });
+      const o = (req.headers.get("Origin") || "").replace(/\/$/, "");
+      if (!origins(env).includes(o)) return new Response(null, { status: 204 });
+      const ua = req.headers.get("User-Agent") || "";
+      if (!ua || /bot|crawl|spider|slurp|preview|headless|lighthouse|monitor|curl|wget|python|httpclient/i.test(ua)) return new Response(null, { status: 204 });
+      const b = await req.json().catch(() => ({}));
+      const day = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10); // 한국 날짜
+      const ip = req.headers.get("CF-Connecting-IP") || "";
+      const dg = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${day}|${ip}|${ua}|${env.GITHUB_CLIENT_SECRET || "hibe"}`));
+      const vid = [...new Uint8Array(dg)].slice(0, 8).map((x) => x.toString(16).padStart(2, "0")).join("");
+      let ref = "";
+      try { const h = new URL(String(b.r || "")).hostname; if (h && !/github\.io$/.test(h)) ref = h.replace(/^www\./, "").slice(0, 80); } catch {}
+      const page = String(b.p || "home").replace(/[^a-z0-9_-]/gi, "").slice(0, 30) || "home";
+      const country = String(req.cf?.country || "").slice(0, 2);
+      const mobile = /Mobi|Android|iPhone|iPad/i.test(ua) ? 1 : 0;
+      try {
+        await statsInit(env);
+        await env.DB.prepare("INSERT INTO hits (day, vid, page, ref, country, mobile) VALUES (?, ?, ?, ?, ?, ?)").bind(day, vid, page, ref, country, mobile).run();
+        if (Math.random() < 0.01) await env.DB.prepare("DELETE FROM hits WHERE day < ?").bind(new Date(Date.now() - 400 * 864e5).toISOString().slice(0, 10)).run();
+      } catch {}
+      return new Response(null, { status: 204, headers: { "Access-Control-Allow-Origin": o } });
+    }
+
+    // 7. 방문자 통계: 관리자만 (학생 연구원 제외)
+    if (url.pathname === "/stats") {
+      const h = cors(env, req);
+      if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: h });
+      const me = await who(req, env);
+      if (!me || me.role !== "admin") return json({ error: "관리자만 볼 수 있습니다." }, 403, h);
+      if (!env.DB) return json({ error: "nodb" }, 501, h);
+      await statsInit(env);
+      const days = Math.min(365, Math.max(7, parseInt(url.searchParams.get("days") || "30", 10) || 30));
+      const from = new Date(Date.now() + 9 * 3600e3 - (days - 1) * 864e5).toISOString().slice(0, 10);
+      const q = (sql) => env.DB.prepare(sql).bind(from).all().then((r) => r.results || []);
+      const [daily, pages, countries, refs, dev] = await Promise.all([
+        q("SELECT day, COUNT(*) AS views, COUNT(DISTINCT vid) AS visitors, COUNT(DISTINCT CASE WHEN country = 'KR' THEN vid END) AS kr FROM hits WHERE day >= ? GROUP BY day ORDER BY day"),
+        q("SELECT page, COUNT(*) AS views FROM hits WHERE day >= ? GROUP BY page ORDER BY views DESC LIMIT 10"),
+        q("SELECT country, COUNT(DISTINCT day || vid) AS visitors FROM hits WHERE day >= ? GROUP BY country ORDER BY visitors DESC LIMIT 10"),
+        q("SELECT ref, COUNT(DISTINCT day || vid) AS visitors FROM hits WHERE day >= ? AND ref != '' GROUP BY ref ORDER BY visitors DESC LIMIT 8"),
+        q("SELECT mobile, COUNT(DISTINCT day || vid) AS visitors FROM hits WHERE day >= ? GROUP BY mobile"),
+      ]);
+      return json({ from, days, daily, pages, countries, refs, dev }, 200, h);
     }
 
     // 4. 자동 작성: 첨부 파일을 읽고 어느 메뉴에 무엇을 쓸지 제안

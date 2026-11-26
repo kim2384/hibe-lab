@@ -442,6 +442,15 @@ form.adm-head input{flex:1;min-width:220px}
 .adm-drop.on{background:rgba(52,147,129,.15)}.adm-drop input{display:none}
 .adm-auto textarea{font:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical}
 .adm-auto-to{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:10px 0 2px}.adm-auto-to>span{font-size:13px;color:var(--muted)}.adm-auto-to .seg button{font-size:13px;padding:5px 11px}.adm-sub{color:var(--muted);font-size:15px;margin:0 -2px}#admAutoPc{background:var(--teal-soft);border-radius:999px;padding:3px;display:flex;flex-wrap:wrap;gap:3px}#admAutoPc button{font-size:12px;padding:3px 10px;border-color:transparent;background:transparent}#admAutoPc button[aria-pressed="true"]{background:var(--surface);color:var(--teal);border-color:var(--teal);font-weight:600}
+.adm-stats{--st-kr:#1a9a7f;--st-ov:#e07a2a;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:16px 18px;margin-bottom:18px}
+.st-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 12px}.st-h b{font-size:16px}.st-sub{font-size:12px;color:var(--muted)}.st-range{margin-left:auto}.st-range button{font-size:12px;padding:3px 10px}
+.st-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}.st-tile{background:var(--bg);border-radius:8px;padding:10px 12px;display:grid;gap:2px}.st-tile span{font-size:12px;color:var(--muted)}.st-tile b{font-size:24px;font-weight:600;color:var(--ink)}.st-tile small{font-size:11.5px;color:var(--muted);line-height:1.45}
+.st-legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-bottom:4px}.st-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}.st-max{margin-left:auto}
+.st-plot{position:relative;height:120px;border-bottom:1px solid var(--line)}.st-plot svg{width:100%;height:100%;display:block}.st-bar.on rect:first-child{fill:rgba(15,107,92,.08)}
+.st-tip{position:absolute;top:-6px;width:150px;background:var(--ink);color:#fff;font-size:11.5px;line-height:1.45;padding:6px 8px;border-radius:6px;pointer-events:none;z-index:2}
+.st-axis{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:3px}
+.st-lists{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}.st-lists h4{margin:0 0 6px;font-size:13px}.st-lists ol{list-style:none;margin:0;padding:0;display:grid;gap:3px}.st-lists li{display:flex;justify-content:space-between;gap:8px;font-size:12.5px}.st-lists li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}.st-lists li b{font-weight:500;color:var(--ink)}.st-note{font-size:12px;color:var(--muted);margin:6px 0 0}
+@media (max-width:640px){.st-tiles{gap:6px}.st-tile b{font-size:19px}.st-lists{grid-template-columns:1fr}}
 .adm-dup{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:4px;padding:6px 8px;border-radius:6px;background:#fff6e0;font-size:12.5px;color:#7a5200}.adm-dup select{font:inherit;font-size:12.5px;padding:2px 6px}
 .adm-drafts{list-style:none;margin:10px 0;padding:0;display:grid;gap:8px}.adm-drafts li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}.adm-drafts li.done{opacity:.55}.adm-dtx{flex:1;min-width:0;display:grid;gap:3px}.adm-dtx select{justify-self:start;font:inherit;font-size:13px;padding:2px 6px}.adm-dtx b{font-weight:500;line-height:1.35}.adm-dtx small{color:var(--muted);font-size:12.5px;line-height:1.45}.adm-dtx em{font-style:normal;font-size:12px;color:var(--teal)}.adm-dchk{padding-top:4px}
 .adm-auto-act{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -978,12 +987,17 @@ function heroFit(){document.querySelectorAll(".hero h1,.hero .ko").forEach(el=>{
   /* 부제가 제목보다 커 보이지 않게 */const h=document.querySelector(".hero h1"),k=document.querySelector(".hero .ko");
   if(h&&k&&Math.min(innerWidth,screen.width||innerWidth)<=560){const hf=parseFloat(getComputedStyle(h).fontSize);if(parseFloat(getComputedStyle(k).fontSize)>hf)k.style.fontSize=hf+"px";}}
 addEventListener("resize",heroFit);addEventListener("load",heroFit);document.fonts?.ready.then(heroFit);
+/* 방문자 기록: 페이지를 열 때마다 Worker에 알림 (관리자 로그인 중이거나 내 컴퓨터에서 열면 세지 않음) */
+let STAT_REF=document.referrer;
+function statHit(id){try{if(!GH_AUTH||id==="admin"||sessionStorage.getItem("hibeGh")||/^(localhost|127\.|\[)/.test(location.hostname)||!navigator.sendBeacon)return;
+  navigator.sendBeacon(GH_AUTH+"/hit",JSON.stringify({p:id,r:STAT_REF}));STAT_REF="";}catch(e){}}
 function route(){
   let id = location.hash.slice(1);
   if(!views[id]) id = "home";
   if(!$modal.hidden) closeModal();
   $main.innerHTML = views[id]();
   heroFit();
+  statHit(id);
   admBar();
   $nav.querySelectorAll("a").forEach(a=>{ if(a.dataset.id===id||(a.dataset.id==="pi"&&id==="members")) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   $nav.classList.remove("open"); document.getElementById("menuBtn").setAttribute("aria-expanded","false");
@@ -1263,6 +1277,43 @@ function admModalTools(k,i){if(!admCan(k)||!(i>=0))return;const body=$mc.querySe
   body.appendChild(d);}
 
 views.admin=()=>`<section class="page wrap adm">${head("","Admin")}<div id="admRoot"></div></section>`;
+/* 방문자 통계 위젯 (Worker /stats, Cloudflare D1) */
+let STATS=null,STATS_DAYS=30;
+const CNAME={KR:"한국",US:"미국",JP:"일본",CN:"중국",SG:"싱가포르",DE:"독일",GB:"영국",CA:"캐나다",AU:"호주",FR:"프랑스",IN:"인도",HK:"홍콩",TW:"대만",VN:"베트남",NL:"네덜란드",IE:"아일랜드"};
+async function statsShow(force){const box=document.getElementById("admStats");if(!box)return;
+  if(STATS&&!force&&STATS.days===STATS_DAYS)return statsDraw(box);
+  box.innerHTML=`<div class="st-h"><b>방문자 통계</b><span class="st-sub">불러오는 중…</span></div>`;
+  try{const r=await fetch(`${GH_AUTH}/stats?days=${STATS_DAYS}`,{method:"POST",headers:{Authorization:`Bearer ${GH_TOKEN}`}});
+    if(r.status===404)throw new Error("setup");const d=await r.json().catch(()=>({}));if(d.error==="nodb")throw new Error("setup");if(!r.ok||d.error)throw new Error(d.error||r.status);
+    STATS=d;}
+  catch(err){const b2=document.getElementById("admStats");if(b2)b2.innerHTML=`<div class="st-h"><b>방문자 통계</b></div><p class="st-note">${err.message==="setup"?"방문자 기록이 아직 켜지지 않았습니다. Cloudflare에서 D1 데이터베이스를 만들어 Worker에 DB라는 이름으로 연결하고, 새 worker.js로 다시 배포하면 그때부터 기록됩니다 (ADMIN_SETUP.md 참고).":"통계를 불러오지 못했습니다: "+esc(err.message||err)}</p>`;return;}
+  if(document.getElementById("admStats"))statsDraw(document.getElementById("admStats"));}
+function statsDraw(box){const d=STATS,today=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);
+  const by=Object.fromEntries((d.daily||[]).map(x=>[x.day,x])),days=[];
+  for(let i=d.days-1;i>=0;i--){const k=new Date(Date.parse(today)-i*864e5).toISOString().slice(0,10),x=by[k]||{views:0,visitors:0,kr:0};days.push({day:k,views:+x.views,u:+x.visitors,kr:+x.kr,ov:+x.visitors-+x.kr});}
+  const sum=(a,f)=>a.reduce((s,x)=>s+f(x),0),tile=(lab,a)=>`<div class="st-tile"><span>${lab}</span><b>${sum(a,x=>x.u).toLocaleString()}</b><small>국내 ${sum(a,x=>x.kr).toLocaleString()} · 해외 ${sum(a,x=>x.ov).toLocaleString()}<br>페이지뷰 ${sum(a,x=>x.views).toLocaleString()}</small></div>`;
+  const max=Math.max(1,...days.map(x=>x.u)),W=days.length,bw=100/W;
+  const bars=days.map((x,i)=>{const hk=x.kr/max*100,ho=x.ov/max*100,gap=x.kr&&x.ov?1.2:0;
+    return `<g class="st-bar" data-i="${i}"><rect x="${i*bw}" y="0" width="${bw}" height="100" fill="transparent"/>${x.ov?`<rect x="${i*bw+bw*.15}" y="${100-ho}" width="${bw*.7}" height="${ho}" fill="var(--st-ov)"/>`:""}${x.kr?`<rect x="${i*bw+bw*.15}" y="${100-ho-hk}" width="${bw*.7}" height="${Math.max(hk-gap,0.6)}" fill="var(--st-kr)"/>`:""}</g>`;}).join("");
+  const dev=Object.fromEntries((d.dev||[]).map(x=>[x.mobile,+x.visitors])),devT=(dev[1]||0)+(dev[0]||0);
+  const list=(rows,f)=>rows.length?`<ol>${rows.map(f).join("")}</ol>`:`<p class="st-note">아직 기록이 없습니다.</p>`;
+  const PN={home:"Home",about:"About hibe",pi:"People · P.I.",members:"People · Members",projects:"Projects",publications:"Publications",awards:"Awards",activities:"Activities",join:"Join us"};
+  const rl=n=>n===365?"1년":n+"일";
+  box.innerHTML=`<div class="st-h"><b>방문자 통계</b><span class="st-sub">하루 단위 방문자 수 (같은 사람이 하루에 여러 번 와도 1명) · 국내/해외는 접속 IP의 나라 기준</span>
+      <div class="seg st-range">${[7,30,90,365].map(n=>`<button type="button" data-d="${n}" aria-pressed="${n===STATS_DAYS}">${rl(n)}</button>`).join("")}</div></div>
+    <div class="st-tiles">${tile("오늘",days.slice(-1))}${tile("최근 7일",days.slice(-7))}${tile("최근 "+rl(STATS_DAYS),days)}</div>
+    <div class="st-chart"><div class="st-legend"><span><i style="background:var(--st-kr)"></i>국내</span><span><i style="background:var(--st-ov)"></i>해외</span><span class="st-max">최대 ${max}명</span></div>
+      <div class="st-plot"><svg viewBox="0 0 100 100" preserveAspectRatio="none" role="img" aria-label="날짜별 방문자 수">${bars}</svg><div class="st-tip" hidden></div></div>
+      <div class="st-axis"><span>${days[0].day.slice(5).replace("-",".")}</span><span>${days[days.length-1].day.slice(5).replace("-",".")}</span></div></div>
+    <div class="st-lists"><div><h4>많이 본 페이지</h4>${list(d.pages||[],x=>`<li><span>${esc(PN[x.page]||x.page)}</span><b>${(+x.views).toLocaleString()}</b></li>`)}</div>
+      <div><h4>나라별 방문자</h4>${list(d.countries||[],x=>`<li><span>${esc(CNAME[x.country]||x.country||"알 수 없음")}</span><b>${(+x.visitors).toLocaleString()}</b></li>`)}</div>
+      <div><h4>들어온 곳</h4>${list(d.refs||[],x=>`<li><span>${esc(x.ref)}</span><b>${(+x.visitors).toLocaleString()}</b></li>`)}${devT?`<p class="st-note">스마트폰 ${Math.round((dev[1]||0)/devT*100)}% · PC ${Math.round((dev[0]||0)/devT*100)}%</p>`:""}</div></div>`;
+  box.querySelector(".st-range").onclick=e=>{const b=e.target.closest("[data-d]");if(!b)return;STATS_DAYS=+b.dataset.d;statsShow(true);};
+  const plot=box.querySelector(".st-plot"),tip=box.querySelector(".st-tip");
+  plot.onmousemove=plot.ontouchstart=e=>{const r=plot.getBoundingClientRect(),cx=(e.touches?.[0]||e).clientX,i=Math.min(W-1,Math.max(0,Math.floor((cx-r.left)/r.width*W))),x=days[i];
+    tip.hidden=false;tip.innerHTML=`<b>${x.day.replaceAll("-",". ")}</b><br>방문자 ${x.u}명 (국내 ${x.kr} · 해외 ${x.ov})<br>페이지뷰 ${x.views}`;
+    tip.style.left=Math.min(r.width-150,Math.max(0,(i+.5)/W*r.width-75))+"px";box.querySelectorAll(".st-bar").forEach((g,j)=>g.classList.toggle("on",j===i));};
+  plot.onmouseleave=()=>{tip.hidden=true;box.querySelectorAll(".st-bar").forEach(g=>g.classList.remove("on"));};}
 function admRender(){
   const root=document.getElementById("admRoot");if(!root)return;
   if(!GH_AUTH){root.innerHTML=`<div class="adm-card"><p><b>관리자 기능이 아직 연결되지 않았습니다.</b></p><p>GitHub 로그인 중계(Cloudflare Worker)를 만들고 그 주소를 넣으면 이 자리에 로그인 버튼이 나옵니다. 저장소의 ADMIN_SETUP.md를 따라 하시면 됩니다.</p></div>`;return;}
@@ -1272,8 +1323,8 @@ function admRender(){
     root.querySelector("#admGh").onclick=admLogin;return;}
   if(!ADMIN.ok){root.innerHTML=`<div class="adm-card"><p><b>${esc(ADMIN.login)}</b> 계정은 아직 이 홈페이지 저장소의 관리자가 아닙니다. 기존 관리자에게 초대를 부탁해 주세요. 초대를 받았다면 GitHub 알림이나 메일에서 수락한 뒤 다시 로그인해 주세요.</p><button class="btn-ghost" id="admOut2">로그아웃</button></div>`;root.querySelector("#admOut2").onclick=admLogout;return;}
   const tabs=[...admKeys().map(k=>[k,ADM[k].label[1]]),...(ADMIN.owner?[["admins","관리자"]]:[])];
-  root.innerHTML=`${admAutoHTML()}<div class="tabs adm-tabs" role="tablist">${tabs.map(([k,l])=>`<button type="button" role="tab" data-t="${k}" aria-selected="${k===ADMTAB}">${l}</button>`).join("")}</div><div id="admBody"></div>`;
-  admAutoBind(root);
+  root.innerHTML=`${ADMIN.student?"":`<div class="adm-stats" id="admStats"></div>`}${admAutoHTML()}<div class="tabs adm-tabs" role="tablist">${tabs.map(([k,l])=>`<button type="button" role="tab" data-t="${k}" aria-selected="${k===ADMTAB}">${l}</button>`).join("")}</div><div id="admBody"></div>`;
+  admAutoBind(root);statsShow();
   root.querySelector(".adm-tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;ADMTAB=b.dataset.t;admRender();};
   if(ADMTAB==="admins"&&ADMIN.owner)return admAdmins();if(ADMTAB==="admins")ADMTAB=admKeys()[0];
   if(!admKeys().includes(ADMTAB))ADMTAB=admKeys()[0];
