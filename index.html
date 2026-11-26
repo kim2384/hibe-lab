@@ -31,7 +31,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 a{color:var(--teal)}
 a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--sun);outline-offset:2px}
 .wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-@media (max-width:560px){.wrap{padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}}
+@media (max-width:560px){.wrap{padding-left:max(15px,env(safe-area-inset-left,0px));padding-right:max(15px,env(safe-area-inset-right,0px))}}
 
 
 
@@ -541,7 +541,7 @@ body{font-size:14.5px;line-height:1.6}
 }
 /* 스마트폰: 수상·활동 그리드를 홈 피드와 같은 규격으로 (3열, 2px 간격, 좌우 4px, 직각 정사각형) — 색·스타일은 원래대로 */
 @media (max-width:560px){
-.ig,.feed{grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;margin-inline:-8px}
+.ig,.feed{grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;margin-inline:-11px}
 .ig-tile{border-radius:0}
 .post{aspect-ratio:1/1;border-radius:0;min-height:0}
 .post .ph{aspect-ratio:auto;flex:1 1 auto;min-height:0}
