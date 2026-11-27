@@ -9,6 +9,10 @@
 //   GITHUB_REPO           내용이 저장되는 저장소                   (일반 변수, 예: kim2384/hibe-lab)
 //   ANTHROPIC_API_KEY     계획서 자동 작성을 쓸 때만               (Secret, 선택)
 //   GITHUB_WRITE_TOKEN    학생 연구원 저장용 토큰 (fine-grained, 이 저장소 Contents 읽기·쓰기만)   (Secret)
+//   지원서 양식(Join us)을 쓸 때만:
+//   RESEND_API_KEY        메일 발송 서비스 Resend의 API 키         (Secret)
+//   TURNSTILE_SECRET      Cloudflare Turnstile(스팸 방지)의 Secret key (Secret)
+//   APPLY_TO              지원서를 받을 메일 주소                   (일반 변수, Resend 가입 메일과 같아야 함)
 //
 // 역할
 //   P.I.·관리자: 저장소에 쓰기 권한이 있는 GitHub 계정. 모든 메뉴를 직접 저장.
@@ -374,6 +378,46 @@ Apply the request. Return in "fields" only the fields you change, each with its 
         items.forEach((it) => { if (force) it.section = force; if (!allowed.includes(it.section)) it.section = allowed[0]; if (force === "pubs" && pc && it.fields) it.fields.pubcat = pc; });
         return json({ items }, 200, h);
       } catch { return json({ error: "자동 작성 결과를 읽지 못했습니다." }, 502, h); }
+    }
+
+    // 9. 지원서 (Join us 양식): 스팸 검사(Turnstile) 후 교수님 메일로 보냄. 성적증명서 PDF 첨부
+    if (url.pathname === "/apply") {
+      const o = (req.headers.get("Origin") || "").replace(/\/$/, "");
+      const h = origins(env).includes(o) ? { "Access-Control-Allow-Origin": o, "Access-Control-Allow-Headers": "content-type", "Access-Control-Allow-Methods": "POST, OPTIONS", Vary: "Origin" } : null;
+      if (!h) return json({ error: "허용되지 않은 사이트입니다." }, 403, {});
+      if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: h });
+      if (req.method !== "POST") return json({ error: "POST only" }, 405, h);
+      if (!env.RESEND_API_KEY || !env.TURNSTILE_SECRET || !env.APPLY_TO) return json({ error: "지원서 양식이 아직 설정되지 않았습니다." }, 501, h);
+      const b = await req.json().catch(() => ({}));
+      const s = (v, n) => String(v || "").replace(/\r/g, "").trim().slice(0, n);
+      const name = s(b.name, 60), email = s(b.email, 120), aff = s(b.aff, 160), program = s(b.program, 60), intro = s(b.intro, 3000), lang = b.lang === "en" ? "en" : "ko";
+      const pdf = String(b.pdf || ""), pdfName = s(b.pdfName, 120).replace(/[^\w.\- ()가-힣]/g, "_") || "transcript.pdf";
+      if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || !intro || !pdf) return json({ error: lang === "en" ? "Please fill in all required fields." : "필수 항목을 모두 입력해 주세요." }, 400, h);
+      if (pdf.length > 14e6 || !pdf.startsWith("JVBER")) return json({ error: lang === "en" ? "Please attach a PDF under 10 MB." : "10MB 이하 PDF 파일을 첨부해 주세요." }, 400, h);
+      const ip = req.headers.get("CF-Connecting-IP") || "";
+      const tv = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: new URLSearchParams({ secret: env.TURNSTILE_SECRET, response: String(b.token || ""), remoteip: ip }) }).then((r) => r.json()).catch(() => ({}));
+      if (!tv.success) return json({ error: lang === "en" ? "Spam check failed. Please try again." : "스팸 방지 확인에 실패했습니다. 다시 시도해 주세요." }, 403, h);
+      // 같은 곳에서 하루 3번까지 (D1이 연결돼 있을 때만)
+      if (env.DB) {
+        try {
+          const day = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+          const dg = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`apply|${day}|${ip}`));
+          const k = [...new Uint8Array(dg)].slice(0, 8).map((x) => x.toString(16).padStart(2, "0")).join("");
+          await env.DB.prepare("CREATE TABLE IF NOT EXISTS applies (day TEXT NOT NULL, k TEXT NOT NULL)").run();
+          const n = (await env.DB.prepare("SELECT COUNT(*) AS n FROM applies WHERE day = ? AND k = ?").bind(day, k).first())?.n || 0;
+          if (n >= 3) return json({ error: lang === "en" ? "Too many submissions today. Please email us directly." : "오늘은 더 보낼 수 없습니다. 메일로 직접 보내 주세요." }, 429, h);
+          await env.DB.prepare("INSERT INTO applies (day, k) VALUES (?, ?)").bind(day, k).run();
+          await env.DB.prepare("DELETE FROM applies WHERE day < ?").bind(new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10)).run();
+        } catch {}
+      }
+      const text = [`이름: ${name}`, `이메일: ${email}`, `소속: ${aff || "-"}`, `희망 과정: ${program || "-"}`, "", "자기소개:", intro, "", `첨부: ${pdfName}`, "", "— hibe lab 홈페이지 Join us 지원서 양식에서 보냄. 이 메일에 답장하면 지원자에게 갑니다."].join("\n");
+      const r = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ from: "hibe lab 홈페이지 <onboarding@resend.dev>", to: [env.APPLY_TO], reply_to: email, subject: `[hibe lab 지원] ${name}${program ? " / " + program : ""}`, text, attachments: [{ filename: /\.pdf$/i.test(pdfName) ? pdfName : pdfName + ".pdf", content: pdf }] }),
+      });
+      if (!r.ok) return json({ error: lang === "en" ? "Could not send. Please email us directly." : "보내지 못했습니다. 메일로 직접 보내 주세요." }, 502, h);
+      return json({ ok: true }, 200, h);
     }
 
     return html("hibe lab 관리자 로그인 중계 서버입니다.");
