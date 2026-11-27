@@ -1255,7 +1255,7 @@ async function contentLoad(){
   let any=false;got.forEach((d,n)=>{if(Array.isArray(d)){ADM[ADM_KEYS[n]].set(d);any=true;}});
   if(any){scholarRemap();const y=scrollY;route();window.scrollTo(0,y);}
 }
-function ghApi(path,init={}){return fetch("https://api.github.com"+path,{...init,headers:{Authorization:`Bearer ${GH_TOKEN}`,Accept:"application/vnd.github+json",...(init.body?{"Content-Type":"application/json"}:{}),...(init.headers||{})}});}
+function ghApi(path,init={}){return fetch("https://api.github.com"+path,{cache:"no-store",...init,headers:{Authorization:`Bearer ${GH_TOKEN}`,Accept:"application/vnd.github+json",...(init.body?{"Content-Type":"application/json"}:{}),...(init.headers||{})}});}
 /* 저장: P.I.·관리자는 GitHub에 직접, 학생 연구원은 Worker를 거쳐 (허용된 메뉴만) */
 function ghPut(path,{message,content,sha}){
   if(!ADMIN?.student)return ghApi(`/repos/${GH_REPO}/contents/${path}`,{method:"PUT",body:JSON.stringify({message,branch:GH_BRANCH,content,...(sha?{sha}:{})})});
@@ -1700,14 +1700,17 @@ async function admStudents(body){
     <form class="adm-head" id="admStuForm"><input id="admStuId" placeholder="GitHub 아이디 또는 GitHub에 등록된 이메일 (예: name@gmail.com)" required autocomplete="off"><input id="admStuName" placeholder="이름 (선택)" autocomplete="off"><button class="btn-post">학생 추가</button></form>
     <p class="adm-note">학생은 저장소 초대가 필요 없습니다. 여기에 GitHub 아이디나 이메일(구글 계정으로 GitHub에 가입했다면 그 Gmail)을 넣으면 바로 'GitHub로 로그인'으로 들어와 활동·수상·연구과제·논문 메뉴만 편집할 수 있습니다. 위의 관리자는 모든 메뉴를 편집합니다.</p>
     <ul class="adm-list">${list.length?list.map((x,j)=>`<li data-j="${j}"><div class="adm-th">${x.login?`<img src="https://github.com/${encodeURIComponent(x.login)}.png?size=96" alt="">`:""}</div><div class="adm-tx"><b>${esc(x.login||x.email)}</b><small>${esc(x.name||"학생 연구원")}</small></div><div class="adm-act"><button type="button" class="danger" data-s="rm">삭제</button></div></li>`).join(""):`<li><div class="adm-tx"><small>아직 없습니다.</small></div></li>`}</ul>`;
-  const save=async(next,what)=>{const r=await ghApi(`/repos/${GH_REPO}/contents/content/roles.json`,{method:"PUT",body:JSON.stringify({message:`관리 화면: 학생 연구원 ${what} (${ADMIN.login})`,branch:GH_BRANCH,content:b64(JSON.stringify({students:next},null,1)+"\n"),...(roles.sha?{sha:roles.sha}:{})})});
+  /* change: 명단을 받아 새 명단을 돌려줌. 그사이 명단이 바뀌었으면(409/422) 최신 명단을 다시 읽어 한 번 더 적용 */
+  const save=async(change,what)=>{let cur=roles,r;
+    for(let t=0;t<2;t++){r=await ghApi(`/repos/${GH_REPO}/contents/content/roles.json`,{method:"PUT",body:JSON.stringify({message:`관리 화면: 학생 연구원 ${what} (${ADMIN.login})`,branch:GH_BRANCH,content:b64(JSON.stringify({students:change(cur.data.students)},null,1)+"\n"),...(cur.sha?{sha:cur.sha}:{})})});
+      if(r.status!==409&&r.status!==422)break;cur=await rolesLoad();}
     if(!r.ok)alert("저장하지 못했습니다: "+((await r.json().catch(()=>({}))).message||r.status));sec.remove();admStudents(body);};
   sec.querySelector("#admStuForm").onsubmit=async e=>{e.preventDefault();const u=sec.querySelector("#admStuId").value.trim().replace(/^@/,""),n=sec.querySelector("#admStuName").value.trim();if(u.includes("@")){const em=u.toLowerCase();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em))return alert("이메일 주소를 확인해 주세요.");
-      if(list.some(x=>String(x.email||"").toLowerCase()===em))return alert("이미 명단에 있습니다.");return save([...list,{email:em,name:n}],"추가");}
+      if(list.some(x=>String(x.email||"").toLowerCase()===em))return alert("이미 명단에 있습니다.");return save(l=>l.some(x=>String(x.email||"").toLowerCase()===em)?l:[...l,{email:em,name:n}],"추가");}
     const chk=await ghApi(`/users/${encodeURIComponent(u)}`);if(!chk.ok)return alert("그런 GitHub 아이디가 없습니다.");const login=(await chk.json()).login;
-    if(list.some(x=>String(x.login||"").toLowerCase()===login.toLowerCase()))return alert("이미 명단에 있습니다.");await save([...list,{login,name:n}],"추가");};
+    if(list.some(x=>String(x.login||"").toLowerCase()===login.toLowerCase()))return alert("이미 명단에 있습니다.");await save(l=>l.some(x=>String(x.login||"").toLowerCase()===login.toLowerCase())?l:[...l,{login,name:n}],"추가");};
   sec.querySelector(".adm-list").onclick=async e=>{const b=e.target.closest("[data-s]");if(!b)return;const j=+b.closest("li").dataset.j;
-    if(!confirm(`${list[j].login||list[j].email} 을(를) 학생 연구원 명단에서 뺄까요?`))return;await save(list.filter((_,k)=>k!==j),"삭제");};
+    if(!confirm(`${list[j].login||list[j].email} 을(를) 학생 연구원 명단에서 뺄까요?`))return;const rm=list[j];await save(l=>l.filter(x=>!(rm.login?String(x.login||"").toLowerCase()===rm.login.toLowerCase():String(x.email||"").toLowerCase()===String(rm.email||"").toLowerCase())),"삭제");};
 }
 contentLoad();admInit();
 if(location.hash==="#admin")route();
