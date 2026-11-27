@@ -1460,7 +1460,11 @@ function admToast(t){const d=document.createElement("div");d.className="adm-toas
 /* PDF 첫 페이지 → 이미지 (브라우저 안에서 pdf.js로 그림, PDF는 어디에도 올리지 않음) */
 const PDFJS="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
 function pdfLib(){return window.pdfjsLib?Promise.resolve(window.pdfjsLib):new Promise((ok,no)=>{const s=document.createElement("script");s.src=PDFJS+"pdf.min.js";s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS+"pdf.worker.min.js";ok(window.pdfjsLib);};s.onerror=()=>no(new Error("PDF 도구를 불러오지 못했습니다"));document.head.appendChild(s);});}
-async function pdfFirstPage(file){const lib=await pdfLib(),doc=await lib.getDocument({data:await file.arrayBuffer()}).promise,pg=await doc.getPage(1);
+/* 표지: 출판사 광고·안내 쪽을 건너뛰고 논문명·저자·초록이 있는 쪽 (앞 5쪽 안에서) */
+async function pdfFirstPage(file){const lib=await pdfLib(),doc=await lib.getDocument({data:await file.arrayBuffer()}).promise;let pg=await doc.getPage(1);
+  try{for(let i=1;i<=Math.min(5,doc.numPages);i++){const p=i===1?pg:await doc.getPage(i),t=(await p.getTextContent()).items.map(x=>x.str).join(" ");
+    if(/you may also like|this content was downloaded|download citation|terms and conditions of use/i.test(t)&&!/\babstract\b[\s\S]{200}/i.test(t))continue;
+    if(/\babstract\b|초\s*록|요\s*약|keywords/i.test(t)){pg=p;break;}}}catch(e){}
   const v0=pg.getViewport({scale:1}),vp=pg.getViewport({scale:1400/v0.width}),c=document.createElement("canvas");c.width=Math.round(vp.width);c.height=Math.round(vp.height);
   const ctx=c.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);await pg.render({canvasContext:ctx,viewport:vp}).promise;
   return new Promise((ok,no)=>c.toBlob(b=>b?ok(b):no(new Error("이미지 변환 실패")),"image/webp",.86));}
