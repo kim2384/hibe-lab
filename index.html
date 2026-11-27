@@ -1127,7 +1127,7 @@ function route(){
       document.getElementById("feed").innerHTML=list.slice(0,shown).map(card).join("")||`<div class="empty">${T("No posts in this category yet. Use \"+ New post\" to add one.","이 분류에는 아직 게시물이 없습니다. 오른쪽 위 \"+ 새 게시물\"로 올려 보세요.")}</div>`;};
     const openPost=openActivity;
     if(NEWS_OPEN?.sec==="activities"){const k=NEWS_OPEN.key;NEWS_OPEN=null;openPost(k);}
-    document.getElementById("actSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;filter=b.dataset.c;
+    document.getElementById("actSeg").addEventListener("click",e=>{let b=e.target.closest("button");if(!b)return;if(b.dataset.c!=="all"&&filter===b.dataset.c)b=e.currentTarget.querySelector('[data-c="all"]');filter=b.dataset.c;
       document.querySelectorAll("#actSeg button").forEach(x=>x.setAttribute("aria-pressed",x===b));render();});
     const feed=document.getElementById("feed");
     feed.addEventListener("click",e=>{const c=e.target.closest(".post");if(c)openPost(c.dataset.id);});
