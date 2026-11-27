@@ -1357,9 +1357,9 @@ function admRender(){
   if(!GH_AUTH){root.innerHTML=`<div class="adm-card"><p><b>관리자 기능이 아직 연결되지 않았습니다.</b></p><p>GitHub 로그인 중계(Cloudflare Worker)를 만들고 그 주소를 넣으면 이 자리에 로그인 버튼이 나옵니다. 저장소의 ADMIN_SETUP.md를 따라 하시면 됩니다.</p></div>`;return;}
   if(!ADMIN){root.innerHTML=`<div class="adm-card adm-login"><h3>관리자 로그인</h3>
       <button class="btn-post" type="button" id="admGh">GitHub로 로그인</button>
-      <p class="adm-msg" id="admMsg"></p><p class="adm-note">이 홈페이지 저장소(${GH_REPO})에 쓰기 권한이 있는 GitHub 계정만 내용을 고칠 수 있습니다. 권한은 기존 관리자가 '관리자' 탭에서 초대합니다.</p></div>`;
+      <p class="adm-msg" id="admMsg"></p><p class="adm-note">관리자가 등록한 GitHub 계정만 로그인해 내용을 고칠 수 있습니다.</p></div>`;
     root.querySelector("#admGh").onclick=admLogin;return;}
-  if(!ADMIN.ok){root.innerHTML=`<div class="adm-card"><p><b>${esc(ADMIN.login)}</b> 계정은 아직 이 홈페이지 저장소의 관리자가 아닙니다. 기존 관리자에게 초대를 부탁해 주세요. 초대를 받았다면 GitHub 알림이나 메일에서 수락한 뒤 다시 로그인해 주세요.</p><button class="btn-ghost" id="admOut2">로그아웃</button></div>`;root.querySelector("#admOut2").onclick=admLogout;return;}
+  if(!ADMIN.ok){root.innerHTML=`<div class="adm-card"><p><b>${esc(ADMIN.login)}</b> 계정은 등록되어 있지 않아 관리 화면을 쓸 수 없습니다.</p><button class="btn-ghost" id="admOut2">로그아웃</button></div>`;root.querySelector("#admOut2").onclick=admLogout;return;}
   const tabs=[...admKeys().map(k=>[k,ADM[k].label[1]]),...(ADMIN.owner?[["admins","관리자"]]:[])];
   if(ADMIN.student)ADMVIEW="content";
   const views=ADMIN.student?"":`<div class="tabs adm-views" role="tablist">${[["content","콘텐츠 관리"],["stats","방문자 통계"]].map(([k,l])=>`<button type="button" role="tab" data-v="${k}" aria-selected="${k===ADMVIEW}">${l}</button>`).join("")}</div>`;
