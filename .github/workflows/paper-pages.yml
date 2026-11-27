@@ -1,4 +1,4 @@
-name: Paper first-page images
+name: Paper first-page images and abstracts
 
 on:
   push:
@@ -6,6 +6,8 @@ on:
       - "index.html"
       - "content/pubs.json"
       - "scripts/paper_pages.py"
+      - "scripts/paper_abstracts.py"
+      - "images/uploads/papers/**"
       - ".github/workflows/paper-pages.yml"
   schedule:
     - cron: "0 19 * * 1"   # every Tuesday 04:00 KST
@@ -29,11 +31,13 @@ jobs:
       - run: pip install pymupdf==1.24.10 pillow==10.4.0
       - name: Make first-page images
         run: python scripts/paper_pages.py
+      - name: Fill abstracts and keywords
+        run: python scripts/paper_abstracts.py
       - name: Commit if changed
         run: |
           git config user.name "paper-pages"
           git config user.email "actions@users.noreply.github.com"
-          git add images/papers data/pub-pages.json 2>/dev/null || true
-          git diff --cached --quiet || git commit -m "Add paper first-page images"
+          git add images/papers data/pub-pages.json data/pub-abstracts.json 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "Update paper first-page images and abstracts"
           git pull --rebase -q || true
           git push

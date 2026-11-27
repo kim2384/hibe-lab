@@ -1,0 +1,98 @@
+{
+ "10.1016/j.autcon.2021.103812": {
+  "abs": "Luminance-based metrics have been used in visual comfort studies that leverage high dynamic ranging imaging (HDRI) techniques. This paper presents a semi-automated robust framework for monitoring luminance within the FOV of occupants using a HDRI camera installed in a non-intrusive position. A new HDRI pipeline is presented, and a Structure-from-Motion and Multi-View-Stereo (SfM-MVS) photogrammetry framework is employed to automatically reconstruct the 3D room geometry and estimate occupant head-poses. The only required “commissioning” effort is to capture a short video of the room and take a few photos from the occupant position using a smartphone. Retrieved 3D context enables the back-projection of the camera-captured luminance distribution into 3D spaces, which is re-projected to occupant FOVs with the estimated head poses. The framework was implemented in a real daylit office and showed reasonable performance in re-projected indoor luminance map as perceived from the occupant position, except for sunlit projections from unshaded windows.",
+  "kw": [],
+  "src": "pdf"
+ },
+ "10.1016/j.buildenv.2020.106912": {
+  "abs": "The main limitation of existing daylight glare control strategies is their fundamental inability to efficiently identify the location, size and brightness of potential glare sources in real-time. This study presents a new daylight glare control framework, using a low-cost, window-mounted programmable High Dynamic Range Image (HDRI) sensor with a wide fisheye lens. With proper calibration, the sensor can accurately measure the lumi nance, size, and relative position of any exterior glare sources in real time, using per pixel analysis. We present a method to enable reliable solar-tracking and an efficient glare source positioning algorithm, which can also detect glare sources of small size but significant luminance (e.g., intense reflections from surroundings). Com plications due to the occupant position relative to the sensor/source are also discussed. The HDRI-based glare control was implemented in a private office with automated roller shades and was also compared with two common glare controls under the same sky conditions. The experimental results showed that the HDRI-based glare control can continuously and fully protect from detected glare sources, maintaining visual comfort, whereas the other controls failed in certain instances or are over-conservative. This new framework is the first proposed solution to address direct and reflective glare in a straightforward and efficient way, and it can be used as an extra layer in existing daylighting controls for glare mitigation. This technology can be used in the future to fully replace photometer-based fenestration controls and additional sensors, as well as to learn occupant visual preferences associated with exterior conditions.",
+  "kw": [
+   "HDRI sensor",
+   "Daylight glare",
+   "Shading",
+   "Control",
+   "Automation"
+  ],
+  "src": "pdf"
+ },
+ "10.1016/j.buildenv.2022.108857": {
+  "abs": "Monitoring luminance distributions, as perceived by the occupants, offers enormous possibilities for continuous and reliable sensing and human-centered daylighting control. Novel luminance monitoring, that utilizes a camera sensor at a non-intrusive position (distant from the occupants), can be achieved using HRDI sensing coupled with occupant-perceived luminance map re-projections. To overcome computational and practical challenges, this paper implements such a luminance monitoring framework in a real daylit office space and evaluates its performance using measured data. The processed re-projected luminance maps were compared against HDRI-measured luminance maps from two side-lit occupant positions. The results, presented in terms of structural similarity measures and visual comfort prediction and diagnostic performance, show that the devel oped method can predict and monitor luminance distributions in the occupant field of view with sufficient ac curacy. A regional super-pixel-scale analysis was performed to further analyze the source of errors, by applying masks to four different regions of interest. The major source of error is the bright exterior scene visible through the window, as well as bright reflections inside the space, which should be generally avoided for glare protection. Overall, this paper presents an important step towards non-intrusive, human-centered daylighting control based on luminance mapping.",
+  "kw": [
+   "Luminance mapping",
+   "HDRI sensors",
+   "Luminance re-projection",
+   "Visual comfort",
+   "Daylighting",
+   "Structural similarity index"
+  ],
+  "src": "pdf"
+ },
+ "10.1016/j.buildenv.2026.114673": {
+  "abs": "This systematic review evaluates non-intrusive artificial intelligence-based occupant monitoring for Occupant-Centric Control systems, analyzing 82 studies published between 2015 and March 2026 across thermal, in door air quality, and visual domains. The analysis reveals that deep learning-based computer vision represents the predominant approach, achieving accuracies of 80–100% for physiological parameter estimation under controlled laboratory conditions, and up to 99.3% for occupant detection in field settings. Integrating these technologies into building operations facilitates substantial benefits: energy savings of up to 50% and thermal comfort improvements of 43–73% have been reported in individual experimental studies, though typical field-validated ranges are more modest. Despite these advancements, significant barriers persist, including high implementation costs, privacy concerns, and a persistent scarcity of labeled training data. This paper establishes a comprehensive technical framework for developing responsive, occupant-centric environments that balance human well-being with operational efficiency.",
+  "kw": [
+   "Occupant-centric control",
+   "Non-intrusive monitoring",
+   "Artificial intelligence",
+   "Indoor environmental quality",
+   "Computer vision"
+  ],
+  "src": "pdf"
+ },
+ "10.1016/j.enbuild.2020.110394": {
+  "abs": "The effects of indoor environmental conditions on human health, satisfaction, and performance have been the focus of research for decades. This paper reviews and summarizes the impact of lighting environment on task performance, speciﬁcally for the built environment audience. Existing studies included a variety of performance tests on cognitive performance and perception, visual acuity and reaction, memory, reasoning, and labor productivity. Illuminance, luminance ratio and correlated color temperature were found to affect performance in different ways, reﬂecting the impact of experimental techniques, conditions, performance evaluation methods used and data analysis methods. These were reviewed and categorized, with discussion on limitations related to sample size, modeling approach, carryover effects and other factors affecting individual differences in performance, with recommendations for future improvement. Although no universal conclusions can be made, in general, task performance seems to improve with higher illuminances, contrast ratios in the range of 7–11:1 (while always making sure that glare will not occur in the space) and higher correlated color temperature, while spectral tuning in the red or blue wavelengths has also shown positive effects. To obtain more generic evidence, future studies should be more consistent in terms of experimental procedures and overall light conditions, and also consider the effects of vertical illuminance, daylight provision/control, and outside views on task performance. Finally, studying performance with multi-factorial designs in a human-centered optimized manner (such as deploying variable lighting scenarios optimized for various tasks) can lead to deeper understanding of lighting effects on task performance, and ultimately to improved lighting design and operation in buildings overall.",
+  "kw": [
+   "Lighting environment",
+   "Task performance",
+   "Experimental designs",
+   "Performance assessment methods"
+  ],
+  "src": "pdf"
+ },
+ "10.1080/23744731.2018.1438021": {
+  "abs": "The current article presents a synthesis of the most recent metrics (visual comfort autonomy, lighting energy use, and view clarity) for assessing the visual environment performance of spaces with window shades, in the form of an integrated framework—interactive web-based tool. A daylighting and glare simulation model is used to calculate interior daylight distributions, luminance mapping, and annual spatial visual performance metrics. Then, a decision strategy was developed for selecting fabric properties based on diﬀerent priorities: maximizing outside view, maximizing energy performance, or a balanced approach with ﬁxed or ﬂexible criteria to avoid compromises, all under visual comfort constraints. The models and decision strategies were implemented into a web-based tool, which includes a database of diﬀerent design conﬁgurations (climate, envelope conﬁguration, orientation, glazing size and properties, comfort restrictions, occupant view directions, etc.) and either provides recommendations for selecting shade properties based on the variation of the three visual performance metrics, or compares diﬀerent conﬁgurations with detailed output information. The tool, under further development, is currently available to the public and can be used to obtain preliminary information about the comfort, energy, and view clarity performance of spaces will roller shades, without the need of high expertise or complex simulations.",
+  "kw": [],
+  "src": "pdf"
+ },
+ "10.1088/1742-6596/1343/1/012157": {
+  "abs": "This study presents the development of a window-attached, low-cost fisheye-stereo camera sensor system for reliable daylighting controls in buildings. The stereovision sensor composed of two cameras can measure 3-D position and luminance of any exterior bright sources after photometric and geometric calibration. Also, by applying a neutral density sensor on one of the cameras and substituting the overflown pixels of the luminance map, a complete luminance map with a wide dynamic range can be retrieved. The new sensor exhibited promising results in validation of 3-D positioning and luminance acquisition, and can be used for real-time glare source detection, location and intensity measurements.",
+  "kw": [],
+  "src": "pdf"
+ },
+ "10.1088/1742-6596/2042/1/012113": {
+  "abs": "Continuous luminance monitoring is challenging because high-dynamic-range cameras are expensive, they need programming, and are intrusive when placed near the occupants’ field-of-view. A new semi-automated and non-intrusive framework is presented for monitoring occupant-perceived luminance using a low-cost camera sensor and Structure-from- Motion (SfM)-Multiview Stereo (MVS) photogrammetry pipeline. Using a short video and a few photos from the occupant position, the 3D space geometry is automatically reconstructed. Retrieved 3D context enables the back-projection of the camera-captured luminance distribution into 3D spaces that are in turn re-projected to occupant-FOVs. The framework was tested and validated in a testbed office. The re-projected luminance field showed with good agreement with luminance measured at the occupant position. The new method can be used for non-intrusive luminance monitoring integrated with daylighting control applications.",
+  "kw": [],
+  "src": "pdf"
+ },
+ "10.1088/1742-6596/2042/1/012114": {
+  "abs": "The concept of integrating programmable low-cost cameras into the office infrastructure and BMS for real-time, web-based sensing and control of the luminous environment in buildings is presented in this study. Experiments were conducted to evaluate the potential of predicting the luminance field perceived by an office occupant using a programmable calibrated HDR camera installed at the rear side of a computer monitor or on the wall behind the occupant, for a variety of sky conditions and shading options. The generated luminance maps using Python scripts with OpenCV packages were further processed to extract daylighting and glare metrics using Evalgare. The results showed that: (i) among the different camera resolutions that were compared, the 330x330 resolution was selected as the best option to balance between accurate capturing of visual environment and comfort and computational efficiency; (ii) a camera sensor embedded on the rear side of a computer screen could capture interior visual conditions consistently similarly to those viewed by the occupant, except for sunny conditions without proper shading protection. This prototype study paves the way for luminance monitoring and daylight control using programmable low-cost camera sensors embedded into the office infrastructure.",
+  "kw": [],
+  "src": "pdf"
+ },
+ "10.12813/kieae.2025.25.2.005": {
+  "abs": "Purpose: Urban-scale solar irradiance simulation is complex owing to the influence of surrounding urban morphology. Existing studies have often oversimplified surface albedo by assuming a uniform, generic value, failing to reflect real-world variations. This study quantifies the impact of albedo assumptions on simulation results, focusing on building-integrated photovoltaics (BIPV) on vertical façades—an advancement beyond previous studies centered on rooftop photovoltaics. Method: Urban-scale solar irradiance simulations were conducted using 10 geometrically identical models with varying surface albedo settings. A synthetic model representing building stocks with realistic albedo parameters was developed as a baseline for comparative analysis. Nine alternative models with different albedo assumptions were generated to assess the sensitivity of annual solar irradiance predictions on exterior façades. Simulations were performed using ClimateStudio. To further evaluate the impact of the surrounding urban context, a novel indicator—Weighted Mean Albedo Difference (WMAD)—was introduced. Result: Albedo variations from the baseline model had a minimal impact on rooftop solar irradiance, aligning with previous research. However, a significant influence on solar irradiance was observed for vertical façades, directly affecting BIPV energy yield. Sensitivity to albedo assumptions strongly correlated with surface orientation and surrounding albedo distribution. Greater discrepancies between simplified assumptions and realistic values resulted in higher simulation errors. These findings underscore the critical importance of precise albedo representation in urban-scale models to ensure reliable BIPV potential estimations.",
+  "kw": [
+   "Urban Building Energy Modeling (UBEM)",
+   "Building-Integrated Photovoltaics (BIPVs)",
+   "Albedo",
+   "Sensitivity Analysis"
+  ],
+  "src": "pdf"
+ },
+ "10.26868/25222708.2025.1773": {
+  "abs": "Urban-scale solar simulation studies often oversimplify albedo with a single, fixed value, and few quantify the resulting uncertainty. This study focuses on a residential complex and systematically quantifies the impact of albedo settings on simulation accuracy, particularly on solar irradiance on vertical facades, which is highly correlated with facade-installed photovoltaics (PVs). A series of simulations was conducted to compare a baseline model with realistic, spatially-distributed albedo inputs against a set of simplified models that applied a commonly assumed conservative constant albedo value of 0.2. To quantify the variation in albedo distribution surrounding the facades, a novel metric termed Hemispherical Albedo Difference (HAD) was introduced. Simulation results reveal a significant influence of albedo variation in solar irradiance prediction, particularly on vertical building facades, revealing a strong correlation between HAD and prediction error. These findings highlight the importance of accurate albedo modeling in urban-scale solar irradiance simulations, particularly for PV applications on vertical facades.",
+  "kw": [],
+  "src": "pdf"
+ },
+ "10.3390/electronics12234738": {
+  "abs": "Unmanned ground vehicles (UGVs) have emerged as a promising solution for reconnaissance missions, overcoming labor cost, frequency, and subjectivity issues associated with manual procedures. However, for dynamic environments such as construction sites, the constantly changing conditions hinder a manager from planning the UGV’s paths. For an autonomous monitoring mission, the path planning should be dealt with by having a map with the site’s most recent scene. In this study, we develop a mobile app capable of local map updates by overlaying an image on a mapping API (e.g., Google Maps) hence working as a digital twin capable of creating a dynamic representation of the updated terrain over the mapping API. UGV operators can draw a path on such an updated construction scene using a tablet PC or smartphone. Discrete GPS information (e.g., latitudinal, and longitudinal) is executed for the UGV’s controller. In the overlaying procedure, the homographic relation between the image and map is automatically computed and then projected. We successfully demonstrated the capabilities of the technique with two construction sites and a soccer ﬁeld using images from the ground and satellite, respectively. The error generation is quantitatively measured and analyzed.",
+  "kw": [
+   "reconnaissance mission",
+   "google maps API",
+   "autonomous driving",
+   "unmanned ground vehicles",
+   "GPS",
+   "digital twin"
+  ],
+  "src": "pdf"
+ }
+}
