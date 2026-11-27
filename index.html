@@ -294,6 +294,7 @@ p{max-width:68ch}
 /* Publications */
 .sort-row{display:flex;gap:10px;align-items:center;margin:-8px 0 20px;font-size:14px;color:var(--muted)}
 .pub-tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;align-items:center}
+.pub-cat{flex:0 0 auto}
 .pub-tools input{flex:1 1 220px;min-width:0;font:inherit;font-size:15px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
 .seg{display:flex;flex-wrap:wrap;gap:6px}
 .seg button{font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
@@ -846,7 +847,7 @@ const views = {
   publications(){
     return `<section class="page wrap">${head("","Publications")}
       <div class="pub-tools"><input id="q" type="search" placeholder="${T("Search by title, author or journal","제목, 저자, 학술지로 찾기")}" aria-label="${T("Search publications","논문 검색")}">
-        <div class="seg" id="seg"><button aria-pressed="true" data-c="all">${T("All","전체")}</button>${SITE.pubCats.map(([k,en,kr])=>`<button aria-pressed="false" data-c="${k}">${T(en.replace(/ Papers| Presentations/g,""),kr)}</button>`).join("")}</div></div>
+        <label class="yr-pick pub-cat"><span class="sr">${T("Category","분류")}</span><select id="seg"><option value="all">${T("All","전체")}</option>${SITE.pubCats.map(([k,en,kr])=>`<option value="${k}">${T(en.replace(/ Papers| Presentations/g,""),kr)}</option>`).join("")}</select></label></div>
       <div class="sort-row"><span>${T("Sort","정렬")}</span><div class="seg" id="sortSeg">${[["new","Newest","최신순"],["cite","Most cited","인용순"]].map(([k,en,kr])=>`<button aria-pressed="${k===PUBSORT}" data-s="${k}">${T(en,kr)}</button>`).join("")}</div>
         <div class="seg view-seg" id="viewSeg">${[["list","List","리스트"],["gallery","Gallery","갤러리"]].map(([k,en,kr])=>`<button aria-pressed="${k===PUBVIEW}" data-v="${k}">${T(en,kr)}</button>`).join("")}</div></div>
       <p class="legend"><sup>†</sup> ${T("Corresponding author","교신저자")} · ${T(`Citation counts from ${CITES_SRC} as of ${CITES_DATE}`,`인용 수는 ${CITES_SRC==="OpenAlex"?"OpenAlex":"구글 스칼라"} 기준 (${CITES_DATE})`)}</p><div id="publist"></div></section>`;
@@ -922,7 +923,7 @@ let PUBVIEW="list", PUBSORT="new", PROJVIEW="car", PROJFILTER="on", AWYEAR="all"
 const pList=()=>SITE.projects.map((t,i)=>[t,i]).filter(([,i])=>{const f=SITE.projectInfo?.[i];return PROJFILTER==="all"||(PROJFILTER==="done")===isDone(f);});
 function renderPubs(){
   const q = (document.getElementById("q").value||"").toLowerCase();
-  const c = document.querySelector("#seg [aria-pressed=true]").dataset.c;
+  const c = document.getElementById("seg").value || "all";
   const out = SITE.pubCats.filter(([k])=>c==="all"||c===k).map(([k,label])=>{
     const items = SITE.pubs.map((p,i)=>[p,i]).filter(([p])=>p[0]===k && (p.join(" ").toLowerCase().includes(q)))
       .sort(([a,i],[b,j])=>PUBSORT==="cite" ? (citeOf(b[5],b[3])-citeOf(a[5],a[3]) || b[1]-a[1] || i-j) : (b[1]-a[1] || i-j)).map(([p])=>p);
@@ -1037,8 +1038,7 @@ function route(){
     pl.addEventListener("click",e=>{const li=e.target.closest(".pub,.pub-card");if(li)openPub(+li.dataset.k);});
     pl.addEventListener("keydown",e=>{const li=e.target.closest(".pub");if(li&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openPub(+li.dataset.k);}});
     document.getElementById("q").addEventListener("input", renderPubs);
-    document.getElementById("seg").addEventListener("click", e=>{const b=e.target.closest("button"); if(!b) return;
-      document.querySelectorAll("#seg button").forEach(x=>x.setAttribute("aria-pressed", x===b)); renderPubs();});
+    document.getElementById("seg").addEventListener("change", ()=>renderPubs());
     document.getElementById("sortSeg").addEventListener("click", e=>{const b=e.target.closest("button"); if(!b) return; PUBSORT=b.dataset.s;
       document.querySelectorAll("#sortSeg button").forEach(x=>x.setAttribute("aria-pressed", x===b)); renderPubs();});
     document.getElementById("viewSeg").addEventListener("click", e=>{const b=e.target.closest("button"); if(!b) return; PUBVIEW=b.dataset.v;
