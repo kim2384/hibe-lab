@@ -1115,7 +1115,7 @@ function route(){
     const all=()=>[...SAMPLE].sort((a,b)=>(b.date||"").localeCompare(a.date||""));
     const PAGE=16; let shown=PAGE;
     const card=p=>`<article class="post" data-id="${p.id}" tabindex="0" role="button">
-        <div class="ph">${p.imgs.length?`<img src="${p.imgs[0]}" alt="" loading="lazy">${p.imgs.length>1?`<span class="cnt">${p.imgs.length}${T("","장")}</span>`:""}`:`<div class="fake">${T("Photo","사진")}</div>`}</div>
+        <div class="ph">${p.imgs.length?`<img src="${p.imgs[0]}" alt="" loading="lazy">${p.imgs.length>1?`<span class="cnt">${p.imgs.length}</span>`:""}`:`<div class="fake">${T("Photo","사진")}</div>`}</div>
         <div class="body"><span class="meta">${p.date?p.date.replaceAll("-",". ")+" · ":""}${esc(actCat(p.cat))}</span><h3>${esc(p.title)}</h3>${p.text?`<p>${esc(p.text)}</p>`:""}
 </div></article>`;
     const render=(reset)=>{if(reset!==false)shown=PAGE;const list=all().filter(p=>filter==="all"||p.cat===filter);
