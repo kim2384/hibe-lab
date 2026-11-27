@@ -425,6 +425,8 @@ p{max-width:68ch}
 .apply h3{margin:0;font-size:22px}
 .apply ol{margin:0;padding-left:20px}
 .apply .mail{font-family:var(--mono);font-size:15px;background:var(--bg);color:var(--ink);display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:8px;width:max-content;max-width:100%;flex-wrap:wrap}
+.apply-form{margin-top:24px;background:var(--tile);border-radius:12px;padding:24px;display:grid;gap:14px}.apply-form h3{margin:0;font-size:18px;color:var(--teal)}.apply-form label{display:grid;gap:6px;font-size:14px;font-weight:500}.apply-form input,.apply-form select,.apply-form textarea{font:inherit;font-weight:400;font-size:15px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);width:100%;box-sizing:border-box}.apply-form textarea{resize:vertical}.af-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}.af-cnt{font-weight:400;color:var(--muted)}.af-cnt.over{color:#b42318}.apply-form .btn-post{justify-self:start}.af-msg{margin:0;font-size:14px;color:#b42318}.af-msg.ok{color:var(--teal);font-weight:600}.af-msg:empty{display:none}
+@media (max-width:560px){.af-row{grid-template-columns:1fr}.apply-form{padding:18px 15px}}
 .apply .mail-go{display:inline-block;justify-self:start;margin:4px 0 0;text-decoration:none;background:var(--bg);color:var(--teal);font-weight:600}.apply .mail-go:hover{filter:brightness(.95)}.apply .mail-tip{display:block;margin-top:-4px;font-size:12.5px;opacity:.85}
 .apply .mail button{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:3px 8px;cursor:pointer}
 .loc{margin-top:28px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:15px}
@@ -588,6 +590,7 @@ body{font-size:14.5px;line-height:1.6}
 </footer>
 
 <script>
+const APPLY_SITEKEY = "";   // Join us 지원서 양식: Cloudflare Turnstile의 Site key (공개용). 비어 있으면 양식을 숨김
 /* ---- 콘텐츠: 기존 사이트에서 그대로 옮김. 실제 구축 시 이 부분이 관리툴(콘텐츠 파일)로 분리됩니다. ---- */
 const SITE = {
   nav: [["home","Home","홈"],["about","About hibe","연구실 소개"],["pi","People","구성원"],["projects","Projects","연구과제"],["publications","Publications","논문게재 및 학술발표"],["awards","Awards","수상"],["activities","Activities","활동"],["join","Join us","참여하기"]],
@@ -881,10 +884,36 @@ const views = {
       <div class="apply"><h3>${T("Join the Team","지원 방법")}</h3><p style="margin:0">${T("Send the following to Prof. Michael Kim:","아래 서류를 Michael Kim 교수에게 보내 주세요:")}</p><ol>${j.apply.map(i=>`<li>${esc(i)}</li>`).join("")}</ol>
         <div class="mail"><span id="mailtxt">myk127@cau.ac.kr</span><button id="copy" type="button">${T("Copy","주소 복사")}</button></div>
         <a class="btn-post mail-go" href="${joinMailto()}">${T("✉ Write an email","✉ 메일 쓰기")}</a><small class="mail-tip">${T("Opens your email app with a ready-made template. Please attach your transcript (PDF) yourself.","메일 앱이 양식이 채워진 채로 열립니다. 성적증명서(PDF)는 직접 첨부해 주세요.")}</small></div>
+      ${APPLY_SITEKEY?`<form class="apply-form" id="applyForm" novalidate><h3>${T("Apply here","여기서 바로 지원하기")}</h3>
+        <div class="af-row"><label>${T("Name","이름")} *<input name="name" required maxlength="60" autocomplete="name"></label><label>${T("Email","이메일")} *<input name="email" type="email" required maxlength="120" autocomplete="email"></label></div>
+        <div class="af-row"><label>${T("School / Major / Year","학교·학과·학년")}<input name="aff" maxlength="160"></label><label>${T("Desired program","희망 과정")}<select name="program">${[["Undergraduate RA","학부연구생"],["M.S.","석사"],["Ph.D.","박사"],["Integrated M.S.–Ph.D.","석박통합"],["Postdoc / Other","박사후연구원·기타"]].map(([e,k])=>`<option>${T(e,k)}</option>`).join("")}</select></label></div>
+        <label>${T("Brief introduction","간단한 자기소개")} * <small class="af-cnt" id="afCnt"></small><textarea name="intro" rows="7" required></textarea></label>
+        <label>${T("Recent official transcript (PDF, up to 10 MB)","최근 공식 성적증명서 (PDF, 10MB 이하)")} *<input name="pdf" type="file" accept="application/pdf" required></label>
+        <div id="tsBox"></div><button class="btn-post" type="submit">${T("Send application","지원서 보내기")}</button><p class="af-msg" id="afMsg" role="status"></p></form>`:""}
     </section>`;
   }
 };
 
+/* 지원서 양식: Turnstile(스팸 방지) 확인 후 Worker /apply 로 보내면 교수님 메일로 감 */
+function introLen(v){v=v.trim();return /[가-힣]/.test(v)?{n:v.length,max:500,u:T(" chars","자")}:{n:v?v.split(/\s+/).length:0,max:100,u:T(" words","단어")};}
+function applyInit(){const f=document.getElementById("applyForm");if(!f)return;let token="";
+  const msg=(t,ok)=>{const m=f.querySelector("#afMsg");m.textContent=t;m.classList.toggle("ok",!!ok);},cnt=()=>{const L=introLen(f.elements.intro.value);const c=f.querySelector("#afCnt");c.textContent=`${L.n} / ${L.max}${L.u}`;c.classList.toggle("over",L.n>L.max);return L;};
+  f.elements.intro.addEventListener("input",cnt);cnt();
+  const draw=()=>{try{window.turnstile.render(f.querySelector("#tsBox"),{sitekey:APPLY_SITEKEY,language:LANG==="ko"?"ko":"en",callback:t=>{token=t;},"expired-callback":()=>{token="";}});}catch(e){}};
+  if(window.turnstile)draw();else{window.onTsLoad=()=>{const g=document.getElementById("applyForm");if(g===f)draw();else applyInit();};
+    if(!document.getElementById("tsJs")){const sc=document.createElement("script");sc.id="tsJs";sc.src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTsLoad";sc.async=true;document.head.appendChild(sc);}}
+  f.onsubmit=async e=>{e.preventDefault();const E=f.elements,file=E.pdf.files[0],L=cnt();
+    if(!E.name.value.trim()||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(E.email.value.trim())||!E.intro.value.trim()||!file)return msg(T("Please fill in all required fields (*).","* 표시한 항목을 모두 입력해 주세요."));
+    if(L.n>L.max)return msg(T(`Please keep the introduction within ${L.max}${L.u}.`,`자기소개는 ${L.max}${L.u} 이내로 줄여 주세요.`));
+    if(!(file.type==="application/pdf"||/\.pdf$/i.test(file.name))||file.size>10e6)return msg(T("Please attach a PDF under 10 MB.","10MB 이하 PDF 파일을 첨부해 주세요."));
+    if(!token)return msg(T("Please complete the spam check above the button.","버튼 위의 스팸 방지 확인을 마쳐 주세요."));
+    const btn=f.querySelector("button[type=submit]");btn.disabled=true;msg(T("Sending…","보내는 중…"));
+    try{const pdf=await new Promise((ok,no)=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(",")[1]);fr.onerror=no;fr.readAsDataURL(file);});
+      const r=await fetch(`${GH_AUTH}/apply`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:E.name.value,email:E.email.value,aff:E.aff.value,program:E.program.value,intro:E.intro.value,pdf,pdfName:file.name,token,lang:LANG==="ko"?"ko":"en"})});
+      const d=await r.json().catch(()=>({}));if(!r.ok||!d.ok)throw new Error(d.error||r.status);
+      f.reset();cnt();msg(T("Sent. Thank you! Prof. Kim will reply by email.","보냈습니다. 감사합니다! 교수님이 메일로 답장드립니다."),true);}
+    catch(err){msg(T("Could not send: ","보내지 못했습니다: ")+(err.message||err));}
+    token="";try{window.turnstile.reset(f.querySelector("#tsBox"));}catch(e){}btn.disabled=false;};}
 /* 지원 메일: 메일 앱을 제목·본문 양식이 채워진 채로 엶 */
 function joinMailto(){const ko=LANG==="ko";
   const sub=ko?"[hibe lab 지원] 이름 / 학교·학과 / 희망 과정":"[hibe lab application] Name / School & Major / Desired program";
@@ -1153,6 +1182,7 @@ function route(){
       ({awards:openAward,activities:openActivity,projects:openProject,publications:openPub})[sec]?.(key);};}
   if(id==="admin") admRender();
   if(id==="join"){
+    applyInit();
     document.getElementById("copy").addEventListener("click", e=>{
       const btn=e.currentTarget;
       navigator.clipboard.writeText("myk127@cau.ac.kr").then(()=>{btn.textContent=T("Copied","복사됨")},()=>{
