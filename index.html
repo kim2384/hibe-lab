@@ -315,7 +315,7 @@ html[lang=en] .hero h1{font-size:clamp(18px,2.52vw,28px);line-height:1.1}
 .pub-cover{width:100%;height:auto;border-radius:4px}
 @media (max-width:560px){.pub-mb.has-cover{grid-template-columns:1fr}.pub-cover{max-width:180px}}
 .view-seg{margin-left:auto}
-.pgal{margin-top:10px}.pub-card .nt{-webkit-line-clamp:3}
+.pgal{margin-top:10px}
 /* 모바일: 분류·정렬·리스트/갤러리를 폭이 되면 한 줄에 */
 @media (max-width:560px){.pub-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px 4px;margin-bottom:22px}.pub-ctl .pub-tools,.pub-ctl .sort-row{display:contents}.pub-ctl .sort-row>span{display:none}.pub-ctl input{flex:1 1 100%}.pub-ctl .pub-cat{min-width:0;flex:0 1 auto}.pub-ctl .pub-cat select{font-size:12.5px;padding:6px 24px 6px 10px;max-width:34vw;text-overflow:ellipsis;background-position:calc(100% - 14px) 55%,calc(100% - 9px) 55%}.pub-ctl .seg{gap:3px;flex-wrap:nowrap}.pub-ctl .seg button{font-size:12px;padding:6px 7px;white-space:nowrap}.pub-ctl .view-seg{margin-left:auto}html[lang=en] .pub-ctl .pub-cat select{max-width:28vw}}
 .legend{font-size:14px;color:var(--muted);margin:-8px 0 8px}
@@ -907,6 +907,7 @@ const pFunder=f=>LANG==="ko"?f.funderKo||KO.projects.funders[f.funder]||f.funder
 const authors=(a,corr)=>{let h=esc(a);if(corr)h=h.replace(esc(corr),esc(corr)+"<sup>†</sup>");return h.replace(/Kim, M\./g,'<span class="me">Kim, M.</span>');};
 /* 대문 News: 수상·활동·과제 수주·논문을 날짜순으로 자동 모음 (관리 화면에서 올리면 바로 반영) */
 let NEWS_OPEN=null, NEWS_N=8;
+function pubImgFail(im){const sp=document.createElement("span");sp.className="ig-noimg";sp.textContent=im.dataset.v||"";im.replaceWith(sp);}
 function imgFail(im){const b=im.parentNode;b.classList.remove("cover");b.classList.add("txt");const sp=document.createElement("span");sp.textContent=im.dataset.v||"";im.replaceWith(sp);}
 const gTone=x=>{const h=(x*2654435761>>>0);return `--gh:${158+h%16};--gs:${48+(h>>5)%34}%;--gl:${13+(h>>11)%13}%`;};
 function pubVenue(r){const vs=String(r[4]||""),pm=vs.match(/Presented in ([^,]+)/);return (pm?pm[1]:vs.split(",")[0]).replace(/\.$/,"").trim();}
@@ -932,9 +933,8 @@ function renderPubs(){
     const items = SITE.pubs.map((p,i)=>[p,i]).filter(([p])=>p[0]===k && (p.join(" ").toLowerCase().includes(q)))
       .sort(([a,i],[b,j])=>PUBSORT==="cite" ? (citeOf(b[5],b[3])-citeOf(a[5],a[3]) || b[1]-a[1] || i-j) : (b[1]-a[1] || i-j)).map(([p])=>p);
     if(!items.length) return "";
-    if(PUBVIEW==="gallery") return `<div class="pub-group"><h3>${LANG==="ko"?KO.pubCats[k]:label}<span class="n">${items.length}</span></h3><div class="nfeed pgal">${items.map(r=>{const [,y,,t,,doi]=r,cv=pubCover(r),v=pubVenue(r),c=citeOf(doi,t);
-      return `<button type="button" class="ncard pub-card" data-k="${SITE.pubs.findIndex(p=>p[3]===t)}" style="${gTone(SITE.pubs.findIndex(p=>p[3]===t)+7)}"><div class="nimg${cv?" top":" txt"}">${cv?`<img src="${cv}" alt="" loading="lazy" data-v="${esc(v)}" onerror="imgFail(this)">`:`<span>${esc(v)}</span>`}</div>
-      <div class="nbody"><span class="nmeta"><b>${y}</b>${c?" · "+T("Cited by "+c,"인용 "+c+"회"):""}</span><span class="nt">${esc(t)}</span></div></button>`;}).join("")}</div></div>`;
+    if(PUBVIEW==="gallery") return `<div class="pub-group"><h3>${LANG==="ko"?KO.pubCats[k]:label}<span class="n">${items.length}</span></h3><div class="ig pgal">${items.map(r=>{const [,y,,t,,doi]=r,cv=pubCover(r),v=pubVenue(r),c=citeOf(doi,t);
+      return `<button type="button" class="ig-tile pub-card" data-k="${SITE.pubs.findIndex(p=>p[3]===t)}" aria-label="${esc(t)}">${cv?`<img src="${cv}" alt="" loading="lazy" data-v="${esc(v)}" onerror="pubImgFail(this)">`:`<span class="ig-noimg">${esc(v)}</span>`}<span class="ig-cap"><b>${esc(t)}</b><small>${y}${c?" · "+T("Cited by "+c,"인용 "+c+"회"):""}</small></span></button>`;}).join("")}</div></div>`;
     return `<div class="pub-group"><h3>${LANG==="ko"?KO.pubCats[k]:label}<span class="n">${items.length}</span></h3><ul class="pubs">${items.map(([,y,a,t,v,doi,,corr])=>`<li class="pub" tabindex="0" role="button" data-k="${SITE.pubs.findIndex(p=>p[3]===t)}"><span class="yr">${y}</span><div>
       <div class="t">${esc(t)}</div><div class="a">${authors(a,corr)}</div>
       <div class="v">${esc(v)}</div></div><div class="ct">${citeOf(doi,t)?T("Cited by "+citeOf(doi,t),"인용 "+citeOf(doi,t)+"회"):""}</div></li>`).join("")}</ul></div>`;
