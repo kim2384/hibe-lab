@@ -428,6 +428,7 @@ p{max-width:68ch}
 .apply h3{margin:0;font-size:22px}
 .apply ol{margin:0;padding-left:20px}
 .apply .mail{font-family:var(--mono);font-size:15px;background:var(--bg);color:var(--ink);display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:8px;width:max-content;max-width:100%;flex-wrap:wrap}
+.apply .mail-go{display:inline-block;justify-self:start;margin:4px 0 0;text-decoration:none;background:var(--bg);color:var(--teal);font-weight:600}.apply .mail-go:hover{filter:brightness(.95)}.apply .mail-tip{display:block;margin-top:-4px;font-size:12.5px;opacity:.85}
 .apply .mail button{font:inherit;font-size:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:3px 8px;cursor:pointer}
 .loc{margin-top:28px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:15px}
 
@@ -884,11 +885,18 @@ const views = {
       <p class="lead">${j.intro}</p>
       <div class="join-grid">${card(T("Who We Are Looking For","이런 분을 찾습니다"),j.who)}${card(T("Who Should Apply","이런 분께 추천합니다"),j.should)}${card(T("Perks","지원 사항"),j.perks)}</div>
       <div class="apply"><h3>${T("Join the Team","지원 방법")}</h3><p style="margin:0">${T("Send the following to Prof. Michael Kim:","아래 서류를 Michael Kim 교수에게 보내 주세요:")}</p><ol>${j.apply.map(i=>`<li>${esc(i)}</li>`).join("")}</ol>
-        <div class="mail"><span id="mailtxt">myk127@cau.ac.kr</span><button id="copy" type="button">${T("Copy","주소 복사")}</button></div></div>
+        <div class="mail"><span id="mailtxt">myk127@cau.ac.kr</span><button id="copy" type="button">${T("Copy","주소 복사")}</button></div>
+        <a class="btn-post mail-go" href="${joinMailto()}">${T("✉ Write an email","✉ 메일 쓰기")}</a><small class="mail-tip">${T("Opens your email app with a ready-made template. Please attach your transcript (PDF) yourself.","메일 앱이 양식이 채워진 채로 열립니다. 성적증명서(PDF)는 직접 첨부해 주세요.")}</small></div>
     </section>`;
   }
 };
 
+/* 지원 메일: 메일 앱을 제목·본문 양식이 채워진 채로 엶 */
+function joinMailto(){const ko=LANG==="ko";
+  const sub=ko?"[hibe lab 지원] 이름 / 학교·학과 / 희망 과정":"[hibe lab application] Name / School & Major / Desired program";
+  const body=ko?"교수님 안녕하세요,\n\n1. 자기소개 (500자 이내)\n- 이름:\n- 학교·학과·학년:\n- 희망 과정 (학부연구생/석사/박사/석박통합):\n- 관심 연구 분야:\n- 소개:\n\n2. 최근 공식 성적증명서 (PDF 첨부)\n\n감사합니다.\n"
+    :"Dear Prof. Kim,\n\n1. Brief introduction (within 100 words)\n- Name:\n- School / Major / Year:\n- Desired program (Undergraduate RA / M.S. / Ph.D. / Integrated):\n- Research interests:\n- About me:\n\n2. Recent official transcript (PDF attached)\n\nBest regards,\n";
+  return "mailto:myk127@cau.ac.kr?subject="+encodeURIComponent(sub)+"&body="+encodeURIComponent(body);}
 /* 연구비 USD 환산: 1 USD = USD_RATE원 (환율이 바뀌면 이 숫자만 고치면 됨) */
 /* USD 환율: 매일 GitHub Actions가 data/fx.json 갱신(유럽중앙은행 기준). 파일을 못 읽으면 1400원 */
 let USD_RATE=1400, FX_DATE="";
