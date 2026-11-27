@@ -985,7 +985,17 @@ const authors=(a,corr)=>{let h=esc(a);if(corr)h=h.replace(esc(corr),esc(corr)+"<
 let NEWS_OPEN=null, NEWS_N=8;
 function pubImgFail(im){const sp=document.createElement("span");sp.className="ig-noimg";sp.textContent=im.dataset.v||"";im.replaceWith(sp);}
 function imgFail(im){const b=im.parentNode;b.classList.remove("cover");b.classList.add("txt");const sp=document.createElement("span");sp.textContent=im.dataset.v||"";im.replaceWith(sp);}
-const gTone=x=>{const h=(x*2654435761>>>0);return `--gh:${158+h%16};--gs:${48+(h>>5)%34}%;--gl:${13+(h>>11)%13}%`;};
+/* 홈 피드: 무작위 톤이되, 실제 열 수 기준으로 좌·상(가능하면 대각선)과 명도 단계가 겹치지 않게 */
+const TONE_L=[12,18,24,30];
+function toneGrid(feed){const cards=[...feed.children].filter(c=>c.classList.contains("ncard"));if(!cards.length)return;
+  const cols=Math.max(1,getComputedStyle(feed).gridTemplateColumns.split(" ").filter(Boolean).length),tier=[];
+  cards.forEach((c,i)=>{const h=(i*2654435761>>>0),r=i%cols,near=[],diag=[];
+    if(r>0)near.push(tier[i-1]);if(i>=cols)near.push(tier[i-cols]);
+    if(i>=cols&&r>0)diag.push(tier[i-cols-1]);if(i>=cols&&r<cols-1)diag.push(tier[i-cols+1]);
+    let ok=TONE_L.map((_,t)=>t).filter(t=>!near.includes(t)&&!diag.includes(t));
+    if(!ok.length)ok=TONE_L.map((_,t)=>t).filter(t=>!near.includes(t));
+    const t=ok[(h>>>7)%ok.length];tier[i]=t;
+    c.style.setProperty("--gh",158+h%16);c.style.setProperty("--gs",(50+(h>>>5)%30)+"%");c.style.setProperty("--gl",TONE_L[t]+"%");});}
 function pubVenue(r){const vs=String(r[4]||""),pm=vs.match(/Presented in ([^,]+)/);return (pm?pm[1]:vs.split(",")[0]).replace(/\.$/,"").trim();}
 function newsItems(){
   const out=[],pad=d=>(d+"-00-00").slice(0,10),L=(en,ko)=>LANG==="ko"&&ko?ko:en;
@@ -1121,7 +1131,7 @@ function heroFit(){document.querySelectorAll(".hero h1,.hero .ko").forEach(el=>{
   if(Math.min(innerWidth,screen.width||innerWidth)>560)return;const w=el.clientWidth,sw=el.scrollWidth;if(w&&sw>w){const f=parseFloat(getComputedStyle(el).fontSize);el.style.fontSize=Math.floor(f*w/sw*10)/10+"px";}});
   /* 부제가 제목보다 커 보이지 않게 */const h=document.querySelector(".hero h1"),k=document.querySelector(".hero .ko");
   if(h&&k&&Math.min(innerWidth,screen.width||innerWidth)<=560){const hf=parseFloat(getComputedStyle(h).fontSize);if(parseFloat(getComputedStyle(k).fontSize)>hf)k.style.fontSize=hf+"px";}}
-addEventListener("resize",heroFit);addEventListener("load",heroFit);document.fonts?.ready.then(heroFit);
+addEventListener("resize",heroFit);addEventListener("resize",()=>{const f=document.getElementById("newsFeed");if(f)toneGrid(f);});addEventListener("load",heroFit);document.fonts?.ready.then(heroFit);
 /* 방문자 기록: 페이지를 열 때마다 Worker에 알림 (관리자 로그인 중이거나 내 컴퓨터에서 열면 세지 않음) */
 let STAT_REF=document.referrer;
 function statHit(id){try{if(!GH_AUTH||id==="admin"||sessionStorage.getItem("hibeGh")||/^(localhost|127\.|\[)/.test(location.hostname)||!navigator.sendBeacon)return;
@@ -1233,9 +1243,9 @@ function route(){
     render();
   }
   if(id==="home"){const feed=document.getElementById("newsFeed"),ALL=newsItems(),PAGE=25;let shown=0;
-    const card=(n,x)=>`<button type="button" class="ncard" data-x="${x}" style="${gTone(x)}"><div class="nimg${n.img?(n.fit==="contain"?"":" "+n.fit):" txt"}">${n.img?`<img src="${n.img}" alt="" loading="lazy" data-v="${esc(n.venue||"")}" onerror="imgFail(this)">`:`<span>${esc(n.venue||"")}</span>`}</div>
+    const card=(n,x)=>`<button type="button" class="ncard" data-x="${x}"><div class="nimg${n.img?(n.fit==="contain"?"":" "+n.fit):" txt"}">${n.img?`<img src="${n.img}" alt="" loading="lazy" data-v="${esc(n.venue||"")}" onerror="imgFail(this)">`:`<span>${esc(n.venue||"")}</span>`}</div>
       <div class="nbody"><span class="nmeta"><b>${T(...n.c)}</b> · ${newsDate(n.d)}</span><span class="nt">${esc(n.t)}</span></div></button>`;
-    const more=()=>{if(shown>=ALL.length)return;feed.insertAdjacentHTML("beforeend",ALL.slice(shown,shown+PAGE).map((n,k)=>card(n,shown+k)).join(""));shown=Math.min(ALL.length,shown+PAGE);
+    const more=()=>{if(shown>=ALL.length)return;feed.insertAdjacentHTML("beforeend",ALL.slice(shown,shown+PAGE).map((n,k)=>card(n,shown+k)).join(""));shown=Math.min(ALL.length,shown+PAGE);toneGrid(feed);
       const end=document.getElementById("newsEnd");end.hidden=shown<ALL.length;end.textContent=T("You're all caught up.","모든 소식을 다 봤습니다.");};
     more();new IntersectionObserver(es=>{if(es[0].isIntersecting)more();},{rootMargin:"500px"}).observe(document.getElementById("newsSentinel"));
     feed.onclick=e=>{const b=e.target.closest(".ncard");if(!b)return;const [sec,key]=ALL[+b.dataset.x].go;
