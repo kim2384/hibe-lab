@@ -883,7 +883,7 @@ const views = {
   },
   activities(){
     return `<section class="page wrap">${head("","Activities")}
-      <div class="act-bar"><div class="seg cyc" id="actSeg"><button aria-pressed="true" data-c="all">${T("All","전체")}</button>${actCats().filter(c=>OLD_POSTS.some(p=>p.cat===c.k)||c.s).map(c=>`<button aria-pressed="false" data-c="${esc(c.k)}"><span class="l-full">${esc(T(c.en,c.ko))}</span><span class="l-short">${esc(actCatShort(c.k))}</span></button>`).join("")}</div>
+      <div class="act-bar"><div class="seg cyc" id="actSeg">${(()=>{ACTSHOW=actCats().filter(c=>OLD_POSTS.some(p=>p.cat===c.k)||c.s).some(c=>c.k===ACTFILTER)?ACTFILTER:"all";return "";})()}<button aria-pressed="${ACTSHOW==="all"}" data-c="all">${T("All","전체")}</button>${actCats().filter(c=>OLD_POSTS.some(p=>p.cat===c.k)||c.s).map(c=>`<button aria-pressed="${ACTSHOW===c.k}" data-c="${esc(c.k)}"><span class="l-full">${esc(T(c.en,c.ko))}</span><span class="l-short">${esc(actCatShort(c.k))}</span></button>`).join("")}</div>
         ${ADMIN?.ok?`<button class="btn-post" id="newPost" type="button">${T("+ New post","+ 새 게시물")}</button>`:""}</div>
       <div class="feed" id="feed"></div><div class="sentinel" id="sentinel"></div><div class="feed-end" id="feedEnd" hidden></div></section>`;
   },
@@ -979,7 +979,10 @@ function newsItems(){
 const newsDate=d=>d.length===4?d:d.replaceAll("-",". ");
 /* 한 개 버튼 토글: 누를 때마다 다음 값으로 */
 const segNext=e=>{if(!e.target.closest("button"))return null;const bs=[...e.currentTarget.querySelectorAll("button")],i=bs.findIndex(x=>x.getAttribute("aria-pressed")==="true");return bs[(i+1)%bs.length];};
-let PUBVIEW="list", PUBSORT="new", PROJVIEW="car", PROJFILTER="on", AWYEAR="all";
+/* 보기 설정(토글)은 이 브라우저에 마지막 선택을 기억 */
+const prefGet=(k,d,ok)=>{try{const v=localStorage.getItem("hibe-"+k);return v!==null&&(!ok||ok.includes(v))?v:d;}catch(e){return d;}};
+const prefSet=(k,v)=>{try{localStorage.setItem("hibe-"+k,v);}catch(e){}};
+let PUBVIEW=prefGet("pubview","list",["list","gallery"]), PUBSORT=prefGet("pubsort","new",["new","cite"]), PROJVIEW=prefGet("projview","car",["car","list"]), PROJFILTER=prefGet("projfilter","on",["on","done","all"]), AWYEAR="all", ACTSHOW="all", ACTFILTER=prefGet("actfilter","all");
 const pList=()=>SITE.projects.map((t,i)=>[t,i]).filter(([,i])=>{const f=SITE.projectInfo?.[i];return PROJFILTER==="all"||(PROJFILTER==="done")===isDone(f);});
 function renderPubs(){
   const q = (document.getElementById("q").value||"").toLowerCase();
@@ -1111,13 +1114,13 @@ function route(){
     pl.addEventListener("keydown",e=>{const li=e.target.closest(".pub");if(li&&(e.key==="Enter"||e.key===" ")){e.preventDefault();openPub(+li.dataset.k);}});
     document.getElementById("q").addEventListener("input", renderPubs);
     document.getElementById("seg").addEventListener("change", ()=>renderPubs());
-    document.getElementById("sortSeg").addEventListener("click", e=>{const b=e.target.closest("button"); if(!b) return; PUBSORT=b.dataset.s;
+    document.getElementById("sortSeg").addEventListener("click", e=>{const b=e.target.closest("button"); if(!b) return; PUBSORT=b.dataset.s;prefSet("pubsort",PUBSORT);
       document.querySelectorAll("#sortSeg button").forEach(x=>x.setAttribute("aria-pressed", x===b)); renderPubs();});
-    document.getElementById("viewSeg").addEventListener("click", e=>{const b=segNext(e); if(!b) return; PUBVIEW=b.dataset.v;
+    document.getElementById("viewSeg").addEventListener("click", e=>{const b=segNext(e); if(!b) return; PUBVIEW=b.dataset.v;prefSet("pubview",PUBVIEW);
       document.querySelectorAll("#viewSeg button").forEach(x=>x.setAttribute("aria-pressed", x===b)); renderPubs();});
   }
   if(id==="projects"){
-    document.getElementById("projFilter").onclick=e=>{const b=e.target.closest("button");if(!b||b.dataset.f===PROJFILTER)return;PROJFILTER=b.dataset.f;const y=scrollY;route();window.scrollTo(0,y);};
+    document.getElementById("projFilter").onclick=e=>{const b=e.target.closest("button");if(!b||b.dataset.f===PROJFILTER)return;PROJFILTER=b.dataset.f;prefSet("projfilter",PROJFILTER);const y=scrollY;route();window.scrollTo(0,y);};
     if(!pList().length){document.getElementById("carView").hidden=true;document.getElementById("projList").outerHTML=`<p class="empty">${T("No projects here yet.","해당하는 과제가 없습니다.")}</p>`;return;}
     const track=document.getElementById("track"), slides=[...track.children], n=slides.length;
     const cur=()=>{const c=track.scrollLeft+track.clientWidth/2;let best=0,d=1e9;slides.forEach((s,i)=>{const x=Math.abs(s.offsetLeft+s.offsetWidth/2-c);if(x<d){d=x;best=i}});return best};
@@ -1142,7 +1145,7 @@ function route(){
     const plist=document.getElementById("projList");
     plist.addEventListener("click",e=>{const r=e.target.closest(".proj-row");if(r)open(+r.dataset.i);});
     plist.addEventListener("keydown",e=>{const r=e.target.closest(".proj-row");if(r&&e.key==="Enter")open(+r.dataset.i);});
-    document.querySelector(".proj-tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;PROJVIEW=b.dataset.v;
+    document.querySelector(".proj-tabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;PROJVIEW=b.dataset.v;prefSet("projview",PROJVIEW);
       document.querySelectorAll(".proj-tabs button").forEach(x=>x.setAttribute("aria-selected",x===b));
       document.getElementById("carView").hidden=PROJVIEW==="list";plist.hidden=PROJVIEW!=="list";if(PROJVIEW!=="list"){go(cur(),true);sync();}});
     requestAnimationFrame(()=>{go(0,true);sync();});
@@ -1175,7 +1178,7 @@ function route(){
   }
   if(id==="activities"){
     const SAMPLE=OLD_POSTS;
-    let filter="all";
+    let filter=document.querySelector(`#actSeg button[data-c="${CSS.escape(ACTFILTER)}"]`)?ACTFILTER:"all";
     const all=()=>[...SAMPLE].sort((a,b)=>(b.date||"").localeCompare(a.date||""));
     const PAGE=16; let shown=PAGE;
     const card=p=>`<article class="post" data-id="${p.id}" tabindex="0" role="button">
@@ -1187,7 +1190,7 @@ function route(){
       document.getElementById("feed").innerHTML=list.slice(0,shown).map(card).join("")||`<div class="empty">${T("No posts in this category yet. Use \"+ New post\" to add one.","이 분류에는 아직 게시물이 없습니다. 오른쪽 위 \"+ 새 게시물\"로 올려 보세요.")}</div>`;};
     const openPost=openActivity;
     if(NEWS_OPEN?.sec==="activities"){const k=NEWS_OPEN.key;NEWS_OPEN=null;openPost(k);}
-    document.getElementById("actSeg").addEventListener("click",e=>{const b=segNext(e);if(!b)return;filter=b.dataset.c;
+    document.getElementById("actSeg").addEventListener("click",e=>{const b=segNext(e);if(!b)return;filter=ACTFILTER=b.dataset.c;prefSet("actfilter",ACTFILTER);
       document.querySelectorAll("#actSeg button").forEach(x=>x.setAttribute("aria-pressed",x===b));render();});
     const feed=document.getElementById("feed");
     feed.addEventListener("click",e=>{const c=e.target.closest(".post");if(c)openPost(c.dataset.id);});
