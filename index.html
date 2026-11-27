@@ -319,9 +319,9 @@ html[lang=ko] .edu-sp{display:block}html[lang=ko] .edu-sp>span+span::before{cont
 .pub .open{font-size:13px;color:var(--teal);margin-top:4px}
 .modal-body .cite{font-size:14px;color:var(--muted)}
 .modal-body .sum{font-size:15.5px;line-height:1.7}
-.pub-mb.has-cover{display:grid;grid-template-columns:minmax(0,180px) 1fr;gap:24px;align-items:start}
-.pub-cover{width:100%;height:auto;border-radius:4px}
-@media (max-width:560px){.pub-mb.has-cover{grid-template-columns:1fr}.pub-cover{max-width:180px}}
+.pub-mb.has-cover{display:grid;grid-template-columns:minmax(0,300px) 1fr;gap:28px;align-items:start}
+.pub-cover{width:100%;height:auto;border-radius:4px;cursor:zoom-in;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+@media (max-width:560px){.pub-mb.has-cover{grid-template-columns:1fr}.pub-cover{max-width:min(300px,100%)}}
 .view-seg{margin-left:auto}
 .pgal{margin-top:10px}
 /* 모바일: 분류·정렬·리스트/갤러리를 폭이 되면 한 줄에 */
@@ -1052,7 +1052,7 @@ function openPdf(url,title){const src=new URL(url,location.href).href,name=(titl
     catch(e){box.innerHTML=`<p class="pdf-wait">${T("Could not show the PDF here. Use Download.","여기서 PDF를 보여 주지 못했습니다. 내려받기를 눌러 주세요.")}</p>`;}})();}}
 function openPub(k){const [cat,y,a,t,v,doi,sum,corr,,,pdf]=SITE.pubs[k],cover=pubCover(SITE.pubs[k]);const label=SITE.pubCats.find(c=>c[0]===cat)[1];
   openModal(`<div class="modal-body"><h3 id="mTitle">${esc(t)}</h3><div class="cite">${authors(a,corr)}<br>${esc(v)}</div>
-  <div class="pub-mb${cover?" has-cover":""}">${cover?`<img class="pub-cover" src="${cover}" alt="" onerror="this.parentNode.classList.remove('has-cover');this.remove()">`:""}<div class="sum">${sum?esc(sum):todo()}</div></div>
+  <div class="pub-mb${cover?" has-cover":""}">${cover?`<img class="pub-cover" src="${cover}" alt="" role="button" tabindex="0" title="${T("Enlarge","크게 보기")}" onclick="openLightbox([this.src],0)" onkeydown="if(event.key==='Enter')openLightbox([this.src],0)" onerror="this.parentNode.classList.remove('has-cover');this.remove()">`:""}<div class="sum">${sum?esc(sum):todo()}</div></div>
   ${citeOf(doi,t)?`<div class="cite-note">${T(`Cited by ${citeOf(doi,t)} (${CITES_SRC}, ${CITES_DATE})`,`인용 ${citeOf(doi,t)}회 (${CITES_SRC==="OpenAlex"?"OpenAlex":"구글 스칼라"}, ${CITES_DATE} 기준)`)}</div>`:""}
   <div class="pub-links">${pdf?`<button type="button" class="btn-post pub-pdf" data-pdf="${esc(pdf)}">${T("View PDF","PDF 보기")}</button>`:""}${doi?`<a href="https://doi.org/${doi}" target="_blank" rel="noopener">${T("Read the paper","원문 보기")} (doi:${doi})</a>`:""}</div></div>`);
   $mc.querySelector(".pub-pdf")?.addEventListener("click",()=>openPdf(pdf,t));}
