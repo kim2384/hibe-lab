@@ -316,6 +316,8 @@ html[lang=en] .hero h1{font-size:clamp(18px,2.52vw,28px);line-height:1.1}
 @media (max-width:560px){.pub-mb.has-cover{grid-template-columns:1fr}.pub-cover{max-width:180px}}
 .view-seg{margin-left:auto}
 .pgal{margin-top:10px}.pub-card .nt{-webkit-line-clamp:3}
+/* 모바일: 분류·정렬·리스트/갤러리를 폭이 되면 한 줄에 */
+@media (max-width:560px){.pub-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px 4px;margin-bottom:22px}.pub-ctl .pub-tools,.pub-ctl .sort-row{display:contents}.pub-ctl .sort-row>span{display:none}.pub-ctl input{flex:1 1 100%}.pub-ctl .pub-cat{min-width:0;flex:0 1 auto}.pub-ctl .pub-cat select{font-size:12.5px;padding:6px 24px 6px 10px;max-width:34vw;text-overflow:ellipsis;background-position:calc(100% - 14px) 55%,calc(100% - 9px) 55%}.pub-ctl .seg{gap:3px;flex-wrap:nowrap}.pub-ctl .seg button{font-size:12px;padding:6px 7px;white-space:nowrap}.pub-ctl .view-seg{margin-left:auto}html[lang=en] .pub-ctl .pub-cat select{max-width:28vw}}
 .legend{font-size:14px;color:var(--muted);margin:-8px 0 8px}
 .pub sup,.legend sup,.cite sup{color:var(--teal);font-weight:700}
 .pub .yr{font-family:var(--mono);font-size:14px;color:var(--teal);font-variant-numeric:tabular-nums;padding-top:1px}
@@ -848,10 +850,10 @@ const views = {
   },
   publications(){
     return `<section class="page wrap">${head("","Publications")}
-      <div class="pub-tools"><input id="q" type="search" placeholder="${T("Search by title, author or journal","제목, 저자, 학술지로 찾기")}" aria-label="${T("Search publications","논문 검색")}">
+      <div class="pub-ctl"><div class="pub-tools"><input id="q" type="search" placeholder="${T("Search by title, author or journal","제목, 저자, 학술지로 찾기")}" aria-label="${T("Search publications","논문 검색")}">
         <label class="yr-pick pub-cat"><span class="sr">${T("Category","분류")}</span><select id="seg"><option value="all">${T("All","전체")}</option>${SITE.pubCats.map(([k,en,kr])=>`<option value="${k}">${T(en.replace(/ Papers| Presentations/g,""),kr)}</option>`).join("")}</select></label></div>
       <div class="sort-row"><span>${T("Sort","정렬")}</span><div class="seg" id="sortSeg">${[["new","Newest","최신순"],["cite","Most cited","인용순"]].map(([k,en,kr])=>`<button aria-pressed="${k===PUBSORT}" data-s="${k}">${T(en,kr)}</button>`).join("")}</div>
-        <div class="seg view-seg" id="viewSeg">${[["list","List","리스트"],["gallery","Gallery","갤러리"]].map(([k,en,kr])=>`<button aria-pressed="${k===PUBVIEW}" data-v="${k}">${T(en,kr)}</button>`).join("")}</div></div>
+        <div class="seg view-seg" id="viewSeg">${[["list","List","리스트"],["gallery","Gallery","갤러리"]].map(([k,en,kr])=>`<button aria-pressed="${k===PUBVIEW}" data-v="${k}">${T(en,kr)}</button>`).join("")}</div></div></div>
       <p class="legend"><sup>†</sup> ${T("Corresponding author","교신저자")} · ${T(`Citation counts from ${CITES_SRC} as of ${CITES_DATE}`,`인용 수는 ${CITES_SRC==="OpenAlex"?"OpenAlex":"구글 스칼라"} 기준 (${CITES_DATE})`)}</p><div id="publist"></div></section>`;
   },
   awards(){
