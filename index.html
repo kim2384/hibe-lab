@@ -435,7 +435,7 @@ footer .fc{height:4px;background:linear-gradient(90deg,var(--fc1),var(--fc2),var
 .adm input,.adm select,.adm textarea,.adm-form input,.adm-form select,.adm-form textarea{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;width:100%;box-sizing:border-box}
 .adm-links{display:flex;gap:16px;flex-wrap:wrap}.link{background:none;border:0;padding:0;color:var(--teal);font:inherit;font-size:13px;cursor:pointer;text-decoration:underline}
 .adm-msg{color:var(--teal);font-size:14px;margin:0;min-height:1em}.adm-note{font-size:13px;color:var(--muted);margin:0}
-.adm-tabs{flex-wrap:wrap;margin-bottom:20px}
+.adm-tabs{flex-wrap:wrap;margin-bottom:20px}.adm-views{margin-bottom:22px}
 .adm-head{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap}
 form.adm-head input{flex:1;min-width:220px}
 .adm-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
@@ -1347,6 +1347,7 @@ function statsDraw(box){const d=STATS,today=new Date(Date.now()+9*3600e3).toISOS
     tip.hidden=false;tip.innerHTML=`<b>${x.day.replaceAll("-",". ")}</b><br>방문자 ${x.u}명 (국내 ${x.kr} · 해외 ${x.ov})<br>페이지뷰 ${x.views}`;
     tip.style.left=Math.min(r.width-150,Math.max(0,(i+.5)/W*r.width-75))+"px";box.querySelectorAll(".st-bar").forEach((g,j)=>g.classList.toggle("on",j===i));};
   plot.onmouseleave=()=>{tip.hidden=true;box.querySelectorAll(".st-bar").forEach(g=>g.classList.remove("on"));};}
+let ADMVIEW="content";
 function admRender(){
   const root=document.getElementById("admRoot");if(!root)return;
   if(!GH_AUTH){root.innerHTML=`<div class="adm-card"><p><b>관리자 기능이 아직 연결되지 않았습니다.</b></p><p>GitHub 로그인 중계(Cloudflare Worker)를 만들고 그 주소를 넣으면 이 자리에 로그인 버튼이 나옵니다. 저장소의 ADMIN_SETUP.md를 따라 하시면 됩니다.</p></div>`;return;}
@@ -1356,8 +1357,14 @@ function admRender(){
     root.querySelector("#admGh").onclick=admLogin;return;}
   if(!ADMIN.ok){root.innerHTML=`<div class="adm-card"><p><b>${esc(ADMIN.login)}</b> 계정은 아직 이 홈페이지 저장소의 관리자가 아닙니다. 기존 관리자에게 초대를 부탁해 주세요. 초대를 받았다면 GitHub 알림이나 메일에서 수락한 뒤 다시 로그인해 주세요.</p><button class="btn-ghost" id="admOut2">로그아웃</button></div>`;root.querySelector("#admOut2").onclick=admLogout;return;}
   const tabs=[...admKeys().map(k=>[k,ADM[k].label[1]]),...(ADMIN.owner?[["admins","관리자"]]:[])];
-  root.innerHTML=`${ADMIN.student?"":`<div class="adm-stats" id="admStats"></div>`}${admAutoHTML()}<div class="tabs adm-tabs" role="tablist">${tabs.map(([k,l])=>`<button type="button" role="tab" data-t="${k}" aria-selected="${k===ADMTAB}">${l}</button>`).join("")}</div><div id="admBody"></div>`;
-  admAutoBind(root);statsShow();
+  if(ADMIN.student)ADMVIEW="content";
+  const views=ADMIN.student?"":`<div class="tabs adm-views" role="tablist">${[["content","콘텐츠 관리"],["stats","방문자 통계"]].map(([k,l])=>`<button type="button" role="tab" data-v="${k}" aria-selected="${k===ADMVIEW}">${l}</button>`).join("")}</div>`;
+  if(ADMVIEW==="stats"){root.innerHTML=`${views}<div class="adm-stats" id="admStats"></div>`;
+    root.querySelector(".adm-views").onclick=e=>{const b=e.target.closest("button");if(!b)return;ADMVIEW=b.dataset.v;admRender();};
+    statsShow();return;}
+  root.innerHTML=`${views}${admAutoHTML()}<div class="tabs adm-tabs" role="tablist">${tabs.map(([k,l])=>`<button type="button" role="tab" data-t="${k}" aria-selected="${k===ADMTAB}">${l}</button>`).join("")}</div><div id="admBody"></div>`;
+  admAutoBind(root);
+  root.querySelector(".adm-views")?.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;ADMVIEW=b.dataset.v;admRender();});
   root.querySelector(".adm-tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;ADMTAB=b.dataset.t;admRender();};
   if(ADMTAB==="admins"&&ADMIN.owner)return admAdmins();if(ADMTAB==="admins")ADMTAB=admKeys()[0];
   if(!admKeys().includes(ADMTAB))ADMTAB=admKeys()[0];
