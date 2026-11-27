@@ -455,7 +455,7 @@ form.adm-head input{flex:1;min-width:220px}
 .adm-auto{border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:24px;background:var(--surface);display:grid;gap:12px}
 .adm-auto-h{display:grid;gap:4px}.adm-auto-h b{font-size:17px;color:var(--teal)}.adm-auto-h span{font-size:14px;color:var(--muted)}
 .adm-drop{display:block;border:1.5px dashed var(--teal);border-radius:10px;padding:18px;text-align:center;font-size:14px;color:var(--muted);cursor:pointer;background:rgba(52,147,129,.05)}
-.adm-drop.on{background:rgba(52,147,129,.15)}.adm-drop input{display:none}
+.adm-drop.on{background:rgba(52,147,129,.15)}.adm-drop input{display:none}.adm-drop{cursor:text}.adm-drop:focus{outline:none;border-style:solid;background:rgba(52,147,129,.1)}.adm-drop-hint{display:none;margin-top:6px;font-size:13px;color:var(--teal);font-weight:600}.adm-drop:focus .adm-drop-hint{display:block}.adm-drop-pick{display:inline-block;margin-top:10px;font:inherit;font-size:13px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}.adm-drop>span:first-of-type{display:block}
 .adm-auto textarea{font:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);resize:vertical}
 .adm-auto-to{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:10px 0 2px}.adm-auto-to>span{font-size:13px;color:var(--muted)}.adm-auto-to .seg button{font-size:13px;padding:5px 11px}.adm-sub{color:var(--muted);font-size:15px;margin:0 -2px}.adm-rev{display:grid;gap:6px;margin-top:4px;padding:10px 12px;border-radius:8px;background:var(--teal-soft)}.adm-rev label small{color:var(--muted)}.adm-rev textarea{font:inherit;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;resize:vertical;background:var(--surface)}
 .adm-ai{margin:4px 0 12px}.adm-form .adm-aich{background:#fff8dc;transition:background 1s}
@@ -1589,7 +1589,7 @@ function admEdit(key,i,pre){
 /* 자동 작성: 파일을 올리면 어느 메뉴에 무엇을 쓸지 초안을 만들어 줌 (Worker /draft → Claude) */
 function admAutoHTML(){const A=ADM_AUTO,o=A.out;
   return `<div class="adm-auto" id="admAuto"><div class="adm-auto-h"><b>자동 작성</b><span>상장 사진, 논문 PDF, 연구개발계획서, 행사 사진 등을 올리면 어느 메뉴에 어떤 내용으로 올릴지 초안을 만들어 드립니다.</span></div>
-    <label class="adm-drop" id="admDrop"><input type="file" id="admAutoIn" multiple accept="image/*,application/pdf,.txt,.md,text/plain"><span>${A.files.length?A.files.map(x=>esc(x.name)).join(", "):"여기에 파일을 끌어 놓거나 눌러서 고르세요 (여러 개 가능)"}</span></label>
+    <div class="adm-drop" id="admDrop" tabindex="0" role="button" aria-label="파일 붙여넣기 칸"><input type="file" id="admAutoIn" multiple accept="image/*,application/pdf,.txt,.md,text/plain"><span>${A.files.length?A.files.map(x=>esc(x.name)).join(", "):"여기를 누르고 Ctrl+V로 이미지·파일을 붙여넣거나, 끌어 놓으세요 (여러 개 가능)"}</span><span class="adm-drop-hint">붙여넣기 준비됨 · Ctrl+V (Mac은 ⌘V)</span><button type="button" class="adm-drop-pick" id="admAutoPick">파일 고르기</button></div>
     <textarea id="admAutoNote" rows="2" placeholder="메모 (선택): 예) 강경민 학생, ALC2026 최우수 학생논문상, 8월 21일 나고야">${esc(A.note||"")}</textarea>
     <div class="adm-auto-to"><span>올릴 메뉴</span><div class="seg" id="admAutoTo">${[["","자동"],...admKeys().filter(k=>k!=="pi").map(k=>[k,ADM[k].label[1]])].map(([k,l])=>`<button type="button" data-to="${k}" aria-pressed="${(A.to||"")===k}">${l}</button>`).join("")}</div>
       ${A.to==="pubs"?`<span class="adm-sub">›</span><div class="seg" id="admAutoPc">${[["","분류 자동"],...SITE.pubCats.map(([k,,kr])=>[k,kr])].map(([k,l])=>`<button type="button" data-pc="${k}" aria-pressed="${(A.pc||"")===k}">${l}</button>`).join("")}</div>`:""}
@@ -1636,6 +1636,12 @@ function admAutoBind(root){const A=ADM_AUTO,box=root.querySelector("#admAuto");i
   const drop=box.querySelector("#admDrop");
   drop.ondragover=e=>{e.preventDefault();drop.classList.add("on");};drop.ondragleave=()=>drop.classList.remove("on");
   drop.ondrop=e=>{e.preventDefault();drop.classList.remove("on");take(e.dataTransfer.files);};
+  /* 칸을 누르면 붙여넣기 대기, Ctrl+V로 이미지·파일 추가 (복사한 글은 메모에 덧붙임) */
+  drop.onclick=e=>{if(e.target.closest("#admAutoPick"))return;drop.focus();};
+  box.querySelector("#admAutoPick").onclick=e=>{e.stopPropagation();box.querySelector("#admAutoIn").click();};
+  const pasteFiles=e=>{const fl=[...(e.clipboardData?.files||[])].map((x,n)=>x.name&&x.name!=="image.png"?x:new File([x],`paste-${Date.now()}-${n}.${(x.type.split("/")[1]||"png").replace("jpeg","jpg")}`,{type:x.type}));if(!fl.length)return false;e.preventDefault();take(fl);setTimeout(()=>document.getElementById("admDrop")?.focus(),0);return true;};
+  drop.onpaste=e=>{if(pasteFiles(e))return;const t=e.clipboardData?.getData("text");if(t&&t.trim()){e.preventDefault();A.note=(A.note?A.note.replace(/\s*$/,"")+"\n":"")+t.trim();A.out=null;admRender();}};
+  box.querySelector("#admAutoNote").onpaste=e=>{pasteFiles(e);};
   box.querySelector("#admAutoNote").oninput=e=>{A.note=e.target.value;};
   box.querySelector("#admAutoTo").onclick=e=>{const b=e.target.closest("[data-to]");if(!b)return;A.to=b.dataset.to;if(A.to!=="pubs")A.pc="";if(A.to!=="posts"){A.ac="";A.acNew=false;}if(A.out&&A.to)A.out.forEach(d=>{if(!d.done)d.section=A.to;});admRender();};
   const pc=box.querySelector("#admAutoPc");if(pc)pc.onclick=e=>{const b=e.target.closest("[data-pc]");if(!b)return;A.pc=b.dataset.pc;if(A.out&&A.pc)A.out.forEach(d=>{if(!d.done&&d.fields)d.fields.pubcat=A.pc;});admRender();};
