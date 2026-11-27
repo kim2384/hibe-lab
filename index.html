@@ -554,7 +554,9 @@ form.adm-head input{flex:1;min-width:220px}
 @media (max-width:760px){.nfeed{grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}}
 @media (max-width:560px){.news.wrap{padding-left:max(4px,env(safe-area-inset-left,0px));padding-right:max(4px,env(safe-area-inset-right,0px))}.nfeed{grid-template-columns:repeat(3,minmax(0,1fr));gap:2px}.ncard .nbody{padding:16px 6px 6px;gap:1px}.ncard .nt{font-size:10.5px;line-height:1.3;height:3.9em}.ncard .nmeta{font-size:7.5px}.ncard .nimg.txt span{display:none}}
 @media (max-width:340px){.ncard .nt{-webkit-line-clamp:2;height:2.7em}}
-.ncard{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;background:var(--surface);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:transform .15s}
+@property --gh{syntax:"<number>";inherits:true;initial-value:170}@property --gs{syntax:"<percentage>";inherits:true;initial-value:70%}@property --gl{syntax:"<percentage>";inherits:true;initial-value:18%}
+.ncard{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;background:var(--surface);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:transform .15s,--gh 2.5s ease,--gs 2.5s ease,--gl 2.5s ease}
+@media (prefers-reduced-motion:reduce){.ncard{transition:transform .15s}}
 .ncard:hover{transform:translateY(-2px)}.ncard:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
 .nimg{aspect-ratio:1/1;background:#f4f5f6;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .nimg img{width:100%;height:100%;object-fit:contain;padding:6px;box-sizing:border-box}
@@ -990,15 +992,19 @@ function pubImgFail(im){const sp=document.createElement("span");sp.className="ig
 function imgFail(im){const b=im.parentNode;b.classList.remove("cover");b.classList.add("txt");const sp=document.createElement("span");sp.textContent=im.dataset.v||"";im.replaceWith(sp);}
 /* 홈 피드: 무작위 톤이되, 실제 열 수 기준으로 좌·상(가능하면 대각선)과 명도 단계가 겹치지 않게 */
 const TONE_L=[12,18,24,30];
+let TONE_SEED=0;
+const toneHash=x=>{x=Math.imul(x^x>>>16,0x45d9f3b);x=Math.imul(x^x>>>16,0x45d9f3b);return (x^x>>>16)>>>0;};
 function toneGrid(feed){const cards=[...feed.children].filter(c=>c.classList.contains("ncard"));if(!cards.length)return;
   const cols=Math.max(1,getComputedStyle(feed).gridTemplateColumns.split(" ").filter(Boolean).length),tier=[];
-  cards.forEach((c,i)=>{const h=(i*2654435761>>>0),r=i%cols,near=[],diag=[];
+  cards.forEach((c,i)=>{const h=toneHash(Math.imul(i+1,0x9E3779B1)^Math.imul(TONE_SEED+1,0x85EBCA6B)),r=i%cols,near=[],diag=[];
     if(r>0)near.push(tier[i-1]);if(i>=cols)near.push(tier[i-cols]);
     if(i>=cols&&r>0)diag.push(tier[i-cols-1]);if(i>=cols&&r<cols-1)diag.push(tier[i-cols+1]);
     let ok=TONE_L.map((_,t)=>t).filter(t=>!near.includes(t)&&!diag.includes(t));
     if(!ok.length)ok=TONE_L.map((_,t)=>t).filter(t=>!near.includes(t));
     const t=ok[(h>>>7)%ok.length];tier[i]=t;
     c.style.setProperty("--gh",158+h%16);c.style.setProperty("--gs",(50+(h>>>5)%30)+"%");c.style.setProperty("--gl",TONE_L[t]+"%");});}
+/* 홈 피드 톤이 시간에 따라 천천히 바뀜(6초마다 새 배치, 2.5초에 걸쳐 부드럽게). 화면에 없거나 '동작 줄이기' 설정이면 멈춤 */
+setInterval(()=>{const f=document.getElementById("newsFeed");if(!f||document.hidden||matchMedia("(prefers-reduced-motion: reduce)").matches)return;TONE_SEED++;toneGrid(f);},6000);
 function pubVenue(r){const vs=String(r[4]||""),pm=vs.match(/Presented (?:in|at) ([^,]+)/);return (pm?pm[1]:vs.split(",")[0]).replace(/\.$/,"").trim();}
 function newsItems(){
   const out=[],pad=d=>(d+"-00-00").slice(0,10),L=(en,ko)=>LANG==="ko"&&ko?ko:en;
