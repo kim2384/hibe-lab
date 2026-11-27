@@ -308,6 +308,7 @@ html[lang=ko] .edu-sp{display:block}html[lang=ko] .edu-sp>span+span::before{cont
 .seg{display:flex;flex-wrap:wrap;gap:6px}
 .seg button{font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:var(--bg)}
+.seg.cyc button[aria-pressed="false"]{display:none}.seg.cyc button::after{content:"⇄";margin-left:7px;font-size:.9em;opacity:.75}
 .pub-group h3{font-size:18px;margin:32px 0 6px;display:flex;gap:10px;align-items:baseline}
 .pub-group h3 .n{font-family:var(--mono);font-size:13px;color:var(--muted);font-weight:400}
 .pubs{list-style:none;margin:0;padding:0}
@@ -870,7 +871,7 @@ const views = {
       <div class="pub-ctl"><div class="pub-tools"><input id="q" type="search" placeholder="${T("Search by title, author or journal","제목, 저자, 학술지로 찾기")}" aria-label="${T("Search publications","논문 검색")}">
         <label class="yr-pick pub-cat"><span class="sr">${T("Category","분류")}</span><select id="seg"><option value="all">${T("All","전체")}</option>${SITE.pubCats.map(([k,en,kr])=>`<option value="${k}">${T(en.replace(/ Papers| Presentations/g,""),kr)}</option>`).join("")}</select></label></div>
       <div class="sort-row"><span>${T("Sort","정렬")}</span><div class="seg" id="sortSeg">${[["new","Newest","최신순"],["cite","Most cited","인용순"]].map(([k,en,kr])=>`<button aria-pressed="${k===PUBSORT}" data-s="${k}">${T(en,kr)}</button>`).join("")}</div>
-        <div class="seg view-seg" id="viewSeg">${[["list","List","리스트"],["gallery","Gallery","갤러리"]].map(([k,en,kr])=>`<button aria-pressed="${k===PUBVIEW}" data-v="${k}">${T(en,kr)}</button>`).join("")}</div></div></div>
+        <div class="seg view-seg cyc" id="viewSeg">${[["list","List","리스트"],["gallery","Gallery","갤러리"]].map(([k,en,kr])=>`<button aria-pressed="${k===PUBVIEW}" data-v="${k}">${T(en,kr)}</button>`).join("")}</div></div></div>
       <p class="legend"><sup>†</sup> ${T("Corresponding author","교신저자")} · ${T(`Citation counts from ${CITES_SRC} as of ${CITES_DATE}`,`인용 수는 ${CITES_SRC==="OpenAlex"?"OpenAlex":"구글 스칼라"} 기준 (${CITES_DATE})`)}</p><div id="publist"></div></section>`;
   },
   awards(){
@@ -880,7 +881,7 @@ const views = {
   },
   activities(){
     return `<section class="page wrap">${head("","Activities")}
-      <div class="act-bar"><div class="seg" id="actSeg"><button aria-pressed="true" data-c="all">${T("All","전체")}</button>${actCats().filter(c=>OLD_POSTS.some(p=>p.cat===c.k)||c.s).map(c=>`<button aria-pressed="false" data-c="${esc(c.k)}"><span class="l-full">${esc(T(c.en,c.ko))}</span><span class="l-short">${esc(actCatShort(c.k))}</span></button>`).join("")}</div>
+      <div class="act-bar"><div class="seg cyc" id="actSeg"><button aria-pressed="true" data-c="all">${T("All","전체")}</button>${actCats().filter(c=>OLD_POSTS.some(p=>p.cat===c.k)||c.s).map(c=>`<button aria-pressed="false" data-c="${esc(c.k)}"><span class="l-full">${esc(T(c.en,c.ko))}</span><span class="l-short">${esc(actCatShort(c.k))}</span></button>`).join("")}</div>
         ${ADMIN?.ok?`<button class="btn-post" id="newPost" type="button">${T("+ New post","+ 새 게시물")}</button>`:""}</div>
       <div class="feed" id="feed"></div><div class="sentinel" id="sentinel"></div><div class="feed-end" id="feedEnd" hidden></div></section>`;
   },
@@ -974,6 +975,8 @@ function newsItems(){
   return out.sort((a,b)=>pad(b.d).localeCompare(pad(a.d)));
 }
 const newsDate=d=>d.length===4?d:d.replaceAll("-",". ");
+/* 한 개 버튼 토글: 누를 때마다 다음 값으로 */
+const segNext=e=>{if(!e.target.closest("button"))return null;const bs=[...e.currentTarget.querySelectorAll("button")],i=bs.findIndex(x=>x.getAttribute("aria-pressed")==="true");return bs[(i+1)%bs.length];};
 let PUBVIEW="list", PUBSORT="new", PROJVIEW="car", PROJFILTER="on", AWYEAR="all";
 const pList=()=>SITE.projects.map((t,i)=>[t,i]).filter(([,i])=>{const f=SITE.projectInfo?.[i];return PROJFILTER==="all"||(PROJFILTER==="done")===isDone(f);});
 function renderPubs(){
@@ -1108,7 +1111,7 @@ function route(){
     document.getElementById("seg").addEventListener("change", ()=>renderPubs());
     document.getElementById("sortSeg").addEventListener("click", e=>{const b=e.target.closest("button"); if(!b) return; PUBSORT=b.dataset.s;
       document.querySelectorAll("#sortSeg button").forEach(x=>x.setAttribute("aria-pressed", x===b)); renderPubs();});
-    document.getElementById("viewSeg").addEventListener("click", e=>{const b=e.target.closest("button"); if(!b) return; PUBVIEW=b.dataset.v;
+    document.getElementById("viewSeg").addEventListener("click", e=>{const b=segNext(e); if(!b) return; PUBVIEW=b.dataset.v;
       document.querySelectorAll("#viewSeg button").forEach(x=>x.setAttribute("aria-pressed", x===b)); renderPubs();});
   }
   if(id==="projects"){
@@ -1182,7 +1185,7 @@ function route(){
       document.getElementById("feed").innerHTML=list.slice(0,shown).map(card).join("")||`<div class="empty">${T("No posts in this category yet. Use \"+ New post\" to add one.","이 분류에는 아직 게시물이 없습니다. 오른쪽 위 \"+ 새 게시물\"로 올려 보세요.")}</div>`;};
     const openPost=openActivity;
     if(NEWS_OPEN?.sec==="activities"){const k=NEWS_OPEN.key;NEWS_OPEN=null;openPost(k);}
-    document.getElementById("actSeg").addEventListener("click",e=>{let b=e.target.closest("button");if(!b)return;if(b.dataset.c!=="all"&&filter===b.dataset.c)b=e.currentTarget.querySelector('[data-c="all"]');filter=b.dataset.c;
+    document.getElementById("actSeg").addEventListener("click",e=>{const b=segNext(e);if(!b)return;filter=b.dataset.c;
       document.querySelectorAll("#actSeg button").forEach(x=>x.setAttribute("aria-pressed",x===b));render();});
     const feed=document.getElementById("feed");
     feed.addEventListener("click",e=>{const c=e.target.closest(".post");if(c)openPost(c.dataset.id);});
