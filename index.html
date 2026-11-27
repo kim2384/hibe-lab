@@ -663,7 +663,7 @@ const SITE = {
   projectImgs: ["images/projects/project-1.jpg", "images/projects/project-2.jpg", "images/projects/project-3.jpg", "images/projects/project-4.jpg", "images/projects/project-5.jpg", "images/projects/project-6.jpg"],
   pubCats: [["sci","International Journal Papers (SCI-E)","국제 저널"],["kci","Domestic Journal Papers (KCI)","국내 저널"],["intconf","International Conference Presentations","국제 학술대회"],["domconf","Domestic Conference Presentations","국내 학술대회"]],
   pubs: [
-    ["sci", 2026, "Yun, J., Moon, J., Bae, K., Kim, J., Lee, H., Kim, H., Sung, J., & Kim, M.", "AI-driven non-intrusive occupant monitoring for occupant-centric control: A multi-domain review of thermal, air, and visual environments", "Building and Environment, 299, 114673.", "10.1016/j.buildenv.2026.114673", "", "Kim, M.", ""],
+    ["sci", 2026, "Yun, J., Moon, J., Bae, K., Kim, J., Lee, H., Kim, H., Sung, J., & Kim, M.", "AI-driven non-intrusive occupant monitoring for occupant-centric control: A multi-domain review of thermal, air, and visual environments", "Building and Environment, 299, 114673.", "10.1016/j.buildenv.2026.114673", "", "Kim, M.", "", "", "images/uploads/papers/2026-buildenv-114673-ai-occupant-monitoring.pdf"],
     ["sci", 2022, "Kim, M., & Tzempelikos, A.", "Performance evaluation of non-intrusive luminance mapping towards human-centered daylighting control", "Building and Environment, 213, 108857.", "10.1016/j.buildenv.2022.108857", "", "", ""],
     ["sci", 2021, "Kim, M., & Tzempelikos, A.", "Semi-Automated Luminance Map Re-projection via High Dynamic Range Imaging and Indoor Space 3-D Reconstruction", "Automation in Construction, 129, 103812.", "10.1016/j.autcon.2021.103812", "", "", ""],
     ["sci", 2020, "Konstantzos, I., Sadeghi, S. A., Kim, M., Xiong, J., & Tzempelikos, A.", "The Effect of Lighting Environment on Task Performance in Buildings – A Review", "Energy and Buildings, 226, 110394.", "10.1016/j.enbuild.2020.110394", "", "", ""],
@@ -675,7 +675,7 @@ const SITE = {
     ["intconf", 2026, "Kang, Y., Kang, K., & Kim, M.", "Eye-Level Vertical Illuminance as an Indicator for Integrated Assessment of Glare and Circadian Lighting in Sidelit Open-Plan Offices", "Presented at ASim 2026 (IBPSA Asia Conference), November 2026.", "", "Annual RADIANCE and Lark simulations of a sidelit open-plan office show that meeting both glare (DGP ≤ 0.35) and circadian (CS ≥ 0.3) criteria corresponds to a two-sided band of eye-level vertical illuminance. The upper bound stays near 3,240 lux, while the lower bound rises with warmer wall spectra, making Ev a location-based diagnostic for layout and lighting decisions.", "", "2026-11-26", ""],
     ["intconf", 2026, "Kang, K., Kang, Y., Yoon, D., & Kim, M.", "Systematic Quantification of Occupant Visual Field Errors in Image-Based Daylight Simulation", "Presented at ASim 2026 (IBPSA Asia Conference), November 2026.", "", "Image-based lighting from a single façade HDRI is compared with explicit geometry over an 816-point grid and 50 sky conditions in a perimeter office. Agreement is high overall (CCC = 0.997), but errors concentrate sharply where the occupant's line of sight to the sun grazes the window frame, not with distance from the capture point.", "", "2026-11-26", ""],
     ["intconf", 2026, "Jang, H., Cho, H., & Kim, M.", "A Generative Augmentation Framework for 3D Urban Digital Twins Leveraging Conditional Diffusion Model", "Presented at ASim 2026 (IBPSA Asia Conference), November 2026.", "", "Public GIS data are preprocessed into tensors and a conditional diffusion model, conditioned on patch-level morphological indicators, generates realistic and controllable urban layouts that are extruded into 3D models. The framework supplies augmented urban geometry for training deep-learning surrogate models of urban environmental performance.", "", "2026-11-26", ""],
-    ["intconf",2025,"Yoon, D., Kang, K., Jang, H., Cho, H., & Kim, M.","Sensitivity analysis of albedo input settings for vertical facades in community-scale solar irradiance simulation","Proceedings of the 19th International Building Performance Simulation Association Conference.","10.26868/25222708.2025.1773"],
+    ["intconf",2025,"Yoon, D., Kang, K., Jang, H., Cho, H., & Kim, M.","Sensitivity analysis of albedo input settings for vertical facades in community-scale solar irradiance simulation","Proceedings of the 19th International Building Performance Simulation Association Conference.","10.26868/25222708.2025.1773","","","","","images/uploads/papers/2025-ibpsa-bs2025-1773-albedo-facades.pdf"],
     ["intconf",2022,"Kim, M., & Tzempelikos, A.","A Programmable Image Sensor for Smart Daylighting and Glare Control in Buildings","Presented in Indoor Air 2020 Conference, Athens, Greece, May 2022.",""],
     ["intconf",2022,"Kim, M., Zhang, H., Tzempelikos, A., Gasparella, A., & Cappelletti, F.","New Low-Cost Sensing Network for Indoor Environmental Monitoring and Control in Buildings","Presented in Indoor Air 2020 Conference, Athens, Greece, May 2022.",""],
     ["intconf", 2021, "Mah, D., Kim, M., & Tzempelikos, A.", "Utilization of programmable cameras for web-based sensing and control of daylight in buildings", "Journal of Physics: Conference Series, 2042(1). Presented in CISBAT 2021 Conference, Lausanne, Switzerland, September 2021.", "10.1088/1742-6596/2042/1/012114", "", "", ""],
@@ -1459,8 +1459,16 @@ function admToast(t){const d=document.createElement("div");d.className="adm-toas
 
 /* PDF 첫 페이지 → 이미지 (브라우저 안에서 pdf.js로 그림, PDF는 어디에도 올리지 않음) */
 const PDFJS="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+/* 표지(초록 쪽) 앞의 광고·안내 쪽을 잘라낸 PDF (pdf-lib) */
+function pdfEdit(){return window.PDFLib?Promise.resolve(window.PDFLib):new Promise((ok,no)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js";s.onload=()=>ok(window.PDFLib);s.onerror=()=>no(new Error("PDF 편집 도구를 불러오지 못했습니다"));document.head.appendChild(s);});}
+async function pdfFromPage(file,from){if(!(from>1))return file;const L=await pdfEdit(),src=await L.PDFDocument.load(await file.arrayBuffer(),{ignoreEncryption:true}),out=await L.PDFDocument.create();
+  const pages=await out.copyPages(src,src.getPageIndices().slice(from-1));pages.forEach(p=>out.addPage(p));return new File([await out.save()],file.name,{type:"application/pdf"});}
 function pdfLib(){return window.pdfjsLib?Promise.resolve(window.pdfjsLib):new Promise((ok,no)=>{const s=document.createElement("script");s.src=PDFJS+"pdf.min.js";s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS+"pdf.worker.min.js";ok(window.pdfjsLib);};s.onerror=()=>no(new Error("PDF 도구를 불러오지 못했습니다"));document.head.appendChild(s);});}
-async function pdfFirstPage(file){const lib=await pdfLib(),doc=await lib.getDocument({data:await file.arrayBuffer()}).promise,pg=await doc.getPage(1);
+/* 표지: 출판사 광고·안내 쪽을 건너뛰고 논문명·저자·초록이 있는 쪽 (앞 5쪽 안에서) */
+async function pdfFirstPage(file){const lib=await pdfLib(),doc=await lib.getDocument({data:await file.arrayBuffer()}).promise;let pg=await doc.getPage(1);pdfFirstPage.page=1;
+  try{for(let i=1;i<=Math.min(5,doc.numPages);i++){const p=i===1?pg:await doc.getPage(i),t=(await p.getTextContent()).items.map(x=>x.str).join(" ");pdfFirstPage.page=1;
+    if(/you may also like|this content was downloaded|download citation|terms and conditions of use/i.test(t)&&!/\babstract\b[\s\S]{200}/i.test(t))continue;
+    if(/\babstract\b|초\s*록|요\s*약|keywords/i.test(t)){pg=p;pdfFirstPage.page=i;break;}}}catch(e){pdfFirstPage.page=1;}
   const v0=pg.getViewport({scale:1}),vp=pg.getViewport({scale:1400/v0.width}),c=document.createElement("canvas");c.width=Math.round(vp.width);c.height=Math.round(vp.height);
   const ctx=c.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);await pg.render({canvasContext:ctx,viewport:vp}).promise;
   return new Promise((ok,no)=>c.toBlob(b=>b?ok(b):no(new Error("이미지 변환 실패")),"image/webp",.86));}
@@ -1608,11 +1616,12 @@ function admEdit(key,i,pre){
     box.addEventListener("click",e=>{if(e.target.closest("[data-pdfdel]")){it.pdf="";pbox();pm("PDF를 뺐습니다. 저장을 눌러 주세요.");}});
     pdfIn.onchange=()=>{pf=pdfIn.files[0];pdfIn.value="";if(!pf)return;if(pf.size>25e6){pf=null;return pm("PDF가 너무 큽니다 (25MB 이하).");}ch.hidden=false;pm(`고른 파일: ${pf.name}`);};
     ch.addEventListener("click",async e=>{const b=e.target.closest("[data-pm]");if(!b||!pf)return;const file=pf,full=b.dataset.pm==="full";pf=null;ch.hidden=true;
-      try{pm("첫 페이지를 그리는 중…");const blob=await pdfFirstPage(file);pm("표지 이미지를 올리는 중…");it.cover=await admUpload(blob,1400,"papers");redraw("cover");
-        if(full){pm("PDF 전체를 올리는 중…");const data=await new Promise(ok=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(",")[1]);fr.readAsDataURL(file);});
+      try{pm("첫 페이지를 그리는 중…");const blob=await pdfFirstPage(file),from=pdfFirstPage.page||1;pm("표지 이미지를 올리는 중…");it.cover=await admUpload(blob,1400,"papers");redraw("cover");
+        if(full){let up=file;if(from>1){pm(`앞의 ${from-1}쪽(광고·안내)을 빼는 중…`);try{up=await pdfFromPage(file,from);}catch(err){up=file;}}
+          pm("PDF 전체를 올리는 중…");const data=await new Promise(ok=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(",")[1]);fr.readAsDataURL(up);});
           const path=`images/uploads/papers/${Date.now()}-${(file.name.replace(/\.pdf$/i,"").replace(/[^A-Za-z0-9_-]+/g,"-").slice(0,40)||"paper")}.pdf`;
           const r=await ghPut(path,{message:`관리 화면: 논문 PDF 올림 (${ADMIN.login})`,content:data});if(!r.ok)throw new Error((await r.json().catch(()=>({}))).message||r.status);
-          ADM_PREVIEW[path]=URL.createObjectURL(file);it.pdf=path;pbox();}
+          ADM_PREVIEW[path]=URL.createObjectURL(up);it.pdf=path;pbox();}
         pm(full?"PDF 전체와 표지 이미지를 올렸습니다. 저장을 눌러 주세요.":"첫 페이지 이미지를 만들었습니다. 저장을 눌러 주세요.");}
       catch(err){pm("올리지 못했습니다: "+(err.message||err));}});}
   const plan=f.querySelector("#admPlan");
