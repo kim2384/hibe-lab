@@ -1,7 +1,7 @@
 {
-  "updated": "2026-11-26",
+  "updated": "2026-11-27",
   "source": "Google Scholar (via SerpApi)",
-  "total": 412,
+  "total": 413,
   "h_index": 7,
   "i10_index": 5,
   "articles": [
@@ -9,7 +9,7 @@
       "title": "The effect of lighting environment on task performance in buildings–A review",
       "key": "theeffectoflightingenvironmentontaskperformanceinbuildingsareview",
       "year": "2020",
-      "cites": 248
+      "cites": 249
     },
     {
       "title": "Real-time daylight glare control using a low-cost, window-mounted HDRI sensor",
