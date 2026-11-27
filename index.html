@@ -885,7 +885,7 @@ const views = {
   activities(){
     return `<section class="page wrap">${head("","Activities")}
       <div class="act-bar"><div class="seg cyc" id="actSeg">${(()=>{ACTSHOW=actCats().filter(c=>OLD_POSTS.some(p=>p.cat===c.k)||c.s).some(c=>c.k===ACTFILTER)?ACTFILTER:"all";return "";})()}<button aria-pressed="${ACTSHOW==="all"}" data-c="all">${T("All","전체")}</button>${actCats().filter(c=>OLD_POSTS.some(p=>p.cat===c.k)||c.s).map(c=>`<button aria-pressed="${ACTSHOW===c.k}" data-c="${esc(c.k)}"><span class="l-full">${esc(T(c.en,c.ko))}</span><span class="l-short">${esc(actCatShort(c.k))}</span></button>`).join("")}</div>
-        ${ADMIN?.ok?`<button class="btn-post" id="newPost" type="button">${T("+ New post","+ 새 게시물")}</button>`:""}</div>
+        </div>
       <div class="feed" id="feed"></div><div class="sentinel" id="sentinel"></div><div class="feed-end" id="feedEnd" hidden></div></section>`;
   },
   join(){
@@ -1188,7 +1188,7 @@ function route(){
 </div></article>`;
     const render=(reset)=>{if(reset!==false)shown=PAGE;const list=all().filter(p=>filter==="all"||p.cat===filter);
       document.getElementById("feedEnd").hidden=!(list.length>PAGE&&shown>=list.length);document.getElementById("feedEnd").textContent=T("You have seen all posts.","모든 게시물을 다 봤습니다.");
-      document.getElementById("feed").innerHTML=list.slice(0,shown).map(card).join("")||`<div class="empty">${T("No posts in this category yet. Use \"+ New post\" to add one.","이 분류에는 아직 게시물이 없습니다. 오른쪽 위 \"+ 새 게시물\"로 올려 보세요.")}</div>`;};
+      document.getElementById("feed").innerHTML=list.slice(0,shown).map(card).join("")||`<div class="empty">${T("No posts in this category yet. ","이 분류에는 아직 게시물이 없습니다.")}</div>`;};
     const openPost=openActivity;
     if(NEWS_OPEN?.sec==="activities"){const k=NEWS_OPEN.key;NEWS_OPEN=null;openPost(k);}
     document.getElementById("actSeg").addEventListener("click",e=>{const b=segNext(e);if(!b)return;filter=ACTFILTER=b.dataset.c;prefSet("actfilter",ACTFILTER);
