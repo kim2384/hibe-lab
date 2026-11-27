@@ -1459,12 +1459,16 @@ function admToast(t){const d=document.createElement("div");d.className="adm-toas
 
 /* PDF 첫 페이지 → 이미지 (브라우저 안에서 pdf.js로 그림, PDF는 어디에도 올리지 않음) */
 const PDFJS="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+/* 표지(초록 쪽) 앞의 광고·안내 쪽을 잘라낸 PDF (pdf-lib) */
+function pdfEdit(){return window.PDFLib?Promise.resolve(window.PDFLib):new Promise((ok,no)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js";s.onload=()=>ok(window.PDFLib);s.onerror=()=>no(new Error("PDF 편집 도구를 불러오지 못했습니다"));document.head.appendChild(s);});}
+async function pdfFromPage(file,from){if(!(from>1))return file;const L=await pdfEdit(),src=await L.PDFDocument.load(await file.arrayBuffer(),{ignoreEncryption:true}),out=await L.PDFDocument.create();
+  const pages=await out.copyPages(src,src.getPageIndices().slice(from-1));pages.forEach(p=>out.addPage(p));return new File([await out.save()],file.name,{type:"application/pdf"});}
 function pdfLib(){return window.pdfjsLib?Promise.resolve(window.pdfjsLib):new Promise((ok,no)=>{const s=document.createElement("script");s.src=PDFJS+"pdf.min.js";s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS+"pdf.worker.min.js";ok(window.pdfjsLib);};s.onerror=()=>no(new Error("PDF 도구를 불러오지 못했습니다"));document.head.appendChild(s);});}
 /* 표지: 출판사 광고·안내 쪽을 건너뛰고 논문명·저자·초록이 있는 쪽 (앞 5쪽 안에서) */
-async function pdfFirstPage(file){const lib=await pdfLib(),doc=await lib.getDocument({data:await file.arrayBuffer()}).promise;let pg=await doc.getPage(1);
-  try{for(let i=1;i<=Math.min(5,doc.numPages);i++){const p=i===1?pg:await doc.getPage(i),t=(await p.getTextContent()).items.map(x=>x.str).join(" ");
+async function pdfFirstPage(file){const lib=await pdfLib(),doc=await lib.getDocument({data:await file.arrayBuffer()}).promise;let pg=await doc.getPage(1);pdfFirstPage.page=1;
+  try{for(let i=1;i<=Math.min(5,doc.numPages);i++){const p=i===1?pg:await doc.getPage(i),t=(await p.getTextContent()).items.map(x=>x.str).join(" ");pdfFirstPage.page=1;
     if(/you may also like|this content was downloaded|download citation|terms and conditions of use/i.test(t)&&!/\babstract\b[\s\S]{200}/i.test(t))continue;
-    if(/\babstract\b|초\s*록|요\s*약|keywords/i.test(t)){pg=p;break;}}}catch(e){}
+    if(/\babstract\b|초\s*록|요\s*약|keywords/i.test(t)){pg=p;pdfFirstPage.page=i;break;}}}catch(e){pdfFirstPage.page=1;}
   const v0=pg.getViewport({scale:1}),vp=pg.getViewport({scale:1400/v0.width}),c=document.createElement("canvas");c.width=Math.round(vp.width);c.height=Math.round(vp.height);
   const ctx=c.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);await pg.render({canvasContext:ctx,viewport:vp}).promise;
   return new Promise((ok,no)=>c.toBlob(b=>b?ok(b):no(new Error("이미지 변환 실패")),"image/webp",.86));}
@@ -1612,11 +1616,12 @@ function admEdit(key,i,pre){
     box.addEventListener("click",e=>{if(e.target.closest("[data-pdfdel]")){it.pdf="";pbox();pm("PDF를 뺐습니다. 저장을 눌러 주세요.");}});
     pdfIn.onchange=()=>{pf=pdfIn.files[0];pdfIn.value="";if(!pf)return;if(pf.size>25e6){pf=null;return pm("PDF가 너무 큽니다 (25MB 이하).");}ch.hidden=false;pm(`고른 파일: ${pf.name}`);};
     ch.addEventListener("click",async e=>{const b=e.target.closest("[data-pm]");if(!b||!pf)return;const file=pf,full=b.dataset.pm==="full";pf=null;ch.hidden=true;
-      try{pm("첫 페이지를 그리는 중…");const blob=await pdfFirstPage(file);pm("표지 이미지를 올리는 중…");it.cover=await admUpload(blob,1400,"papers");redraw("cover");
-        if(full){pm("PDF 전체를 올리는 중…");const data=await new Promise(ok=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(",")[1]);fr.readAsDataURL(file);});
+      try{pm("첫 페이지를 그리는 중…");const blob=await pdfFirstPage(file),from=pdfFirstPage.page||1;pm("표지 이미지를 올리는 중…");it.cover=await admUpload(blob,1400,"papers");redraw("cover");
+        if(full){let up=file;if(from>1){pm(`앞의 ${from-1}쪽(광고·안내)을 빼는 중…`);try{up=await pdfFromPage(file,from);}catch(err){up=file;}}
+          pm("PDF 전체를 올리는 중…");const data=await new Promise(ok=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(",")[1]);fr.readAsDataURL(up);});
           const path=`images/uploads/papers/${Date.now()}-${(file.name.replace(/\.pdf$/i,"").replace(/[^A-Za-z0-9_-]+/g,"-").slice(0,40)||"paper")}.pdf`;
           const r=await ghPut(path,{message:`관리 화면: 논문 PDF 올림 (${ADMIN.login})`,content:data});if(!r.ok)throw new Error((await r.json().catch(()=>({}))).message||r.status);
-          ADM_PREVIEW[path]=URL.createObjectURL(file);it.pdf=path;pbox();}
+          ADM_PREVIEW[path]=URL.createObjectURL(up);it.pdf=path;pbox();}
         pm(full?"PDF 전체와 표지 이미지를 올렸습니다. 저장을 눌러 주세요.":"첫 페이지 이미지를 만들었습니다. 저장을 눌러 주세요.");}
       catch(err){pm("올리지 못했습니다: "+(err.message||err));}});}
   const plan=f.querySelector("#admPlan");
