@@ -16,6 +16,7 @@ OUT_DIR = ROOT / "images" / "papers"
 MAP = ROOT / "data" / "pub-pages.json"
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 WIDTH = 1000
+KEEP = {"10.1016/j.enbuild.2020.110394"}   # MK가 직접 고른 표지(출판본 첫 쪽) — 자동으로 바꾸지 않음
 
 
 def dois():
@@ -65,9 +66,9 @@ def abstract_page(doc):
     """표지로 쓸 쪽: 앞 5쪽 중 초록(Abstract)이 시작하는 쪽. IOP 등 첫 쪽이 안내·광고인 경우를 건너뜀."""
     try:
         sys.path.insert(0, str(Path(__file__).parent))
-        from paper_abstracts import from_blocks, page_blocks
+        from paper_abstracts import from_blocks
         for i in range(min(5, len(doc))):
-            if from_blocks(page_blocks(doc, i))[0]:
+            if from_blocks(doc[i].get_text("blocks"))[0]:   # 그 쪽 안에서 초록이 시작해야 함
                 return i
     except Exception as e:  # noqa: BLE001
         print(f"  초록 쪽 찾기 실패: {e}")
@@ -90,6 +91,8 @@ def main():
     pages = json.loads(MAP.read_text(encoding="utf-8")) if MAP.exists() else {}
     changed = False
     for doi in dois():
+        if doi in KEEP:
+            continue
         rel = f"images/papers/{re.sub(r'[^A-Za-z0-9._-]+', '_', doi)}-a.webp"   # -a: 초록 쪽 기준(2026-11-27부터)
         if pages.get(doi) == rel and (ROOT / rel).exists():
             continue
