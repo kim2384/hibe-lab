@@ -991,7 +991,7 @@ let NEWS_OPEN=null, NEWS_N=8;
 function pubImgFail(im){const sp=document.createElement("span");sp.className="ig-noimg";sp.textContent=im.dataset.v||"";im.replaceWith(sp);}
 function imgFail(im){const b=im.parentNode;b.classList.remove("cover");b.classList.add("txt");const sp=document.createElement("span");sp.textContent=im.dataset.v||"";im.replaceWith(sp);}
 /* 홈 피드: 무작위 톤이되, 실제 열 수 기준으로 좌·상(가능하면 대각선)과 명도 단계가 겹치지 않게 */
-const TONE_L=[12,18,24,30];
+const TONE_L=[8,14,20,26,33];
 let TONE_SEED=0;
 const toneHash=x=>{x=Math.imul(x^x>>>16,0x45d9f3b);x=Math.imul(x^x>>>16,0x45d9f3b);return (x^x>>>16)>>>0;};
 function toneGrid(feed){const cards=[...feed.children].filter(c=>c.classList.contains("ncard"));if(!cards.length)return;
@@ -1002,7 +1002,7 @@ function toneGrid(feed){const cards=[...feed.children].filter(c=>c.classList.con
     let ok=TONE_L.map((_,t)=>t).filter(t=>!near.includes(t)&&!diag.includes(t));
     if(!ok.length)ok=TONE_L.map((_,t)=>t).filter(t=>!near.includes(t));
     const t=ok[(h>>>7)%ok.length];tier[i]=t;
-    c.style.setProperty("--gh",158+h%16);c.style.setProperty("--gs",(50+(h>>>5)%30)+"%");c.style.setProperty("--gl",TONE_L[t]+"%");});}
+    c.style.setProperty("--gh",145+h%46);c.style.setProperty("--gs",(35+(h>>>6)%50)+"%");c.style.setProperty("--gl",TONE_L[t]+"%");});}
 /* 홈 피드 톤이 시간에 따라 천천히 바뀜(6초마다 새 배치, 2.5초에 걸쳐 부드럽게). 화면에 없거나 '동작 줄이기' 설정이면 멈춤 */
 setInterval(()=>{const f=document.getElementById("newsFeed");if(!f||document.hidden||matchMedia("(prefers-reduced-motion: reduce)").matches)return;TONE_SEED++;toneGrid(f);},6000);
 function pubVenue(r){const vs=String(r[4]||""),pm=vs.match(/Presented (?:in|at) ([^,]+)/);return (pm?pm[1]:vs.split(",")[0]).replace(/\.$/,"").trim();}
