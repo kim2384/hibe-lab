@@ -1011,7 +1011,7 @@ function openProject(i){const t=SITE.projects[i];
       const pimgs=[SITE.projectImgs?.[i],...(SITE.projectMore?.[i]||[])].filter(Boolean);
       openModal(`${pimgs.length?galHTML(pimgs):`<div class="img">${T("Project image (to be replaced)","과제 이미지 (원본으로 교체 예정)")}</div>`}<div class="modal-body"><h3 id="mTitle">${esc(t)}</h3>${projOverview(SITE.projectInfo?.[i]||{})}</div>`);$mc._full=pimgs;admModalTools("projects",i);}
 /* 활동 분류: 기본 2개 + 관리자가 만든 분류(각 게시물에 catEn·catKo로 이름 저장) */
-const ACT_BASE=[{k:"conf",en:"Scientific Conference Attendances",ko:"학술대회 참석",s:["Conference","학술대회"]},{k:"out",en:"Outreach & Extra Activities",ko:"아웃리치 및 기타 활동",s:["Outreach","아웃리치"]}];
+const ACT_BASE=[{k:"conf",en:"Scientific Conference Attendances",ko:"학술대회 참석",s:["Conference","학술대회"]},{k:"out",en:"Outreach & Extra Activities",ko:"대외활동 및 연구실 행사",s:["Outreach","대외활동"]}];
 let ACT_NEW=[];
 function actCats(){const m=new Map(ACT_BASE.map(c=>[c.k,c]));
   [...OLD_POSTS.filter(p=>p.cat&&(p.catEn||p.catKo)).map(p=>({k:p.cat,en:p.catEn||p.catKo,ko:p.catKo||p.catEn})),...ACT_NEW].forEach(c=>{if(!m.has(c.k))m.set(c.k,c);});
