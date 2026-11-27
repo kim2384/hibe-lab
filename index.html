@@ -168,7 +168,7 @@ html[lang=en] .hero h1{font-size:clamp(18px,2.52vw,28px);line-height:1.1}
 .course code{font-family:var(--mono);font-size:13px;color:var(--muted)}
 
 .edu-tl li{grid-template-columns:52px 1fr 136px;align-items:center;gap:16px}
-.edu-tl li > *{min-width:0}.edu-tx{display:flex;flex-direction:column;line-height:1.35}
+.edu-tl li > *{min-width:0}.edu-tx{display:flex;flex-direction:column;line-height:1.35;word-break:keep-all}
 .edu-logo{width:136px;height:75px;display:flex;align-items:center;justify-content:center}
 .edu-logo img{width:75px;height:75px;object-fit:contain;display:block}
 .edu-logo img[alt="Yonsei University"]{width:69px;height:69px}
@@ -815,7 +815,7 @@ const views = {
       <div class="cv-grid">
         <div><h3>${T("Research Interests","연구 분야")}</h3><ul class="plain">${ko("pi.interests",p.interests).map(i=>`<li>${i}</li>`).join("")}</ul></div>
         <div><h3>${T("Education","학력")}</h3><ul class="tl edu-tl">${p.education.map((e,i)=>{const k=ko("pi.education",[])[i]||{};const d=LANG==="ko"?{...e,...k}:e;return `<li><span class="y">${e.year}</span>
-          <span class="edu-tx">${[d.degree,d.major,d.school,d.place].filter(Boolean).map(x=>`<span>${esc(x)}</span>`).join("")}</span>
+          <span class="edu-tx">${[LANG==="ko"?[d.major,d.degree].filter(Boolean).join(" "):[d.degree,d.major].filter(Boolean).join(" in "),d.school,d.place].filter(Boolean).map(x=>`<span>${esc(x)}</span>`).join("")}</span>
           <span class="edu-logo">${e.logo?`<img src="${e.logo}" alt="${e.school}"${e.seal?' class="seal"':""}>`:`<span class="ph">${e.school}</span>`}</span></li>`}).join("")}</ul></div>
         <div><h3>${T("Professional Experience","경력")}</h3>${tl(ko("pi.experience",p.experience))}</div>
         <div><h3>${T("Affiliations","학회 활동")}</h3><ul class="plain">${ko("pi.affiliations",p.affiliations).map(i=>`<li>${i}</li>`).join("")}</ul></div>
