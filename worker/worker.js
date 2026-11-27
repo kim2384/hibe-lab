@@ -41,7 +41,7 @@ Fill in the fields for the hibe lab website (Prof. Michael (Youngsu) Kim, 김영
 - Leave a field empty rather than guessing.`;
 
 // 학생 연구원이 저장할 수 있는 파일: 활동·수상·연구과제·논문 내용과 그 사진
-const STUDENT_PATHS = /^(content\/(posts|awards|projects|pubs)\.json|images\/uploads\/(posts|awards|projects|pubs|papers)\/(full\/)?[A-Za-z0-9._-]+\.(webp|png|jpe?g))$/;
+const STUDENT_PATHS = /^(content\/(posts|awards|projects|pubs)\.json|images\/uploads\/(posts|awards|projects|pubs|papers)\/(full\/)?[A-Za-z0-9._-]+\.(webp|png|jpe?g)|images\/uploads\/papers\/[A-Za-z0-9._-]+\.pdf)$/;
 
 const DRAFT_ITEM = {
   type: "object",
