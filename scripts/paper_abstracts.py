@@ -163,6 +163,43 @@ def from_api(doi):
     return "", []
 
 
+CC = re.compile(r"creativecommons\.org/(licenses|publicdomain)/([a-z-]+)/(\d\.\d)?")
+
+
+def lic_name(url):
+    m = CC.search(url or "")
+    if not m:
+        return ""
+    if m.group(1) == "publicdomain":
+        return "CC0"
+    return "CC " + m.group(2).upper() + (" " + m.group(3) if m.group(3) else "")
+
+
+def lic_from_pdf(data):
+    """PDF 앞 3쪽에서 © 문구 한 문장."""
+    import pymupdf
+    doc = pymupdf.open(stream=data, filetype="pdf")
+    t = re.sub(r"\s+", " ", " ".join(doc[i].get_text() for i in range(min(3, len(doc)))))
+    m = re.search(r"(?:©|\(c\)|Copyright ©?)\s*(?:19|20)\d\d\b.{0,200}", t)
+    if not m:
+        return ""
+    c = m.group(0)
+    e = re.search(r"(All rights reserved\.|Licensee [^.]+\.|license\b)", c)
+    c = c[: e.end()] if e else re.split(r"(?<=\.)\s", c)[0]
+    return clean(c)[:200]
+
+
+def lic_from_api(doi):
+    """Crossref: 저작권 문구(assertion)·출판본 라이선스 URL·출판사·연도."""
+    w = json.loads(get("https://api.crossref.org/works/" + urllib.parse.quote(doi, safe="/"), "application/json"))["message"]
+    text = next((a.get("value", "") for a in w.get("assertion", []) if a.get("name") == "copyright"), "")
+    lics = w.get("license", [])
+    url = next((l["URL"] for l in lics if l.get("content-version") == "vor"), "") or \
+        next((l["URL"] for l in lics if "creativecommons" in l.get("URL", "")), "")
+    year = (w.get("published") or w.get("issued") or {}).get("date-parts", [[None]])[0][0]
+    return clean(text), url, w.get("publisher", ""), year
+
+
 def pubs():
     """{DOI(없으면 PDF 경로): 저장소 PDF 경로}."""
     out = {}
@@ -193,7 +230,29 @@ def put(data, doi, ab, kw, src):
         return False
     if old.get("src") == src and old.get("abs"):
         return False
-    data[doi] = {"abs": ab, "kw": kw or old.get("kw", []), "src": src}
+    data[doi] = {**old, "abs": ab, "kw": kw or old.get("kw", []), "src": src}
+    return True
+
+
+def add_lic(data, key, pdf):
+    """라이선스 표시용 'lic': {"text": 저작권 문구, "name": CC 이름, "url": 라이선스 주소}. 한 번 찾으면 그대로 둠."""
+    cur = data.setdefault(key, {})
+    if cur.get("lic"):
+        return False
+    text, url, pub, year = "", "", "", None
+    if key.startswith("10."):
+        try:
+            text, url, pub, year = lic_from_api(key)
+        except Exception as e:  # noqa: BLE001
+            print(f"  crossref 라이선스 실패 {key}: {e}")
+    if not text and pdf and not pdf.startswith("http") and (ROOT / pdf).exists():
+        text = lic_from_pdf((ROOT / pdf).read_bytes())
+    if not text and pub and year and not lic_name(url):
+        text = f"© {year} {pub}"
+    if not text and not url:
+        return False
+    cur["lic"] = {k: v for k, v in {"text": text, "name": lic_name(url), "url": url}.items() if v}
+    print(f"  라이선스 {key}: {cur['lic']}")
     return True
 
 
@@ -245,6 +304,10 @@ def main():
         ab, kw = from_api(doi)
         if put(data, doi, ab, kw, "api"):
             changed += 1
+    for key, pdf in pubs().items():
+        if add_lic(data, key, pdf):
+            changed += 1
+    data = {k: v for k, v in data.items() if v}
     save(data)
     print(f"바뀐 논문 {changed}건")
 
