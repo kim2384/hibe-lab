@@ -157,8 +157,8 @@ html[lang=en] .hero h1{font-size:clamp(18px,2.52vw,28px);line-height:1.1}
 .pi-role{color:var(--muted);margin:4px 0 14px}
 .contact{display:flex;gap:10px;flex-wrap:wrap;font-size:14px}
 .contact a,.contact span{text-decoration:none}.contact{gap:20px!important}.contact a:hover{text-decoration:underline}
-.cv-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 48px}
-@media (max-width:720px){.cv-grid{grid-template-columns:1fr}}
+.cv-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:32px 48px}
+@media (max-width:980px){.cv-grid{grid-template-columns:1fr}}
 .cv-grid h3{font-size:18px;margin:0 0 10px;padding-bottom:8px;border-bottom:2px solid var(--teal)}
 .tl{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .tl li{display:grid;grid-template-columns:52px 1fr;gap:10px}
@@ -167,13 +167,13 @@ html[lang=en] .hero h1{font-size:clamp(18px,2.52vw,28px);line-height:1.1}
 .course{display:grid;grid-template-columns:56px 1fr;gap:10px}
 .course code{font-family:var(--mono);font-size:13px;color:var(--muted)}
 
-.edu-tl li{grid-template-columns:52px 1fr 136px;align-items:center;gap:16px}
+.edu-tl li{grid-template-columns:52px 1fr 84px;align-items:center;gap:14px}
 .edu-tl li > *{min-width:0}.edu-tx{display:flex;flex-direction:column;line-height:1.35;word-break:keep-all}
-.edu-logo{width:136px;height:75px;display:flex;align-items:center;justify-content:center}
+.edu-logo{width:84px;height:75px;display:flex;align-items:center;justify-content:center}
 .edu-logo img{width:75px;height:75px;object-fit:contain;display:block}
 .edu-logo img[alt="Yonsei University"]{width:69px;height:69px}
 .edu-logo .ph{width:100%;height:100%;border:1px dashed var(--line);border-radius:6px;display:grid;place-content:center;text-align:center;font-size:10.5px;line-height:1.2;color:var(--muted);padding:0 4px}
-@media (max-width:480px){.edu-tl li{grid-template-columns:52px 1fr 45px;gap:10px}.edu-tl .edu-logo{width:45px;height:45px}.edu-logo img{width:45px;height:45px}.edu-logo img[alt="Yonsei University"]{width:41px;height:41px}.edu-logo .ph{font-size:8px}}
+@media (max-width:480px){.edu-tl li{grid-template-columns:34px 1fr 45px;gap:6px}.edu-tl .y{font-size:12.5px}html[lang=en] .edu-tx{font-size:12px;letter-spacing:-.01em}.edu-tl .edu-logo{width:45px;height:45px}.edu-logo img{width:45px;height:45px}.edu-logo img[alt="Yonsei University"]{width:41px;height:41px}.edu-logo .ph{font-size:8px}}
 
 .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:-12px 0 40px}
 .tabs a{text-align:center;padding:12px 22px;font-size:17px;font-weight:500;color:var(--muted);text-decoration:none;border-bottom:3px solid transparent;margin-bottom:-1px}
@@ -713,7 +713,7 @@ const KO = {
     office: ["208관 402호","건축학부","중앙대학교, 서울"],
     education: [
       {degree:"학사", major:"건축공학", school:"연세대학교", place:"서울"},
-      {degree:"석사", major:"건물성능진단 (Building Performance and Diagnostics)", school:"카네기멜론대학교", place:"미국 펜실베이니아"},
+      {degree:"석사", major:"건물성능진단", school:"카네기멜론대학교", place:"미국 펜실베이니아"},
       {degree:"박사", major:"토목공학 (건축 분야)", school:"퍼듀대학교", place:"미국 인디애나"}
     ],
     experience: [["2014","연구원, 한국건설기술연구원(KICT), 고양"],["2023","박사후연구원, 콘코디아대학교, 캐나다 퀘벡"]],
