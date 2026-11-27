@@ -475,6 +475,7 @@ form.adm-head input{flex:1;min-width:220px}
 .adm-auto-t{font-weight:500}
 .adm-students{margin-top:36px}.adm-students h3{font-size:17px;margin:0 0 12px}.adm-students h3 small{font-size:13px;color:var(--muted);font-weight:400;margin-left:6px}
 .adm-plan{border:1px dashed var(--teal);border-radius:10px;padding:14px;background:rgba(52,147,129,.06)}
+.adm-money{display:grid;grid-template-columns:1fr auto;gap:8px}.adm-money select{width:auto}
 .adm-imgs{display:flex;gap:8px;flex-wrap:wrap}.adm-paste{margin-top:8px;padding:12px;border:1.5px dashed var(--line);border-radius:8px;color:var(--muted);font-size:13px;text-align:center;cursor:pointer;background:var(--surface)}.adm-paste:focus,.adm-paste.on{outline:none;border-color:var(--teal);color:var(--teal);background:var(--teal-soft)}.adm-f.drag{outline:2px dashed var(--teal);outline-offset:4px;border-radius:8px;background:var(--teal-soft)}.adm-imgs figure{margin:0;width:110px;display:grid;gap:4px}
 .adm-imgs img{width:110px;height:110px;object-fit:contain;background:#f4f5f6;border-radius:8px}.adm-imgs span{display:flex;gap:4px}.adm-imgs button{padding:2px 7px}
 .adm-foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:sticky;bottom:0;background:var(--surface);padding:10px 0}
@@ -998,7 +999,7 @@ function openPub(k){const [cat,y,a,t,v,doi,sum,corr]=SITE.pubs[k],cover=pubCover
 /* 과제 개요: 입력한 항목만 보여 줌 (국문 칸이 비면 영문, 영문이 비면 국문) */
 const bi=(en,ko)=>LANG==="ko"?(ko||en||""):(en||ko||"");
 function projOverview(f){const row=(l,v,c="")=>v?`<dt>${l}</dt><dd${c}>${v}</dd>`:"";
-  const money=(f.total&&f.total!==f.amount?`<div class="amt">${T("Total project","과제 전체")} <b>${esc(krw(f.total))}</b>${usd(f.total)}</div>`:"")+(f.amount?`<div class="amt">${f.total&&f.total!==f.amount?T("hibe lab portion","hibe lab 배정"):T("Amount","연구비")} <b>${esc(krw(f.amount))}</b>${usd(f.amount)}</div>`:"")+(f.amountNote||f.amountNoteKo?`<small class="amt-note">${esc(bi(f.amountNote,f.amountNoteKo))}</small>`:"");
+  const money=(f.total&&f.total!==f.amount?`<div class="amt">${T("Total project","과제 전체")} <b>${esc(krw(f.total))}</b>${usd(f.total)}</div>`:"")+(f.amount?`<div class="amt">${f.total&&f.total!==f.amount?T("hibe lab portion","hibe lab 배정"):T("Amount","연구비")} <b>${esc(krw(f.amount))}</b>${usd(f.amount)}</div>`:"")+(f.annual?`<small class="amt-note">${T(`${f.annual} per year`,`연 ${krw(f.annual)}`)}</small>`:"")+(f.amountNote||f.amountNoteKo?`<small class="amt-note">${esc(bi(f.amountNote,f.amountNoteKo))}</small>`:"");
   const d=bi(f.desc,f.descKo);
   return `<dl>${row(T("Program","사업명"),esc(bi(f.program,f.programKo)))}${row(T("Project title","연구과제명"),esc(bi(f.task,f.taskKo)))}${row(T("Ministry","주무부처"),esc(bi(f.ministry,f.ministryKo)))}${row(T("Funded by","지원 기관"),esc(pFunder(f)))}${row(T("Funding","연구비"),money)}${row(T("Role","역할"),f.role==="PI"?T("Principal Investigator (PI)","연구책임자 (PI)"):f.role?T("Co-Principal Investigator (Co-PI)","공동연구책임자 (Co-PI)"):"")}${row(T("Period","기간"),f.period?esc(ym(f.period))+(isDone(f)?` · ${T("Completed","종료")}`:` · ${T("Ongoing","진행 중")}`):"")}${row(T("Project No.","과제 번호"),esc(f.no||""))}${row(T("Description","과제 설명"),d?esc(d):""," class=\"pdesc\"")}</dl>`;}
 function openProject(i){const t=SITE.projects[i];
@@ -1225,10 +1226,10 @@ const ADM = {
   projects: {label:["Projects","연구과제"], ordered:true,
     get:()=>SITE.projects.map((t,i)=>({title:t,...(SITE.projectInfo?.[i]||{}),img:SITE.projectImgs?.[i]||"",more:[...(SITE.projectMore?.[i]||[])]})),
     set:a=>{SITE.projects=a.map(p=>p.title);SITE.projectInfo=a.map(({title,img,more,...r})=>r);SITE.projectImgs=a.map(p=>p.img||"");SITE.projectMore=a.map(p=>p.more||[]);},
-    title:p=>p.title, sub:p=>`${p.role?p.role+" · ":""}${p.period||""}`, thumb:p=>p.img, fin:p=>{p.total=amtNorm(p.total);p.amount=amtNorm(p.amount);},
+    title:p=>p.title, sub:p=>`${p.role?p.role+" · ":""}${p.period||""}`, thumb:p=>p.img, fin:p=>{p.total=amtNorm(p.total);p.amount=amtNorm(p.amount);p.annual=amtNorm(p.annual);if(!p.annual)delete p.annual;},
     blank:()=>({title:"",role:"PI",period:"",funder:"",total:"",amount:"",no:"",desc:"",img:"",more:[]}),
     fields:[["plan","연구개발계획서로 자동 작성","plan"],["title","과제명 (영문)","text",1],["role","역할","select",[["PI","PI (연구책임자)"],["Co-PI","Co-PI (공동연구책임자)"],["","표시 안 함"]]],
-      ["period","기간 (예: 2026.03 – 2031.02)","text"],["program","사업명 (영문, 비우면 표시 안 함)","text"],["programKo","사업명 (국문, 예: 개인기초연구사업)","text"],["task","연구과제명 (영문, 공식 과제명이 위 제목과 다를 때)","text"],["taskKo","연구과제명 (국문)","text"],["ministry","주무부처 (영문, 예: Ministry of Science and ICT)","text"],["ministryKo","주무부처 (국문, 예: 과학기술정보통신부)","text"],["funder","지원 기관 (영문)","text"],["funderKo","지원 기관 (국문, 예: 한국연구재단)","text"],["total","과제 전체 연구비 (원 또는 USD로 정확히. 예: 8,000,000,000원 · 80억 · $5,700,000 / 비우면 표시 안 함)","money"],["amount","hibe lab 배정 연구비 (예: 120,000,000원 · 1억 2천만 · USD 85,000)","money"],["amountNote","연구비 설명 (영문, 예: Direct costs allocated to hibe lab)","text"],["amountNoteKo","연구비 설명 (국문)","text"],["no","과제 번호","text"],["desc","과제 설명 (영문)","textarea"],["descKo","과제 설명 (국문, 비우면 영문을 보여 줌)","textarea"],
+      ["period","기간 (예: 2026.03 – 2031.02)","text"],["program","사업명 (영문, 비우면 표시 안 함)","text"],["programKo","사업명 (국문, 예: 개인기초연구사업)","text"],["task","연구과제명 (영문, 공식 과제명이 위 제목과 다를 때)","text"],["taskKo","연구과제명 (국문)","text"],["ministry","주무부처 (영문, 예: Ministry of Science and ICT)","text"],["ministryKo","주무부처 (국문, 예: 과학기술정보통신부)","text"],["funder","지원 기관 (영문)","text"],["funderKo","지원 기관 (국문, 예: 한국연구재단)","text"],["total","과제 전체 연구비 (비우면 표시 안 함)","money"],["amount","hibe lab 배정 연구비 (총액)","money"],["annual","hibe lab 연간 배정 연구비 (선택, 적으면 '연 ○○원'으로 표시)","money"],["amountNote","연구비 기타 설명 (영문, 선택. 보통 비워 두세요)","text"],["amountNoteKo","연구비 기타 설명 (국문, 선택)","text"],["no","과제 번호","text"],["desc","과제 설명 (영문)","textarea"],["descKo","과제 설명 (국문, 비우면 영문을 보여 줌)","textarea"],
       ["img","대표 이미지 (카로셀)","image"],["more","팝업에 추가로 보일 그림","images"]]},
   members: {label:["Members","구성원"], ordered:true, get:()=>SITE.members.map(m=>({...m,interests:[...(m.interests||[])]})), set:a=>{SITE.members=a;},
     title:m=>m.name, sub:m=>`${m.group} · ${m.role}`, thumb:m=>m.photo,
@@ -1453,7 +1454,7 @@ function admEdit(key,i,pre){
   const fld=([k,label,type,opt])=>{const v=it[k];
     if(type==="pdfpage")return `<div class="adm-f adm-plan"><label>${label}<input type="file" id="admPdf" accept="application/pdf"></label><small>PDF 파일은 저장되지 않고, 첫 페이지 그림만 저장됩니다. 공개 PDF가 있는 논문은 저장 후 자동으로도 만들어집니다.</small><p class="adm-msg" id="admPdfMsg"></p></div>`;
     if(type==="plan")return i>=0?"":`<div class="adm-f adm-plan"><label>${label}<input type="file" id="admPlan" accept="application/pdf,.txt,.md,text/plain"></label><small>PDF를 올리면 과제명·기간·기관·연구비·역할·설명을 채워 넣습니다. 채워진 내용은 꼭 확인해 주세요.</small><p class="adm-msg" id="admPlanMsg"></p></div>`;
-    if(type==="money")return `<label class="adm-f">${label}<input name="${k}" value="${esc(v??"")}" autocomplete="off"><small class="adm-amt" data-for="${k}"></small></label>`;
+    if(type==="money"){const kr=amtKRW(v);return `<div class="adm-f"><span>${label}</span><div class="adm-money" data-k="${k}"><input type="text" inputmode="decimal" class="am-n" value="${kr==null?"":Math.round(kr).toLocaleString("en-US")}" placeholder="금액 (숫자만)" autocomplete="off"><select class="am-c"><option value="KRW">KRW (원)</option><option value="USD">USD ($)</option></select></div><input type="hidden" name="${k}" value="${esc(v??"")}"><small class="adm-amt" data-for="${k}"></small></div>`;}
     if(type==="pick5"){const all=[...new Set(SITE.members.flatMap(m=>m.interests||[]).map(x=>x.trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
       return `<div class="adm-f"><span>${label}</span><datalist id="dl-${k}">${all.map(x=>`<option value="${esc(x)}">`).join("")}</datalist><div class="adm-pick">${[0,1,2,3,4].map(n=>`<input name="${k}" list="dl-${k}" value="${esc((v||[])[n]||"")}" placeholder="${n+1}번째 주제" autocomplete="off">`).join("")}</div></div>`;}
     if(type==="pdf")return `<div class="adm-f"><span>${label}</span><div class="adm-pdf" data-f="${k}">${v?`<a href="${esc(v)}" data-cv="${esc(it.name||"")}">현재 CV 보기</a> <button type="button" class="btn-ghost" data-pdfx="${k}">빼기</button>`:"<small>올린 파일 없음</small>"}</div><input type="file" accept="application/pdf" data-pdf="${k}"></div>`;
@@ -1472,6 +1473,12 @@ function admEdit(key,i,pre){
   const amtShow=el=>{const o=f.querySelector(`.adm-amt[data-for="${el.name}"]`);if(!o)return;const n=amtNorm(el.value);
     o.textContent=!el.value.trim()?"":amtKRW(el.value)==null?"금액을 알아보지 못했습니다. 숫자로 넣어 주세요.":`→ ${n} · ${(()=>{const L=LANG;LANG="ko";const r=krw(n);LANG=L;return r;})()}${usd(n)} (1 USD = ${USD_RATE.toLocaleString()}원${FX_DATE?`, ${FX_DATE} 환율`:""})`;};
   f.querySelectorAll(".adm-amt").forEach(o=>{const el=f.elements[o.dataset.for];if(el){amtShow(el);el.addEventListener("input",()=>amtShow(el));}});
+  /* 연구비: 숫자 + 통화(KRW/USD) → 저장은 "KRW … Million" (USD는 그날 환율로 원화 환산) */
+  f.querySelectorAll(".adm-money").forEach(w=>{const n=w.querySelector(".am-n"),c=w.querySelector(".am-c"),h=f.elements[w.dataset.k];
+    const sync=()=>{const raw=n.value.replace(/[^\d.]/g,"");const num=parseFloat(raw);
+      if(raw&&!isNaN(num)&&!/\.$/.test(raw)){const p=n.selectionStart,len=n.value.length;n.value=num.toLocaleString("en-US",{maximumFractionDigits:2});try{n.setSelectionRange(p+n.value.length-len,p+n.value.length-len);}catch(e){}}
+      h.value=!raw||isNaN(num)?"":c.value==="USD"?`USD ${num}`:`${num}원`;amtShow(h);};
+    n.addEventListener("input",sync);c.addEventListener("change",sync);});
   const redraw=k=>{const t=S.fields.find(x=>x[0]===k)[2],urls=t==="gallery"?it.imgs:t==="image"?(it[k]?[it[k]]:[]):it[k];f.querySelector(`.adm-imgs[data-f="${k}"]`).outerHTML=imgList(k,urls||[]);};
   f.addEventListener("click",e=>{const b=e.target.closest("button[data-m]");if(!b)return;const box=b.closest(".adm-imgs"),k=box.dataset.f,j=+b.closest("figure").dataset.j,type=S.fields.find(x=>x[0]===k)[2];
     const lists=type==="gallery"?[it.imgs,it.full||[]]:type==="image"?null:[it[k]];

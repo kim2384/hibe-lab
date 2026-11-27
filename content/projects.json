@@ -14,12 +14,13 @@
   "img": "images/projects/project-1.jpg",
   "more": [
    "images/projects/project-1-overview.jpg"
-  ]
+  ],
+  "funderKo": "서울특별시"
  },
  {
   "title": "2026 Green Remodeling Talent Development Platform",
   "period": "2026.05 – 2028.12",
-  "funder": "Ministry of Land, Infrastructure and Transport",
+  "funder": "Korea Authority of Land & Infrastructure Safety",
   "amount": "KRW 500 Million",
   "no": "",
   "desc": "The Green Remodeling Talent Development Platform at Chung-Ang University cultivates practice- and research-oriented professionals capable of performing the full lifecycle of Green Remodeling (GR)—diagnosis, planning, design, construction, operation, and performance evaluation—in response to the growing demand for carbon-neutral building expertise. Built on an integrated architecture and architectural engineering curriculum, the program combines specialized coursework (24+ credits) with extracurricular activities (15+ credits), and operates a three-tier \"Carbon-Neutral Architecture·GR Micro-degree\" system (Green–Silver–Gold) supported by blockchain-based digital badges. Leveraging the GR Metropolitan Hub Platform and industry-academia networks, it strengthens field internships and employment linkages, aiming to produce 24+ specialized program completers annually over 2026–2028 and establish a sustainable educational framework beyond the project's conclusion.",
@@ -29,7 +30,7 @@
   "programKo": "",
   "task": "",
   "taskKo": "",
-  "ministry": "",
+  "ministry": "Ministry of Land, Infrastructure and Transport",
   "ministryKo": "국토교통부",
   "funderKo": "국토안전관리원",
   "total": "",
@@ -46,8 +47,8 @@
   "no": "2710106861",
   "desc": "This project is a research initiative designed to develop a holistic analytical framework for urban light pollution. The project addresses two critical challenges: nighttime light pollution from sources such as media facades and daytime glare caused by high-reflectivity building materials. Moving beyond conventional quantity-based lighting regulations, this initiative introduces Human-Centric Lighting (HCL) indicators to prioritize human health and well-being, with a focus on the visual and non-visual impacts of light. To achieve this, the project develops an integrated methodological framework that includes public-data-driven 3D city modeling, GPU-accelerated dynamic light simulations, and a real-time monitoring system based on HDRI and computer vision. Ultimately, this project aims to provide standardized design guidelines and a scientific evaluation protocol that mitigate social conflict and legal disputes while fostering a safer, healthier, and more sustainable urban lightscape.",
   "role": "PI",
-  "amountNote": "KRW 141.1 Million per year for 5 years",
-  "amountNoteKo": "연 1억 4,110만 원 × 5년",
+  "amountNote": "",
+  "amountNoteKo": "",
   "descKo": "이 과제는 도시 빛공해를 종합적으로 분석하는 틀을 개발하는 연구입니다. 미디어파사드 등에서 나오는 야간 빛공해와 고반사 건축 자재로 인한 주간 눈부심이라는 두 가지 핵심 문제를 다룹니다. 기존의 조도 중심 조명 규제를 넘어 인간중심조명(HCL) 지표를 도입해, 빛의 시각적·비시각적 영향을 중심으로 사람의 건강과 웰빙을 우선합니다. 이를 위해 공공데이터 기반 3D 도시 모델링, GPU 가속 동적 빛 시뮬레이션, HDRI와 컴퓨터 비전 기반 실시간 모니터링 시스템을 포함한 통합 방법론을 개발합니다. 최종적으로 사회적 갈등과 법적 분쟁을 줄이고 더 안전하고 건강하며 지속 가능한 도시 빛환경을 만들기 위한 표준 설계 가이드라인과 과학적 평가 프로토콜을 제시하는 것을 목표로 합니다.",
   "program": "",
   "programKo": "",
@@ -58,7 +59,8 @@
   "funderKo": "한국연구재단",
   "total": "",
   "img": "images/projects/project-3.jpg",
-  "more": []
+  "more": [],
+  "annual": "KRW 141.10 Million"
  },
  {
   "title": "Center for Carbon Neutrality in Buildings (C·CNB)",
@@ -68,8 +70,8 @@
   "no": "2710101182",
   "desc": "",
   "role": "Co-PI",
-  "amountNote": "KRW 20 Million per year allocated to hibe lab",
-  "amountNoteKo": "hibe lab 배정 연 2천만 원",
+  "amountNote": "",
+  "amountNoteKo": "",
   "total": "KRW 2,302 Million",
   "img": "images/projects/project-4.jpg",
   "more": [],
@@ -80,7 +82,8 @@
   "ministry": "Ministry of Science and ICT",
   "ministryKo": "과학기술정보통신부",
   "funderKo": "한국연구재단",
-  "descKo": ""
+  "descKo": "",
+  "annual": "KRW 20 Million"
  },
  {
   "title": "Rapid Urban-Scale Solar Simulation Leveraging Augmented Urban Digital Twin and Physically-Informed Neural Networks",
@@ -92,7 +95,10 @@
   "role": "PI",
   "descKo": "이 과제의 최종 목표는 커뮤니티 규모의 제로에너지건물 설계·운영을 지원하는 모델을 개발해, 도시에 태양광 시스템을 적용할 수 있는지 판단하는 의사결정을 돕는 것입니다. 세부 목표는 다음과 같습니다. (1) 공공 GIS 데이터를 전처리·데이터베이스화하여 도시 규모 머신러닝과 시뮬레이션을 위한 기초 데이터셋을 구축하고, (2) 생성형 AI 기법으로 실제와 같은 3D 도시 모델을 대량 증강하며, (3) 복사 전달 제약을 손실 함수에 넣은 물리정보 신경망(PINN) 대리모델을 개발해 도시 규모 일사량과 태양광 잠재량을 빠르게 예측하고, 제안한 방법을 실험으로 검증합니다.",
   "img": "images/projects/project-5.jpg",
-  "more": []
+  "more": [],
+  "ministry": "Ministry of Science and ICT",
+  "ministryKo": "과학기술정보통신부",
+  "funderKo": "한국연구재단"
  },
  {
   "title": "Data-driven energy optimization for supporting the design process of developing net-zero energy communities (SoftwareEcom)",
@@ -107,6 +113,9 @@
   "total": "KRW 212.62 Million",
   "descKo": "한국–영국 국제 컨소시엄 공동연구로, 커뮤니티 규모의 제로에너지건물을 설계·운영하기 위한 소프트웨어 제품군을 개발합니다.\n우리 연구실의 목표는 다음과 같습니다. i) 건물에 부착하거나 일체화한 태양광 패널의 일사 수확 잠재량을 커뮤니티·도시 규모에서 추정하는 계산 효율적인 시뮬레이션 방법 개발, ii) 개발한 시뮬레이션 방법을 공공 데이터셋으로 실험 검증, iii) 커뮤니티의 에너지 자립도를 최대화하는 커뮤니티 규모 BAPV·BIPV 시간분해 설계 최적화 알고리즘 개발.",
   "img": "images/projects/project-6.jpg",
-  "more": []
+  "more": [],
+  "ministry": "Ministry of Land, Infrastructure and Transport",
+  "ministryKo": "국토교통부",
+  "funderKo": "국토교통과학기술진흥원"
  }
 ]
