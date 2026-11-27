@@ -993,7 +993,9 @@ document.getElementById("mMax").onclick=()=>{const bx=$modal.querySelector(".mod
 function closeModal(){$modal.hidden=true;}
 document.getElementById("mClose").onclick=closeModal;
 document.getElementById("mClose").setAttribute("aria-label","Close");
-$modal.addEventListener("click",e=>{if(e.target===$modal)closeModal();});
+/* 바깥(어두운 곳)을 눌렀다 뗄 때만 닫음: 글자를 드래그하다 창 밖에서 마우스를 떼도 닫히지 않게 */
+let modalDown=null;$modal.addEventListener("mousedown",e=>{modalDown=e.target;});
+$modal.addEventListener("click",e=>{if(e.target===$modal&&modalDown===$modal)closeModal();modalDown=null;});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$modal.hidden)closeModal();});
 function openPub(k){const [cat,y,a,t,v,doi,sum,corr]=SITE.pubs[k],cover=pubCover(SITE.pubs[k]);const label=SITE.pubCats.find(c=>c[0]===cat)[1];
   openModal(`<div class="modal-body"><h3 id="mTitle">${esc(t)}</h3><div class="cite">${authors(a,corr)}<br>${esc(v)}</div>
