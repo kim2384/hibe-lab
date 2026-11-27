@@ -470,7 +470,7 @@ form.adm-head input{flex:1;min-width:220px}
 .adm-auto-t{font-weight:500}
 .adm-students{margin-top:36px}.adm-students h3{font-size:17px;margin:0 0 12px}.adm-students h3 small{font-size:13px;color:var(--muted);font-weight:400;margin-left:6px}
 .adm-plan{border:1px dashed var(--teal);border-radius:10px;padding:14px;background:rgba(52,147,129,.06)}
-.adm-imgs{display:flex;gap:8px;flex-wrap:wrap}.adm-imgs figure{margin:0;width:110px;display:grid;gap:4px}
+.adm-imgs{display:flex;gap:8px;flex-wrap:wrap}.adm-drop-hint{display:block;color:var(--muted);font-size:12px;margin-top:4px}.adm-f.drag{outline:2px dashed var(--teal);outline-offset:4px;border-radius:8px;background:var(--teal-soft)}.adm-imgs figure{margin:0;width:110px;display:grid;gap:4px}
 .adm-imgs img{width:110px;height:110px;object-fit:contain;background:#f4f5f6;border-radius:8px}.adm-imgs span{display:flex;gap:4px}.adm-imgs button{padding:2px 7px}
 .adm-foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:sticky;bottom:0;background:var(--surface);padding:10px 0}
 .adm-toast{position:fixed;left:50%;bottom:72px;transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);border-radius:999px;padding:10px 18px;font-size:14px;box-shadow:0 4px 16px rgba(0,0,0,.2)}
@@ -1456,9 +1456,9 @@ function admEdit(key,i,pre){
     if(type==="select"){const o=typeof opt==="function"?opt():opt;return `<label class="adm-f">${label}<select name="${k}">${o.map(([ov,ol])=>`<option value="${esc(ov)}"${ov===v?" selected":""}>${esc(ol)}</option>`).join("")}</select></label>`;}
     if(type==="textarea")return `<label class="adm-f">${label}<textarea name="${k}" rows="6">${esc(v||"")}</textarea></label>`;
     if(type==="lines")return `<label class="adm-f">${label}<textarea name="${k}" rows="4">${esc((v||[]).join("\n"))}</textarea></label>`;
-    if(type==="gallery")return `<div class="adm-f"><span>${label}</span>${imgList(k,it.imgs||[])}<input type="file" accept="image/*" multiple data-up="gallery"></div>`;
-    if(type==="images")return `<div class="adm-f"><span>${label}</span>${imgList(k,v||[])}<input type="file" accept="image/*" multiple data-up="${k}"></div>`;
-    if(type==="image")return `<div class="adm-f"><span>${label}</span>${imgList(k,v?[v]:[])}<input type="file" accept="image/*" data-up="${k}" data-one="1"></div>`;
+    if(type==="gallery")return `<div class="adm-f"><span>${label}</span>${imgList(k,it.imgs||[])}<input type="file" accept="image/*" multiple data-up="gallery"><small class="adm-drop-hint">사진을 이 칸에 끌어다 놓거나, 복사한 이미지를 Ctrl+V(⌘V)로 붙여넣어도 올라갑니다.</small></div>`;
+    if(type==="images")return `<div class="adm-f"><span>${label}</span>${imgList(k,v||[])}<input type="file" accept="image/*" multiple data-up="${k}"><small class="adm-drop-hint">사진을 이 칸에 끌어다 놓거나, 복사한 이미지를 Ctrl+V(⌘V)로 붙여넣어도 올라갑니다.</small></div>`;
+    if(type==="image")return `<div class="adm-f"><span>${label}</span>${imgList(k,v?[v]:[])}<input type="file" accept="image/*" data-up="${k}" data-one="1"><small class="adm-drop-hint">사진을 이 칸에 끌어다 놓거나, 복사한 이미지를 Ctrl+V(⌘V)로 붙여넣어도 올라갑니다.</small></div>`;
     return `<label class="adm-f">${label}<input name="${k}" type="${type}" value="${esc(v??"")}"${opt?" required":""}></label>`;};
   openModal(`<form class="modal-body adm-form" id="admForm"><h3 id="mTitle">${S.label[1]} ${i<0?"새로 추가":"편집"}</h3>${key!=="pi"&&GH_AUTH?`<div class="adm-rev adm-ai"><label for="admAiIns"><b>AI로 고치기</b> <small>어떻게 고칠지 적으면 Claude가 아래 칸을 고쳐 줍니다. 확인한 뒤 저장을 눌러야 반영됩니다.</small></label>
       <textarea id="admAiIns" rows="2" placeholder="예) 내용을 세 줄로 줄여 줘 · News 문구를 더 자연스럽게 · 영문 제목 오타 고쳐 줘"></textarea>
@@ -1491,6 +1491,21 @@ function admEdit(key,i,pre){
     catch(err){msg("PDF를 올리지 못했습니다: "+(err.message||err));}inp.value="";inp.disabled=false;});
   f.addEventListener("change",async e=>{const inp=e.target.closest("input[data-up]");if(!inp||!inp.files.length)return;inp.disabled=true;
     await addImgs(inp.dataset.up,inp.dataset.one,[...inp.files]);inp.value="";inp.disabled=false;});
+  /* 사진 칸: 끌어다 놓기 · 붙여넣기(Ctrl+V)로도 올리기 */
+  const upZone=el=>el?.closest?.(".adm-f")?.querySelector("input[data-up]")?el.closest(".adm-f"):null;
+  let lastZone=null;
+  const dropUp=async(zone,files)=>{const inp=zone.querySelector("input[data-up]");files=files.filter(x=>/^image\//.test(x.type));if(!files.length||inp.disabled)return;
+    inp.disabled=true;await addImgs(inp.dataset.up,inp.dataset.one,inp.dataset.one?files.slice(0,1):files);inp.disabled=false;};
+  f.addEventListener("dragover",e=>{const z=upZone(e.target);if(!z||!e.dataTransfer?.types?.includes("Files"))return;e.preventDefault();e.dataTransfer.dropEffect="copy";
+    f.querySelectorAll(".adm-f.drag").forEach(x=>x!==z&&x.classList.remove("drag"));z.classList.add("drag");});
+  f.addEventListener("dragleave",e=>{const z=upZone(e.target);if(z&&!z.contains(e.relatedTarget))z.classList.remove("drag");});
+  f.addEventListener("drop",e=>{const z=upZone(e.target);if(!z)return;e.preventDefault();z.classList.remove("drag");lastZone=z;dropUp(z,[...(e.dataTransfer?.files||[])]);});
+  f.addEventListener("pointerdown",e=>{const z=upZone(e.target);if(z)lastZone=z;});
+  const onPaste=e=>{if(!f.isConnected){document.removeEventListener("paste",onPaste);return;}
+    const files=[...(e.clipboardData?.files||[])].filter(x=>/^image\//.test(x.type));if(!files.length)return;
+    const zone=(lastZone&&lastZone.isConnected&&lastZone)||[...f.querySelectorAll(".adm-f")].find(z=>z.querySelector("input[data-up]"));if(!zone)return;
+    e.preventDefault();zone.classList.add("drag");setTimeout(()=>zone.classList.remove("drag"),600);dropUp(zone,files.map((x,n)=>x.name&&x.name!=="image.png"?x:new File([x],`paste-${Date.now()}-${n}.${(x.type.split("/")[1]||"png").replace("jpeg","jpg")}`,{type:x.type})));};
+  document.addEventListener("paste",onPaste);
   /* 자동 작성에서 넘어온 파일: 사진은 알맞은 칸에 올리고, 논문 PDF는 첫 페이지를 표지로 */
   if(pre?.files?.length)(async()=>{const imgs=pre.files.filter(x=>/^image\//.test(x.type)),pdfs=pre.files.filter(x=>x.type==="application/pdf");
     if(key==="posts"||key==="awards"){if(imgs.length)await addImgs("gallery",0,imgs);}
