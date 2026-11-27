@@ -321,6 +321,7 @@ html[lang=ko] .edu-sp{display:block}html[lang=ko] .edu-sp>span+span::before{cont
 .modal-body .sum{font-size:15.5px;line-height:1.7}
 .pub-mb.has-cover{display:grid;grid-template-columns:minmax(0,300px) 1fr;gap:28px;align-items:start}
 .pub-info{display:grid;gap:12px;align-content:start;min-width:0}
+.lic-note{font-size:12px;color:var(--muted,#6b7a76);line-height:1.5}.lic-note a{color:inherit;text-decoration:underline}
 .oa-badge{justify-self:start;font-size:12px;font-weight:600;color:#fff;background:linear-gradient(90deg,#0b7162,#349381);padding:3px 10px;border-radius:999px}
 .modal-body .ab-h{margin:6px 0 0;font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--teal)}
 .ab-t{margin:0;text-align:justify;hyphens:auto}
@@ -1102,11 +1103,13 @@ function openPdf(url,title){const src=new URL(url,location.href).href,name=(titl
     catch(e){box.innerHTML=`<p class="pdf-wait">${T("Could not show the PDF here. Use Download.","여기서 PDF를 보여 주지 못했습니다. 내려받기를 눌러 주세요.")}</p>`;}})();}}
 function openPub(k){const [cat,y,a,t,v,doi,sum,corr,,,pdf0,oa]=SITE.pubs[k],cover=pubCover(SITE.pubs[k]),pdf=oa?pdf0:"";
   const ab=PUBABS[doi]||(pdf0&&PUBABS[pdf0])||null,kw=ab&&Array.isArray(ab.kw)?ab.kw.filter(Boolean):[];
+  const lic=!oa&&ab&&ab.lic,licU=lic&&/^https?:\/\//.test(lic.url||"")?lic.url:"";
   const text=ab&&ab.abs?`<h4 class="ab-h">${T("Abstract","초록")}</h4><p class="ab-t">${esc(ab.abs)}</p>${kw.length?`<h4 class="ab-h">${T("Keywords","키워드")}</h4><div class="kw">${kw.map(x=>`<span>${esc(x)}</span>`).join("")}</div>`:""}`:sum?esc(sum):todo();
   openModal(`<div class="modal-body pub-body"><div class="pub-mb${cover?" has-cover":""}">${cover?`<img class="pub-cover" src="${cover}" alt="" role="button" tabindex="0" title="${T("Enlarge","크게 보기")}" onclick="openLightbox([this.src],0)" onkeydown="if(event.key==='Enter')openLightbox([this.src],0)" onerror="this.closest('.pub-mb').classList.remove('has-cover');this.closest('.modal-box').classList.remove('pub-box');this.remove()">`:""}
   <div class="pub-info">${oa?`<span class="oa-badge" title="${T("Free to read","누구나 무료로 읽을 수 있는 논문")}">Open Access</span>`:""}<h3 id="mTitle">${esc(t)}</h3><div class="cite">${authors(a,corr)}<br>${esc(v)}</div>
   <div class="sum">${text}</div>
   ${citeOf(doi,t)?`<div class="cite-note">${T(`Cited by ${citeOf(doi,t)} (${CITES_SRC}, ${CITES_DATE})`,`인용 ${citeOf(doi,t)}회 (${CITES_SRC==="OpenAlex"?"OpenAlex":"구글 스칼라"}, ${CITES_DATE} 기준)`)}</div>`:""}
+  ${lic&&(lic.text||licU)?`<div class="lic-note">${esc(lic.text||"")}${licU?`${lic.text?" · ":""}<a href="${esc(licU)}" target="_blank" rel="noopener">${esc(lic.name||T("License","라이선스"))}</a>`:""}</div>`:""}
   <div class="pub-links">${pdf?`<button type="button" class="btn-post pub-pdf" data-pdf="${esc(pdf)}">${T("View PDF","PDF 보기")}</button>`:""}${doi?`<a href="https://doi.org/${doi}" target="_blank" rel="noopener">${T("Read the paper","원문 보기")} (doi:${doi})</a>`:""}</div></div></div></div>`);
   if(cover)$modal.querySelector(".modal-box").classList.add("pub-box");
   $mc.querySelector(".pub-pdf")?.addEventListener("click",()=>openPdf(pdf,t));}
