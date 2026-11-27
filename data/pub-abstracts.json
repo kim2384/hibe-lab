@@ -94,5 +94,82 @@
    "digital twin"
   ],
   "src": "pdf"
+ },
+ "images/uploads/papers/2026-alc-kang-eye-level-vertical-illuminance.pdf": {
+  "abs": "Daylight conditions vary significantly across locations within a sidelit open-plan office, with implications for both visual comfort and circadian lighting. However, previous studies have predominantly evaluated these aspects in isolation, leaving a gap in understanding how they interact spatially and how such interactions can inform early-stage design decisions regarding layout and lighting. This study investigates the potential of eye-level vertical illuminance (Ev) as a unified reference indicator for simultaneously interpreting glare and circadian lighting during the early design phase. A reference sidelit open-plan office model was developed, with the spectral reflectance and reflectance level of the walls as the primary variables. Using Lark Spectral Lighting and RADIANCE- based annual daylight simulation, Ev, Daylight Glare Probability (DGP), and Circadian Stimulus (CS) were simulated at eye-level grid points, and statistical analyses examined how glare and circadian responses varied with Ev across nine wall conditions. The results showed that simultaneous satisfaction of the glare (DGP ≤ 0.35) and circadian (CS ≥ 0.3) criteria was described not by a single Ev threshold but by a two-sided Ev band. Its upper bound, set by glare, remained nearly constant across all wall conditions at approximately 3,240 lux, whereas its lower bound, set by circadian sufficiency, shifted with wall spectrum, rising from about 53 lux for cool walls to 174–329 lux for warm walls. When this Ev band mapped onto the room plan, it distinguished a geometry-driven glare-buffer zone near the window (extending to about 6 m for window-facing views and 3.4 m for parallel views) from a spectrum-dependent circadian-limited zone at the rear, which appeared only under warm walls. View direction resolved the glare– circadian trade-off only under spectrally favourable walls. These findings indicate that eye-level vertical illuminance can serve as a practical, location-based reference linking visual and non-visual daylight performance, with a wall-independent glare ceiling and a spectrum-dependent circadian floor, and that the approach may be extended by incorporating additional indoor-geometry and material-optical variables.",
+  "kw": [
+   "Daylight",
+   "office design",
+   "circadian lighting",
+   "glare",
+   "multi-spectral simulation",
+   "indoor lighting environment",
+   "vertical illuminance"
+  ],
+  "src": "pdf"
+ },
+ "images/uploads/papers/2026-alc-kang-far-field-ibl-error.pdf": {
+  "abs": "Occupant-centric daylighting needs accurate, real-time prediction at each occupant's position. Image-Based Lighting (IBL) reproduces exterior luminance from a single HDRI without explicit 3D modeling, but its far-field assumption fixes occlusion at the capture point. Across 816 points and 50 sky conditions, illuminance agreement with baseline is high overall (CCC = 0.997), yet errors cluster where the solar disk straddles the window frame, from pixel-quantized sun-vector divergence.",
+  "kw": [
+   "Human-Centric Lighting",
+   "Image-Based Lighting",
+   "High Dynamic Range Imaging",
+   "Daylighting Simulation",
+   "Far-Field Assumption"
+  ],
+  "src": "pdf"
+ },
+ "images/uploads/papers/2026-asim-cho-physics-structured-surrogate.pdf": {
+  "abs": "Urban energy transitions and carbon-neutrality targets have increased the need for accurate and rapid assessment of solar irradiance on building surfaces. Physics-based ray-tracing simulations can represent complex urban shading but require substantial computational effort when applied annually to hundreds of thousands of sensors. Purely data-driven models provide faster inference but may produce physically inconsistent outputs and offer limited diagnostic interpretability. This study proposes a physicsstructured surrogate model with an explicitly physics-structured output formulation for urban-scale irradiance prediction. Hourly irradiance was simulated using ClimateStudio for 351,685 roof and façade sensors distributed across 1,741 buildings within a 1-km-radius district in Seoul, Korea. Following data quality control, 2,421 sensors were used for training, while 523 sensors from 155 buildings not represented in training formed the development set. The model uses 22 meteorological, solar-geometric, surface, and horizon-related features. Analytical beam and diffuse irradiance terms are calculated from DNI, DHI, angle of incidence, continuous solar visibility, surface tilt, and horizon attenuation. Their sum is multiplied by a dimensionless neural correction factor, 𝑚NN, predicted by a multilayer perceptron. Non-negative output and zero nighttime irradiance are guaranteed structurally rather than through loss penalties. The model achieved a daytime 𝑅2 of 0.9496 and RMSE of 61.02 W/m², together with an annual cumulative 𝑅2 of 0.9736 and RMSE of 91.14 kWh/m²·yr on the development set. Physics structuring reduced training time from 976 to 470 s. The façade median 𝑚NN of 0.504 revealed a missing tilt-dependent diffuse term; introducing this term shifted the median to 1.076, demonstrating the diagnostic value of the learned correction factor. Application of the frozen model to 100,000 additional same-site sensors excluded from training and development produced an annual 𝑅2 of 0.9661 and RMSE of 101.95 kWh/m²·yr. These results demonstrate the accuracy, physical consistency, diagnostic capability, and large-scale applicability of the proposed approach.",
+  "kw": [
+   "Solar irradiance",
+   "Surrogate model",
+   "Physics-informed learning",
+   "Solar potential",
+   "Building envelope"
+  ],
+  "src": "pdf"
+ },
+ "images/uploads/papers/2026-asim-jang-generative-urban-digital-twins.pdf": {
+  "abs": "Three-dimensional urban digital twins are essential for evaluating urban environmental and energy performance, including microclimate, urban heat islands, solar radiation, and airflow. To enable such analyses at scale, machine-learning-based surrogate models are increasingly being developed as computationally efficient alternatives to physics-based simulations. However, training these models requires large volumes of urban geometry data that closely resemble real-world urban environments, while remaining controllable across design parameters. To address this challenge, this study proposes a framework for preprocessing public GIS data and generatively augmenting 3D urban models. First, public GIS vector data containing semantic attribute information is collected and preprocessed into tensor formats suitable for model training. A conditional diffusion model is then applied, taking patch-level urban morphological indicators as input conditions to generate urban layouts. The proposed model produces urban spatial configurations that are statistically similar to real cities while allowing user-defined conditional control. The diffusion model learns urban layouts through a progressive denoising process, which mitigates the instability in condition adherence commonly observed in GAN-based approaches and enables stable generation of diverse urban patterns. The generated raster layouts are converted into vector formats and combined with height fields reflecting building type-specific height distributions to extrude 3D mesh models. The generated layouts are validated along three axes: instruction compliance, output diversity, and visual fidelity. The results show that realistic urban layouts can be generated using simple morphological indicators alone. This framework supports the acquisition of controlled and augmented urban data for training deep-learning-based surrogate models in urban environmental analysis.",
+  "kw": [
+   "Urban layout generation",
+   "Diffusion model",
+   "Generative augmentation",
+   "Urban energy simulation",
+   "3D city model"
+  ],
+  "src": "pdf"
+ },
+ "images/uploads/papers/2026-asim-kang-eye-level-vertical-illuminance.pdf": {
+  "abs": "Daylight conditions vary significantly across locations within a sidelit open-plan office, with implications for both visual comfort and circadian lighting. However, previous studies have predominantly evaluated these aspects in isolation, limiting understanding of how they interact spatially and how this interaction can support decisions regarding layout and lighting. This study investigates the potential of eye-level vertical illuminance (Ev) as a common reference indicator for simultaneously interpreting glare and circadian lighting. A reference sidelit open-plan office was modelled under nine wall conditions combining three spectral profiles with three photopic reflectance levels. Annual RADIANCE and Lark simulations calculated Ev, Daylight Glare Probability (DGP), and Circadian Stimulus (CS) at eye-level grids for four view directions. Threshold-based and spatial analyses were then used to identify the Ev range associated with simultaneous satisfaction of the glare (DGP ≤ 0.35) and circadian (CS ≥ 0.3) criteria. The results showed that simultaneous satisfaction was described by a two-sided Ev band rather than a single threshold. Its upper bound, governed mainly by glare, remained near 3,240 lux across wall conditions, whereas its lower bound increased with wall spectrum, from approximately 53 lux for cool walls to 174–329 lux for warm walls. Spatial mapping separated a geometry-driven glare-buffer near the window from a spectrum-dependent circadian-limited zone at the rear, while the effectiveness of view direction depended on wall spectrum. These findings demonstrate that eye-level Ev can function as a location-based diagnostic that identifies which criterion constrains performance, thereby supporting decisions on surface spectrum and workstation orientation as well as subsequent shading and supplementary lighting.",
+  "kw": [
+   "Vertical illuminance",
+   "Circadian lighting",
+   "Glare",
+   "Daylight",
+   "Multi-spectral simulation"
+  ],
+  "src": "pdf"
+ },
+ "images/uploads/papers/2026-asim-kang-visual-field-errors-ibl.pdf": {
+  "abs": "Occupant-centric daylight control requires predicting not only illuminance, but also directionality, temporal variation, and interaction with the surrounding context. Conventional control based on a single photosensor cannot capture this spatial distribution, limiting control robustness and reducing occupant acceptance. To address this, Model-Based Control (MBC) uses a physics-based model to predict spatial light distribution and derive control actions. MBC combined with Image-Based Lighting (IBL), which uses a High Dynamic Range Image (HDRI) of the facade as raytracing input, has been validated in prior studies. However, IBL applies a far-field assumption to all scene content, fixing solar and sky occlusion at the capture point regardless of occupant position. This prevents accurate representation of obstruction conditions that vary with position and viewpoint, introducing prediction errors. This study quantifies where and why these errors occur. A Baseline Scene, using explicit office and surrounding-building geometry, was compared against an IBL Scene illuminated by a synthetic, single capture-point HDRI, across an 816-point, 0.5 m grid in a perimeter office. Vertical illuminance (Ev) toward the facade was evaluated at each point across 50 annual sky conditions. Overall agreement between IBL and baseline was high (Lin's concordance correlation coefficient, CCC = 0.997), with no meaningful error dependence on distance from the capture point. Error instead concentrated where the occupant's line of sight to the sun grazed the window frame: there, the pixel-quantized sun vector recovered from the HDRI diverged from the baseline vector enough to flip whether the disk was resolved as obstructed, producing errors an order of magnitude larger than distance alone could explain. The far-field assumption thus fails not gradually across the room, but sharply at a narrow, occupant-view-dependent boundary.",
+  "kw": [
+   "Image-Based Lighting",
+   "Far-Field Assumption",
+   "Daylighting Simulation"
+  ],
+  "src": "pdf"
+ },
+ "images/uploads/papers/2026-asim-yoon-fisheye-equivalent-albedo.pdf": {
+  "abs": "Urban solar irradiance simulations often use a uniform albedo of 0.20 because districtscale material data are difficult to obtain. This can be problematic for facades, which receive reflected radiation from surrounding surfaces. This study evaluates an imagederived weighted-mean albedo, αμ, as an approximation of the sensor-specific equivalent albedo, αeq, and tests the image conditions required for its use. Orthographic fisheye albedo maps were generated for 8,473 facade sensors in a level of detail 1 (LoD1) model. Ten field of view (FOV) settings from 90° to 180° and eight image resolutions from 25 to 800 pixels were tested. The conventional α = 0.20 assumption produced an annual root mean square error (RMSE) of 87.9 kWh/m²·yr. Using αμ, RMSE decreased to 27.7 kWh/m²·yr at 180°/800 pixels and remained low at 31.8 kWh/m²·yr even at 180°/25 pixels. In contrast, narrowing the FOV caused substantially larger errors. These results indicate that complete hemispherical coverage is more important than high pixel density for αμ estimation in the tested LoD1 geometry.",
+  "kw": [
+   "Equivalent albedo",
+   "Fisheye image",
+   "Facade",
+   "Urban solar irradiance",
+   "RADIANCE"
+  ],
+  "src": "pdf"
  }
 }

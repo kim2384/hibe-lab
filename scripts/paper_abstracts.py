@@ -36,6 +36,7 @@ def split_kw(chunk):
 
 
 CUT = re.compile(r"(?im)^\s*(?:key\s?words?|index terms|key innovations|practical implications|highlights)\b")
+INTRO_LINE = re.compile(r"(?im)^\s*(?:(?:1|I)\.?\s+)?introduction\s*$")
 INTRO = re.compile(r"(?is)^\s*(?:(?:1|I)\.?\s+)?introduction\b")
 
 
@@ -67,10 +68,13 @@ def from_blocks(blocks):
             parts.append(b[4])
             bottom = b[3]
         txt = "\n".join(parts)
+        i_end = INTRO_LINE.search(txt)
+        if i_end:
+            txt = txt[: i_end.start()]
         e = CUT.search(txt)
         if e:
             if re.match(r"(?i)\s*(?:key\s?words?|index terms)", txt[e.start():]):
-                kw = split_kw(HEAD_KW.sub("", txt[e.start():], count=1))
+                kw = split_kw(re.split(r"\n\s*\n", HEAD_KW.sub("", txt[e.start():], count=1).strip())[0])
             txt = txt[: e.start()]
         ab = clean(txt)
         if len(ab) >= 200:
@@ -96,12 +100,25 @@ def from_blocks(blocks):
     return ab, kw[:12]
 
 
+def page_blocks(doc, i):
+    """i쪽 글 덩어리 + 다음 쪽 글 덩어리를 이어 붙임(초록이 다음 쪽으로 넘어가는 경우). 머리말·꼬리말은 뺌."""
+    h = doc[i].rect.height
+    cur = [b for b in doc[i].get_text("blocks") if b[4].strip() and b[1] < h * 0.9 and not (b[1] > h * 0.8 and len(b[4]) < 250 and STOP_BLOCK.match(b[4]))]
+    if i + 1 >= len(doc) or not cur:
+        return cur
+    nxt = [b for b in doc[i + 1].get_text("blocks") if b[4].strip() and h * 0.07 < b[1] < h * 0.9]
+    if not nxt:
+        return cur
+    shift = max(b[3] for b in cur) - min(b[1] for b in nxt) + 5
+    return cur + [(b[0], b[1] + shift, b[2], b[3] + shift, b[4]) + tuple(b[5:]) for b in nxt]
+
+
 def from_pdf(data):
     import pymupdf
     doc = pymupdf.open(stream=data, filetype="pdf")
     kw0 = []
     for i in range(min(5, len(doc))):
-        ab, kw = from_blocks(doc[i].get_text("blocks"))
+        ab, kw = from_blocks(page_blocks(doc, i))
         if ab:
             return ab, kw or kw0
         kw0 = kw0 or kw
@@ -147,7 +164,7 @@ def from_api(doi):
 
 
 def pubs():
-    """{DOI(없으면 제목): 저장소 PDF 경로}."""
+    """{DOI(없으면 PDF 경로): 저장소 PDF 경로}."""
     out = {}
     text = (ROOT / "index.html").read_text(encoding="utf-8")
     m = re.search(r"\n  pubs: \[(.*?)\n  \],", text, re.S)
@@ -159,7 +176,7 @@ def pubs():
     for r in rows:
         doi = str(r[5] if len(r) > 5 else "").strip()
         pdf = str(r[10]) if len(r) > 10 and r[10] else ""
-        key = doi if doi.startswith("10.") else str(r[3]).strip()   # DOI가 없는 학회 발표는 제목으로
+        key = doi if doi.startswith("10.") else pdf   # DOI가 없는 학회 발표는 올린 PDF 경로로
         if key:
             out[key] = pdf or out.get(key, "")
     return out
