@@ -1,7 +1,7 @@
 {
-  "updated": "2026-11-27",
+  "updated": "2026-11-28",
   "source": "Google Scholar (via SerpApi)",
-  "total": 413,
+  "total": 414,
   "h_index": 7,
   "i10_index": 5,
   "articles": [
@@ -33,7 +33,7 @@
       "title": "An integrated method and web tool to assess visual environment in spaces with window shades",
       "key": "anintegratedmethodandwebtooltoassessvisualenvironmentinspaceswithwindowshades",
       "year": "2018",
-      "cites": 12
+      "cites": 13
     },
     {
       "title": "A low-cost stereo-fisheye camera sensor for daylighting and glare control",
